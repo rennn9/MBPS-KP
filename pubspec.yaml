@@ -1,0 +1,56 @@
+name: projectbps
+description: A new Flutter project.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.10+1
+  smooth_page_indicator: ^1.2.0+3
+  timelines_plus: ^1.0.3
+  connectivity_plus: ^6.0.4
+  intl: ^0.19.0
+  flutter_time_picker_spinner: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/images/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/InterBoldItalic.ttf
+          weight: 700
+        - asset: assets/fonts/InterBold.ttf
+          weight: 700
+        - asset: assets/fonts/InterExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/InterRegular.ttf
+          weight: 400
+        - asset: assets/fonts/InterSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/InterMedium.ttf
+          weight: 500
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/RobotoBlack.ttf
+          weight: 900
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/PoppinsRegular.ttf
+          weight: 400
+    - family: Fira Sans
+      fonts:
+        - asset: assets/fonts/FiraSansMedium.ttf
+          weight: 500
