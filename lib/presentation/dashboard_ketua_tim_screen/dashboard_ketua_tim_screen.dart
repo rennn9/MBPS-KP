@@ -1,81 +1,117 @@
 import 'package:flutter/material.dart';
 import '../../core/app_export.dart';
-import '../../theme/custom_button_style.dart';
-import '../../widgets/custom_drop_down.dart';
-import '../../widgets/custom_outlined_button.dart';
-import '../../widgets/custom_text_form_field.dart';
-import 'widgets/listcell_one_item_widget.dart';
 import 'widgets/listpresensiman1_item_widget.dart';
 
-// ignore_for_file: must_be_immutable
-class DashboardKetuaTimScreen extends StatelessWidget {
+class DashboardKetuaTimScreen extends StatefulWidget {
   DashboardKetuaTimScreen({Key? key}) : super(key: key);
 
-  List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
-  TextEditingController cellsixController = TextEditingController();
+  @override
+  _DashboardKetuaTimScreenState createState() =>
+      _DashboardKetuaTimScreenState();
+}
+
+class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
+  List<String> dropdownItemList = [
+    "Semua Permohonan",
+    "Hari Ini",
+    "Minggu Ini",
+    "Bulan Ini"
+  ];
+  int selectedIndex = 0;
+  String selectedDropdownItem = "Semua Permohonan";
+  final FocusNode dropdownFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Container(
-              height: SizeUtils.height,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  Container(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 18.h,
-                      vertical: 48.h,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.only(top: 100),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 18, vertical: 48),
+                  decoration: BoxDecoration(
+                    color: appTheme.cyan100,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(70),
+                      topRight: Radius.circular(70),
                     ),
-                    decoration: BoxDecoration(
-                      color: appTheme.cyan100,
-                      borderRadius: BorderRadiusStyle.roundedBorder90,
-                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(top: 20),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         _buildListpresensiman(context),
-                        SizedBox(height: 14.h),
-                        CustomDropDown(
-                          width: 178.h,
-                          icon: Container(
-                            margin: EdgeInsets.only(left: 8.h),
-                            child: CustomImageView(
-                              imagePath: ImageConstant.imgArrowdownPrimary,
-                              height: 30.h,
-                              width: 18.h,
-                              fit: BoxFit.contain,
-                            ),
+                        SizedBox(height: 14),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          iconSize: 30.h,
-                          hintText: "Semua Permohonan",
-                          items: dropdownItemList,
-                          contentPadding: EdgeInsets.fromLTRB(18.h, 2.h, 12.h, 2.h),
-                          borderDecoration: DropDownStyleHelper.outlineErrorContainer,
+                          child: DropdownMenu<String>(
+                            initialSelection: dropdownItemList.first,
+                            onSelected: (String? value) {
+                              setState(() {
+                                selectedDropdownItem = value!;
+                              });
+                            },
+                            dropdownMenuEntries: dropdownItemList.map((String value) {
+                              return DropdownMenuEntry<String>(
+                                value: value,
+                                label: value,
+                              );
+                            }).toList(),
+                            focusNode: dropdownFocusNode..canRequestFocus = false,
+                          ),
                         ),
-                        SizedBox(height: 14.h),
-                        _buildTable(context),
-                        SizedBox(height: 210.h)
+                        SizedBox(height: 20),
+                        // Tabel Data Pengajuan
+                        DataTable(
+                          columns: const [
+                            DataColumn(label: Text('Nama')),
+                            DataColumn(label: Text('Jenis Pengajuan')),
+                            DataColumn(label: Text('Status')),
+                          ],
+                          rows: [
+                            DataRow(cells: [
+                              DataCell(Text('John Doe')),
+                              DataCell(Text('Cuti')),
+                              DataCell(Text('Diterima')),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Text('Jane Smith')),
+                              DataCell(Text('Presensi Manual')),
+                              DataCell(Text('Ditolak')),
+                            ]),
+                            DataRow(cells: [
+                              DataCell(Text('Alex Johnson')),
+                              DataCell(Text('KiP APP')),
+                              DataCell(Text('Menunggu')),
+                            ]),
+                          ],
+                        ),
+                        SizedBox(height: 210),
                       ],
                     ),
                   ),
-                  _buildColumnprice(context)
-                ],
+                ),
               ),
             ),
-          ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _buildColumnprice(context),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  /// Section Widget
   Widget _buildListpresensiman(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -83,11 +119,27 @@ class DashboardKetuaTimScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Wrap(
           direction: Axis.horizontal,
-          spacing: 10.h,
+          spacing: 10,
           children: List.generate(
             3,
             (index) {
-              return Listpresensiman1ItemWidget();
+              final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
+              final imagePaths = [
+                ImageConstant.imgEdit,
+                ImageConstant.imgCalendar,
+                ImageConstant.imgDownload
+              ];
+              return Listpresensiman1ItemWidget(
+                text: texts[index],
+                imagePath: imagePaths[index],
+                isSelected: selectedIndex == index,
+                onTap: () {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                selectedTextColor: Color(0xFF3E9B97),
+              );
             },
           ),
         ),
@@ -95,353 +147,87 @@ class DashboardKetuaTimScreen extends StatelessWidget {
     );
   }
 
-
-/// Section Widget
-Widget _buildJavier(BuildContext context) {
-  return CustomOutlinedButton(
-    height: 36.h,
-    width: 76.h,
-    text: "Javier",
-    buttonStyle: CustomButtonStyles.outlineGray,
-    buttonTextStyle: theme.textTheme.bodySmall!,
-  );
-}
-
-/// Section Widget
-Widget _buildPresensimanual(BuildContext context) {
-  return CustomOutlinedButton(
-    height: 36.h,
-    width: 138.h,
-    text: "Presensi Manual",
-    buttonStyle: CustomButtonStyles.outlineGray,
-    buttonTextStyle: theme.textTheme.bodySmall!,
-  );
-}
-
-/// Section Widget
-Widget _buildPresensimanual1(BuildContext context) {
-  return CustomOutlinedButton(
-    height: 36.h,
-    width: 138.h,
-    text: "Presensi Manual",
-    buttonStyle: CustomButtonStyles.outlineGray,
-    buttonTextStyle: theme.textTheme.bodySmall!,
-  );
-}
-
-/// Section Widget
-Widget _buildCellsix(BuildContext context) {
-  return CustomTextFormField(
-    width: 118.h,
-    controller: cellsixController,
-    contentPadding: EdgeInsets.all(12.h),
-    borderDecoration: TextFormFieldStyleHelper.outlineGray,
-  );
-}
-
-/// Section Widget
-Widget _buildTable(BuildContext context) {
-  return Container(
-    width: double.maxFinite,
-    decoration: BoxDecoration(
-      color: appTheme.whiteA700,
-      borderRadius: BorderRadiusStyle.roundedBorder4,
-      border: Border.all(
-        color: appTheme.gray700,
-        width: 1.h,
-      ),
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildColumnprice(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Container(
+        width: double.maxFinite,
+        margin: EdgeInsets.only(top: 24, right: 18),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20.h,
-                vertical: 10.h,
-              ),
-              decoration: BoxDecoration(
-                color: appTheme.whiteA700.withOpacity(0.05),
-                border: Border(
-                  top: BorderSide(
-                    color: appTheme.gray700,
-                    width: 1.h,
+              width: double.maxFinite,
+              margin: EdgeInsets.symmetric(horizontal: 2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CustomImageView(
+                    imagePath: ImageConstant.imgLogoBps,
+                    height: 28,
+                    width: 40,
+                    margin: EdgeInsets.only(left: 26),
                   ),
-                  left: BorderSide(
-                    color: appTheme.gray700,
-                    width: 1.h,
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10, top: 4),
+                      child: Text(
+                        "BADAN PUSAT STATISTIK",
+                        style: theme.textTheme.titleSmall,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              child: Text(
-                "Nama",
-                textAlign: TextAlign.left,
-                style: CustomTextStyles.labelLargeErrorContainer12,
+                  Spacer(),
+                  CustomImageView(
+                    imagePath: ImageConstant.imgMdnotificationsnone,
+                    height: 24,
+                    width: 26,
+                    onTap: () {},
+                  ),
+                ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20.h,
-                vertical: 10.h,
-              ),
-              decoration: BoxDecoration(
-                color: appTheme.whiteA700.withOpacity(0.05),
-                border: Border(
-                  top: BorderSide(
-                    color: appTheme.gray700,
-                    width: 1.h,
+            SizedBox(height: 16),
+            SizedBox(
+              width: double.maxFinite,
+              child: GestureDetector(
+                onTap: () {},
+                child: Container(
+                  margin: EdgeInsets.only(left: 18),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: appTheme.whiteA700,
+                    borderRadius: BorderRadiusStyle.roundedBorder14,
+                    border: Border.all(color: appTheme.gray30001, width: 1),
                   ),
-                  left: BorderSide(
-                    color: appTheme.gray700,
-                    width: 1.h,
+                  child: Row(
+                    children: [
+                      CustomImageView(
+                        imagePath: ImageConstant.imgAvatars3dAvatar21,
+                        height: 40,
+                        width: 40,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Hi, Ketua Tim",
+                                style: theme.textTheme.titleSmall),
+                            Text("IPDS", style: theme.textTheme.bodySmall)
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              child: Text(
-                "Jenis Pengajuan",
-                textAlign: TextAlign.left,
-                style: CustomTextStyles.labelLargeErrorContainer12,
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 30.h,
-                vertical: 10.h,
-              ),
-              decoration: BoxDecoration(
-                color: appTheme.whiteA700.withOpacity(0.05),
-                border: Border(
-                  top: BorderSide(
-                    color: appTheme.gray700,
-                    width: 1.h,
-                  ),
-                  left: BorderSide(
-                    color: appTheme.gray700,
-                    width: 1.h,
-                  ),
-                ),
-              ),
-              child: Text(
-                "Status",
-                textAlign: TextAlign.center,
-                style: CustomTextStyles.labelLargeErrorContainer12,
-              ),
-            )
           ],
         ),
-        Container(
-          width: double.maxFinite,
-          margin: EdgeInsets.only(right: 2.h),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildJavier(context),
-                    _buildPresensimanual(context),
-                    Container(
-                      padding: EdgeInsets.only(
-                        top: 6.h,
-                        right: 2.h,
-                        bottom: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: appTheme.gray700,
-                            width: 1.h,
-                          ),
-                          left: BorderSide(
-                            color: appTheme.gray700,
-                            width: 1.h,
-                          ),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 4.h,
-                              vertical: 2.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: appTheme.yellowA700,
-                              borderRadius: BorderRadiusStyle.roundedBorder4,
-                            ),
-                            child: Text(
-                              "Menunggu Persetujuan",
-                              textAlign: TextAlign.left,
-                              style: theme.textTheme.labelSmall,
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: double.maxFinite,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 36.h,
-                      width: 76.h,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: appTheme.gray700,
-                            width: 1.h,
-                          ),
-                          left: BorderSide(
-                            color: appTheme.gray700,
-                            width: 1.h,
-                          ),
-                        ),
-                      ),
-                    ),
-                    _buildPresensimanual1(context),
-                    _buildCellsix(context)
-                  ],
-                ),
-              ),
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return ListcellOneItemWidget();
-                },
-              )
-            ],
-          ),
-        )
-      ],
-    ),
-  );
-}
-/// Section Widget
-Widget _buildColumnprice(BuildContext context) {
-  return Align(
-    alignment: Alignment.topCenter,
-    child: Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(
-        top: 24.h,
-        right: 18.h,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            width: double.maxFinite,
-            margin: EdgeInsets.symmetric(horizontal: 2.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CustomImageView(
-                  imagePath: ImageConstant.imgLogoBps,
-                  height: 28.h,
-                  width: 40.h,
-                  margin: EdgeInsets.only(left: 26.h),
-                ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 10.h,
-                      top: 4.h,
-                    ),
-                    child: Text(
-                      "BADAN PUSAT STATISTIK",
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                Spacer(),
-                CustomImageView(
-                  imagePath: ImageConstant.imgMdnotificationsnone,
-                  height: 24.h,
-                  width: 26.h,
-                  onTap: () {},
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 16.h),
-          SizedBox(
-            width: double.maxFinite,
-            child: GestureDetector(
-              onTap: () {},
-              child: Container(
-                margin: EdgeInsets.only(left: 18.h),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10.h,
-                  vertical: 12.h,
-                ),
-                decoration: BoxDecoration(
-                  color: appTheme.whiteA700,
-                  borderRadius: BorderRadiusStyle.roundedBorder14,
-                  border: Border.all(
-                    color: appTheme.gray30001,
-                    width: 1.h,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    CustomImageView(
-                      imagePath: ImageConstant.imgAvatars3dAvatar21,
-                      height: 40.h,
-                      width: 40.h,
-                    ),
-                    SizedBox(width: 8.h),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Hi, Ketua Tim",
-                            style: theme.textTheme.titleSmall,
-                          ),
-                          Text(
-                            "IPDS",
-                            style: theme.textTheme.bodySmall,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    ),
-  );
-}
-
-/// Navigates to the detailAbsensiManualKetuaTimScreen when the action is triggered.
-onTapRowone(BuildContext context) {
-  Navigator.pushNamed(context, AppRoutes.detailAbsensiManualKetuaTimScreen);
-}
-
-/// Navigates to the notifikasiKetuaTimScreen when the action is triggered.
-onTapImgMdnotifications(BuildContext context) {
-  Navigator.pushNamed(context, AppRoutes.notifikasiKetuaTimScreen);
-}
-
-/// Navigates to the profileInfoKetuaTimScreen when the action is triggered.
-onTapRowavatars3d(BuildContext context) {
-  Navigator.pushNamed(context, AppRoutes.profileInfoKetuaTimScreen);
-}
+    );
+  }
 }

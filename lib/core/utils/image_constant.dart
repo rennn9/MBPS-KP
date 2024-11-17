@@ -20,8 +20,8 @@ class ImageConstant {
   static String imgGroup2 = '$imagePath/img_group_2.svg';
 
   // Dashboard Pegawai images
-  static String imgCalendar = '$imagePath/img_calendar.svg';
-  static String imgDownload = '$imagePath/img_download.svg';
+  static String imgCalendar = '$imagePath/img_calendar_errorcontainer.svg';
+  static String imgDownload = '$imagePath/img_download_errorcontainer.svg';
   static String imgArrowLeft = '$imagePath/img_arrow_left.svg';
   static String imgUser = '$imagePath/img_user.svg';
   static String imgArrowDown = '$imagePath/img_arrow_down.svg';
