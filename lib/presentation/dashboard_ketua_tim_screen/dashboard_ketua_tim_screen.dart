@@ -21,6 +21,13 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
   String selectedDropdownItem = "Semua Permohonan";
   final FocusNode dropdownFocusNode = FocusNode();
 
+  // Data tabel (contoh, bisa diganti dengan data dari database atau API)
+  List<Map<String, String>> tableData = [
+    {'Nama': 'John Doe', 'Jenis Pengajuan': 'Cuti', 'Status': 'Diterima'},
+    {'Nama': 'Jane Smith', 'Jenis Pengajuan': 'Presensi Manual', 'Status': 'Ditolak'},
+    {'Nama': 'Alex Johnson', 'Jenis Pengajuan': 'KiP APP', 'Status': 'Menunggu'},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -69,30 +76,7 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
                         ),
                         SizedBox(height: 20),
                         // Tabel Data Pengajuan
-                        DataTable(
-                          columns: const [
-                            DataColumn(label: Text('Nama')),
-                            DataColumn(label: Text('Jenis Pengajuan')),
-                            DataColumn(label: Text('Status')),
-                          ],
-                          rows: [
-                            DataRow(cells: [
-                              DataCell(Text('John Doe')),
-                              DataCell(Text('Cuti')),
-                              DataCell(Text('Diterima')),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Text('Jane Smith')),
-                              DataCell(Text('Presensi Manual')),
-                              DataCell(Text('Ditolak')),
-                            ]),
-                            DataRow(cells: [
-                              DataCell(Text('Alex Johnson')),
-                              DataCell(Text('KiP APP')),
-                              DataCell(Text('Menunggu')),
-                            ]),
-                          ],
-                        ),
+                        _buildDataTable(),
                         SizedBox(height: 210),
                       ],
                     ),
@@ -226,6 +210,109 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataTable() {
+    return Container(
+      width: double.infinity, // Memastikan tabel memenuhi lebar layar
+      child: DataTable(
+        headingRowColor: MaterialStateProperty.all(Colors.white),
+        dataRowColor: MaterialStateProperty.all(Colors.white),
+        columnSpacing: 16, // Jarak antar kolom
+        columns: [
+          DataColumn(
+            label: Expanded(
+              child: Center(
+                child: Text(
+                  'Nama',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Expanded(
+              child: Center(
+                child: Text(
+                  'Jenis Pengajuan',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Expanded(
+              child: Center(
+                child: Text(
+                  'Status',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                ),
+              ),
+            ),
+          ),
+        ],
+        rows: tableData.map((row) {
+          return DataRow(
+            cells: [
+              _buildCenteredCell(row['Nama']!),
+              _buildCenteredCell(row['Jenis Pengajuan']!),
+              _buildStatusCell(row['Status']!), // Memanggil fungsi khusus untuk status
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  DataCell _buildCenteredCell(String text) {
+    return DataCell(
+      Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2, // Memungkinkan teks dibungkus
+          style: TextStyle(color: Colors.black), // Warna teks hitam
+        ),
+      ),
+    );
+  }
+
+  DataCell _buildStatusCell(String status) {
+    // Tentukan warna latar belakang berdasarkan status
+    Color statusColor;
+    switch (status) {
+      case 'Diterima':
+        statusColor = Colors.green;
+        break;
+      case 'Ditolak':
+        statusColor = Colors.red;
+        break;
+      case 'Menunggu':
+        statusColor = Colors.yellow;
+        break;
+      default:
+        statusColor = Colors.grey; // Warna default jika status tidak dikenali
+    }
+
+    return DataCell(
+      Center(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: statusColor,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            status,
+            style: TextStyle(color: Colors.black), // Tetap warna teks hitam
+          ),
         ),
       ),
     );

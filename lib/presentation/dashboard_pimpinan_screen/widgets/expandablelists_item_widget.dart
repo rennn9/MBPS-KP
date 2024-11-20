@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../core/app_export.dart';
 import '../../../theme/custom_button_style.dart';
-import '../../../widgets/custom_outlined_button.dart';
 
 // ignore_for_file: must_be_immutable
 class ExpandablelistsItemWidget extends StatelessWidget {
-  ExpandablelistsItemWidget({Key? key, this.onTapRowone}) : super(key: key);
+  ExpandablelistsItemWidget({Key? key, this.onTapRowone, required this.tableData}) : super(key: key);
 
   VoidCallback? onTapRowone;
+  final List<Map<String, String>> tableData;
 
   @override
   Widget build(BuildContext context) {
@@ -49,300 +49,123 @@ class ExpandablelistsItemWidget extends StatelessWidget {
             ),
           ),
           children: [
-            Container(
-              width: double.maxFinite,
-              margin: EdgeInsets.only(bottom: 4.h),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadiusStyle.roundedBorder4,
-                border: Border.all(
-                  color: appTheme.gray700,
-                  width: 1.h,
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CustomOutlinedButton(
-                        height: 36.h,
-                        width: 76.h,
-                        text: "Nama",
-                        buttonStyle: CustomButtonStyles.outlineGray1,
-                        buttonTextStyle:
-                            CustomTextStyles.labelLargeErrorContainer12,
-                      ),
-                      CustomOutlinedButton(
-                        height: 36.h,
-                        width: 138.h,
-                        text: "Jenis Pengajuan",
-                        buttonStyle: CustomButtonStyles.outlineGray1,
-                        buttonTextStyle:
-                            CustomTextStyles.labelLargeErrorContainer12,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 26.h,
-                          vertical: 10.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: appTheme.whiteA700.withOpacity(0.05),
-                          border: Border(
-                            top: BorderSide(
-                              color: appTheme.gray700,
-                              width: 1.h,
-                            ),
-                            left: BorderSide(
-                              color: appTheme.gray700,
-                              width: 1.h,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          "Status",
-                          textAlign: TextAlign.left,
-                          style: CustomTextStyles.labelLargeErrorContainer12,
-                        ),
-                      )
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      onTapRowone?.call();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.h,
-                            vertical: 10.h,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                              left: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            "Javier",
-                            textAlign: TextAlign.left,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 22.h,
-                            vertical: 10.h,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                              left: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            "Presensi Manual",
-                            textAlign: TextAlign.left,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.fromLTRB(4.h, 6.h, 6.h, 6.h),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                              left: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(4.h),
-                                decoration: BoxDecoration(
-                                  color: appTheme.yellowA700,
-                                  borderRadius:
-                                      BorderRadiusStyle.roundedBorder4,
-                                ),
-                                child: Text(
-                                  "Menunggu Persetujuan",
-                                  textAlign: TextAlign.left,
-                                  style: CustomTextStyles.interErrorContainer,
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 36.h,
-                          width: 76.h,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                              left: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: 36.h,
-                            width: 138.h,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: appTheme.gray700,
-                                  width: 1.h,
-                                ),
-                                left: BorderSide(
-                                  color: appTheme.gray700,
-                                  width: 1.h,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        CustomImageView(
-                          imagePath: ImageConstant.imgCell,
-                          height: 36.h,
-                          width: 104.h,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 36.h,
-                          width: 76.h,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                              left: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: 36.h,
-                            width: 138.h,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: appTheme.gray700,
-                                  width: 1.h,
-                                ),
-                                left: BorderSide(
-                                  color: appTheme.gray700,
-                                  width: 1.h,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        CustomImageView(
-                          imagePath: ImageConstant.imgCell36x104,
-                          height: 36.h,
-                          width: 104.h,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 36.h,
-                          width: 76.h,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                              left: BorderSide(
-                                color: appTheme.gray700,
-                                width: 1.h,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: 36.h,
-                            width: 138.h,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: appTheme.gray700,
-                                  width: 1.h,
-                                ),
-                                left: BorderSide(
-                                  color: appTheme.gray700,
-                                  width: 1.h,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        CustomImageView(
-                          imagePath: ImageConstant.imgCell1,
-                          height: 36.h,
-                          width: 104.h,
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            )
+            _buildDataTable(),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildDataTable() {
+    return Container(
+      width: double.infinity, // Memastikan tabel memenuhi lebar dropdown
+      padding: EdgeInsets.all(8.h),
+      child: DataTable(
+        headingRowColor: MaterialStateProperty.all(appTheme.whiteA700),
+        dataRowColor: MaterialStateProperty.all(appTheme.whiteA700),
+        columnSpacing: 8, // Jarak antar kolom
+        columns: [
+          DataColumn(
+            label: Flexible(
+              child: Center(
+                child: Text(
+                  'Nama',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Flexible(
+              child: Center(
+                child: Text(
+                  'Jenis Pengajuan',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Flexible(
+              child: Center(
+                child: Text(
+                  'Status',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                ),
+              ),
+            ),
+          ),
+        ],
+        rows: tableData.map((row) {
+          return DataRow(
+            cells: [
+              _buildMultiLineCell(row['Nama']!),
+              _buildMultiLineCell(row['Jenis Pengajuan']!),
+              _buildStatusCell(row['Status']!), // Memanggil fungsi khusus untuk status
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  DataCell _buildMultiLineCell(String text) {
+    return DataCell(
+      Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible, // Memungkinkan teks melanjutkan ke bawah
+          maxLines: null, // Tidak ada batasan baris
+          style: TextStyle(color: Colors.black), // Warna teks hitam
+        ),
+      ),
+    );
+  }
+
+  DataCell _buildStatusCell(String status) {
+    // Tentukan warna berdasarkan status
+    Color statusColor;
+    switch (status) {
+      case 'Disetujui':
+        statusColor = Colors.green;
+        break;
+      case 'Ditolak':
+        statusColor = Colors.red;
+        break;
+      case 'Menunggu Persetujuan':
+        statusColor = Colors.yellow;
+        break;
+      default:
+        statusColor = Colors.grey; // Warna default jika status tidak dikenali
+    }
+
+    return DataCell(
+      Center(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 4.h),
+          decoration: BoxDecoration(
+            color: statusColor,
+            borderRadius: BorderRadius.circular(4.h),
+          ),
+          child: Text(
+            status,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.visible,
+            maxLines: null,
+            style: TextStyle(
+              color: Colors.black, // Teks warna hitam untuk kontras
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
-  
-                
