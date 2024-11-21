@@ -84,6 +84,14 @@ class CustomButtonStyles {
         elevation: 0,
         padding: EdgeInsets.zero,
       );
+      static ButtonStyle get fillPrimaryTL6 => ElevatedButton.styleFrom(
+        backgroundColor: theme.colorScheme.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6.h),
+        ),
+        elevation: 0,
+        padding: EdgeInsets.zero,
+      );
 
   // Outline button style
   static ButtonStyle get outlineGray => OutlinedButton.styleFrom(

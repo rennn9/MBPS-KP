@@ -6,17 +6,18 @@ import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_checkbox_button.dart';
 import '../../widgets/custom_outlined_button.dart';
+import '../detail_riwayat_kipapp_pegawai_screen_tahun/detail_riwayat_kipapp_pegawai_screen_tahun.dart';
 
 // ignore_for_file: must_be_immutable
 class DetailRiwayatKipappPegawaiScreen extends StatelessWidget {
   DetailRiwayatKipappPegawaiScreen({Key? key}) : super(key: key);
 
-  bool januarione = false;
-  bool februarione = false;
-  bool maretone = false;
-  bool aprilone = false;
-  bool meione = false;
-  bool junione = false;
+  bool januarione = true;
+  bool februarione = true;
+  bool maretone = true;
+  bool aprilone = true;
+  bool meione = true;
+  bool junione = true;
   bool julione = false;
   bool agustusone = false;
   bool septemberone = false;
@@ -44,6 +45,7 @@ class DetailRiwayatKipappPegawaiScreen extends StatelessWidget {
                       left: 20.h,
                       top: 14.h,
                       right: 20.h,
+                      bottom: 20.h,
                     ),
                     decoration: BoxDecoration(
                       color: appTheme.whiteA700,
@@ -110,6 +112,15 @@ class DetailRiwayatKipappPegawaiScreen extends StatelessWidget {
                                           CustomButtonStyles.outlinePrimaryTL6,
                                       buttonTextStyle:
                                           CustomTextStyles.titleMediumPrimary,
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                DetailRiwayatKipappPegawaiScreenTahun(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),

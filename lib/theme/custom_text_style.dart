@@ -265,4 +265,9 @@ class CustomTextStyles {
       theme.textTheme.titleSmall!.copyWith(
         color: appTheme.whiteA700,
       );
+      static TextStyle get titleMediumOnPrimary => TextStyle(
+        color: theme.colorScheme.onPrimary,
+        fontSize: 16.0, // Sesuaikan ukuran font dengan kebutuhan Anda
+        fontWeight: FontWeight.w500,
+      );
 }

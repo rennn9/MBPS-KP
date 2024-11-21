@@ -29,6 +29,7 @@ class CustomCheckboxButton extends StatelessWidget {
     this.overflow,
     this.textAlignment,
     this.isExpandedText = false,
+    this.isEnabled = true, // Tambahkan ini
   }) : super(key: key);
 
   final BoxDecoration? decoration;
@@ -44,9 +45,11 @@ class CustomCheckboxButton extends StatelessWidget {
   final TextOverflow? overflow;
   final TextAlign? textAlignment;
   final bool isExpandedText;
+  final bool isEnabled; // Tambahkan ini
 
   @override
   Widget build(BuildContext context) {
+    value ??= false; // Pastikan value tidak null
     return alignment != null
         ? Align(
             alignment: alignment ?? Alignment.center,
@@ -56,10 +59,12 @@ class CustomCheckboxButton extends StatelessWidget {
   }
 
   Widget get buildCheckBoxWidget => GestureDetector(
-        onTap: () {
-          value = !(value!);
-          onChange(value!);
-        },
+        onTap: isEnabled
+            ? () {
+                value = !(value!);
+                onChange(value!);
+              }
+            : null,
         child: Container(
           decoration: decoration,
           width: width,
@@ -72,10 +77,11 @@ class CustomCheckboxButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           checkboxWidget,
-          SizedBox(
-            width: text != null && text!.isNotEmpty ? 8 : 0,
+          Padding(
+            padding: EdgeInsets.only(
+                left: text != null && text!.isNotEmpty ? 8.0 : 0.0),
           ),
-          isExpandedText ? Expanded(child: textWidget) : textWidget
+          isExpandedText ? Expanded(child: textWidget) : textWidget,
         ],
       );
 
@@ -83,18 +89,23 @@ class CustomCheckboxButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           isExpandedText ? Expanded(child: textWidget) : textWidget,
-          SizedBox(
-            width: text != null && text!.isNotEmpty ? 8 : 0,
+          Padding(
+            padding: EdgeInsets.only(
+                left: text != null && text!.isNotEmpty ? 8.0 : 0.0),
           ),
-          checkboxWidget
+          checkboxWidget,
         ],
       );
 
-  Widget get textWidget => Text(
+ Widget get textWidget => Text(
         text ?? "",
         textAlign: textAlignment ?? TextAlign.start,
         overflow: overflow,
-        style: textStyle ?? theme.textTheme.bodyMedium,
+        style: (value ?? false)
+            ? (textStyle ??
+                theme.textTheme.bodyMedium) // Warna default jika true
+            : (textStyle?.copyWith(color: Colors.black) ??
+                theme.textTheme.bodyMedium?.copyWith(color: Colors.black)),
       );
 
   Widget get checkboxWidget => SizedBox(
@@ -106,16 +117,17 @@ class CustomCheckboxButton extends StatelessWidget {
             horizontal: -4,
           ),
           value: value ?? false,
-          checkColor: theme.colorScheme.primary,
-          activeColor: theme.colorScheme.errorContainer.withOpacity(1),
-          side: WidgetStateBorderSide.resolveWith(
-            (states) => BorderSide(
-              color: theme.colorScheme.errorContainer.withOpacity(1),
-            ),
+          checkColor: Colors.white,
+          activeColor:
+              isEnabled ? theme.colorScheme.errorContainer : Colors.grey,
+          side: BorderSide(
+            color: isEnabled ? theme.colorScheme.errorContainer : Colors.grey,
           ),
-          onChanged: (value) {
-            onChange(value!);
-          },
+          onChanged: isEnabled
+              ? (value) {
+                  onChange(value!);
+                }
+              : null,
         ),
       );
 }

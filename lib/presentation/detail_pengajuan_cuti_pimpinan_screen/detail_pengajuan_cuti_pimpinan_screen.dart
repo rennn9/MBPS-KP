@@ -174,6 +174,8 @@ class DetailPengajuanCutiPimpinanScreen extends StatelessWidget {
                               SizedBox(height: 52.h),
                               Container(
                                 width: double.maxFinite,
+                                padding: EdgeInsets.only(
+                                    bottom: 16.h), // Add bottom padding
                                 margin: EdgeInsets.symmetric(horizontal: 16.h),
                                 child: Row(
                                   children: [
