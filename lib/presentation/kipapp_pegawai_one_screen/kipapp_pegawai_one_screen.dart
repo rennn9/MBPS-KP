@@ -82,8 +82,7 @@ class KipappPegawaiOneScreen extends StatelessWidget {
                                       ),
                                       Text(
                                         "Bulanan",
-                                        style: CustomTextStyles
-                                            .titleMediumWhiteA700,
+                                        style: CustomTextStyles.titleMediumWhiteA700,
                                       ),
                                     ],
                                   ),
@@ -112,14 +111,10 @@ class KipappPegawaiOneScreen extends StatelessWidget {
                                           height: 32.h,
                                           width: 36.h,
                                         ),
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
+                                        Text(
                                             "Tahunan",
-                                            style: CustomTextStyles
-                                                .titleMediumPrimary,
+                                            style: CustomTextStyles.titleMediumPrimary,
                                           ),
-                                        ),
                                       ],
                                     ),
                                   ),
@@ -196,13 +191,16 @@ class KipappPegawaiOneScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 30.h),
-                        CustomElevatedButton(
-                          height: 32.h,
-                          width: 76.h,
-                          text: "Submit",
-                          buttonStyle: CustomButtonStyles.fillTeal,
-                          buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-                          onPressed: () {},
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 24.h),
+                          child: CustomElevatedButton(
+                            height: 32.h,
+                            width: 77.h,
+                            text: "Submit",
+                            buttonStyle: CustomButtonStyles.fillTeal,
+                            buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
+                            onPressed: () {},
+                          ),
                         ),
                       ],
                     ),

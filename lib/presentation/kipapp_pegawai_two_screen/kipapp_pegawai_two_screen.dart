@@ -94,15 +94,13 @@ class KipappPegawaiTwoScreen extends StatelessWidget {
                                       imagePath: ImageConstant.imgGrid,
                                       height: 32.h,
                                       width: 36.h,
+                                      onTap: () {},
                                     ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        "Tahunan",
-                                        style: CustomTextStyles
-                                            .titleMediumWhiteA700,
-                                      ),
-                                    )
+                                    Text(
+                                      "Tahunan",
+                                      style:
+                                          CustomTextStyles.titleMediumWhiteA700,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -115,7 +113,7 @@ class KipappPegawaiTwoScreen extends StatelessWidget {
                       Spacer(),
                       CustomElevatedButton(
                         height: 32.h,
-                        width: 76.h,
+                        width: 77.h,
                         text: "Submit",
                         buttonStyle: CustomButtonStyles.fillTeal,
                         buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
@@ -125,7 +123,7 @@ class KipappPegawaiTwoScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 8.h)
+              SizedBox(height: 37.h)
             ],
           ),
         ),

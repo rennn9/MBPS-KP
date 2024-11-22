@@ -5,14 +5,21 @@ import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_text_form_field.dart';
-import 'widgets/columndiajukan4_item_widget.dart';
-import 'widgets/columnview4_item_widget.dart';
 
 // ignore_for_file: must_be_immutable
 class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
   DetailRiwayatPegawaiFourScreen({Key? key}) : super(key: key);
 
   TextEditingController loremipsumoneController = TextEditingController();
+
+  final String teamLeaderDecision =
+      "Ditolak oleh Ketua Tim"; // Bisa diganti menjadi "Diterima oleh Ketua Tim"
+
+  final List<String> statusList = [
+    "Diajukan",
+    "Sedang Diproses",
+    "Ditolak oleh Ketua Tim", // Sesuaikan dengan status Anda
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -24,20 +31,20 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Container(
               width: double.maxFinite,
-              padding: EdgeInsets.only(
-                left: 18.h,
-                top: 22.h,
-                right: 18.h,
+              padding: const EdgeInsets.only(
+                left: 18.0,
+                top: 22.0,
+                right: 18.0,
               ),
               child: Column(
                 children: [
                   Container(
                     height: 668.h,
                     width: double.maxFinite,
-                    padding: EdgeInsets.only(
-                      left: 20.h,
-                      top: 16.h,
-                      right: 20.h,
+                    padding: const EdgeInsets.only(
+                      left: 20.0,
+                      top: 16.0,
+                      right: 20.0,
                     ),
                     decoration: BoxDecoration(
                       color: appTheme.whiteA700,
@@ -48,14 +55,11 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.colorScheme.errorContainer
-                              .withOpacity(0.25),
+                          color:
+                              theme.colorScheme.errorContainer.withOpacity(0.25),
                           spreadRadius: 2.h,
                           blurRadius: 2.h,
-                          offset: Offset(
-                            0,
-                            4,
-                          ),
+                          offset: const Offset(0, 4),
                         )
                       ],
                     ),
@@ -82,67 +86,47 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                         SizedBox(height: 14.h),
                         SizedBox(
                           width: double.maxFinite,
-                          child: _buildRowtanggal(
+                          child: _buildRowTanggal(
                             context,
                             tanggalOne: "Tipe",
-                            p15oktober2024: "WOFL",
+                            tanggalValue: "WOFL",
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        SizedBox(
-                          width: double.maxFinite,
-                          child: Divider(
-                            color: theme.colorScheme.errorContainer,
-                          ),
-                        ),
+                        const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
                           width: double.maxFinite,
-                          child: _buildRowtanggal(
+                          child: _buildRowTanggal(
                             context,
                             tanggalOne: "Tanggal Pengajuan",
-                            p15oktober2024: "15 Oktober 2024",
+                            tanggalValue: "15 Oktober 2024",
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        SizedBox(
-                          width: double.maxFinite,
-                          child: Divider(
-                            color: theme.colorScheme.errorContainer,
-                          ),
-                        ),
+                        const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
                           width: double.maxFinite,
-                          child: _buildRowtanggal(
+                          child: _buildRowTanggal(
                             context,
                             tanggalOne: "Jam Datang",
-                            p15oktober2024: "07.30",
+                            tanggalValue: "07.30",
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        SizedBox(
-                          width: double.maxFinite,
-                          child: Divider(
-                            color: theme.colorScheme.errorContainer,
-                          ),
-                        ),
+                        const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
                           width: double.maxFinite,
-                          child: _buildRowtanggal(
+                          child: _buildRowTanggal(
                             context,
                             tanggalOne: "Jam Pulang",
-                            p15oktober2024: "18.00",
+                            tanggalValue: "18.00",
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        SizedBox(
-                          width: double.maxFinite,
-                          child: Divider(
-                            color: theme.colorScheme.errorContainer,
-                          ),
-                        ),
+                        const Divider(),
                         SizedBox(height: 10.h),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -157,8 +141,8 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                           hintText: "Lorem ipsum .....",
                           textInputAction: TextInputAction.done,
                           maxLines: 4,
-                          contentPadding:
-                              EdgeInsets.fromLTRB(10.h, 8.h, 10.h, 12.h),
+                          contentPadding: EdgeInsets.fromLTRB(
+                              10.h, 8.h, 10.h, 12.h),
                         ),
                         SizedBox(height: 8.h),
                         Align(
@@ -179,27 +163,66 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             ),
                             builder: TimelineTileBuilder.connected(
                               connectionDirection: ConnectionDirection.before,
-                              itemCount: 3,
+                              itemCount: statusList.length,
                               indicatorBuilder: (context, index) {
-                                return Columnview4ItemWidget();
+                                Color indicatorColor;
+                                if (index == 0) {
+                                  indicatorColor = Colors.green;
+                                } else if (index == 1) {
+                                  indicatorColor = Colors.green;
+                                } else {
+                                  indicatorColor = teamLeaderDecision ==
+                                          "Ditolak oleh Ketua Tim"
+                                      ? Colors.red
+                                      : Colors.green;
+                                }
+                                return DotIndicator(
+                                  size: 20.h,
+                                  color: indicatorColor,
+                                  child: Icon(
+                                    index == statusList.length - 1 &&
+                                            teamLeaderDecision ==
+                                                "Ditolak oleh Ketua Tim"
+                                        ? Icons.close
+                                        : Icons.check,
+                                    color: Colors.white,
+                                    size: 12.h,
+                                  ),
+                                );
                               },
                               contentsBuilder: (context, index) {
-                                return Columndiajukan4ItemWidget();
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, bottom: 24.0),
+                                  child: Text(
+                                    statusList[index],
+                                    style: TextStyle(
+                                      fontSize: 14.h,
+                                      fontWeight: FontWeight.w500,
+                                      color: index == statusList.length - 1 &&
+                                              teamLeaderDecision ==
+                                                  "Ditolak oleh Ketua Tim"
+                                          ? Colors.red
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                );
                               },
                               connectorBuilder: (context, index, type) {
                                 return SolidLineConnector(
                                   thickness: 1.h,
-                                  color: theme.colorScheme.errorContainer
-                                      .withOpacity(0.4),
+                                  color: index < statusList.length - 1
+                                      ? Colors.grey
+                                      : Colors.transparent,
                                 );
                               },
                             ),
                           ),
-                        )
+                        ),
+                        SizedBox(height: 18.h),
                       ],
                     ),
                   ),
-                  SizedBox(height: 18.h)
                 ],
               ),
             ),
@@ -215,8 +238,10 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
       leadingWidth: 43.h,
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
-        margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        margin: const EdgeInsets.only(left: 33.0),
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(
@@ -227,34 +252,35 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
   }
 
   /// Common widget
-  Widget _buildRowtanggal(
+  Widget _buildRowTanggal(
     BuildContext context, {
     required String tanggalOne,
-    required String p15oktober2024,
+    required String tanggalValue,
   }) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          tanggalOne,
-          style: theme.textTheme.labelLarge!.copyWith(
-            color: theme.colorScheme.errorContainer.withOpacity(0.4),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 28.h),
+        Expanded(
           child: Text(
-            p15oktober2024,
-            style: CustomTextStyles.labelLargeErrorContainer.copyWith(
-              color: theme.colorScheme.errorContainer.withOpacity(1),
+            tanggalOne,
+            style: theme.textTheme.labelLarge!.copyWith(
+              color: theme.colorScheme.errorContainer.withOpacity(0.4),
             ),
           ),
-        )
+        ),
+        Text(
+          tanggalValue,
+          style: CustomTextStyles.labelLargeErrorContainer.copyWith(
+            color: theme.colorScheme.errorContainer.withOpacity(1),
+          ),
+        ),
       ],
     );
   }
+}
 
   /// Navigates back to the previous screen.
   onTapArrowleftone(BuildContext context) {
     Navigator.pop(context);
   }
-}
+
