@@ -5,14 +5,12 @@ import '../../../core/app_export.dart';
 class ListandiItemWidget extends StatelessWidget {
   ListandiItemWidget({Key? key, this.onTapRowandilatifah}) : super(key: key);
 
-  VoidCallback? onTapRowandilatifah;
+  final VoidCallback? onTapRowandilatifah;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        onTapRowandilatifah?.call();
-      },
+      onTap: onTapRowandilatifah,
       child: Container(
         padding: EdgeInsets.all(6.h),
         decoration: BoxDecoration(

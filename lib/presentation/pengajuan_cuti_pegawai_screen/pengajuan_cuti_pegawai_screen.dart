@@ -7,15 +7,60 @@ import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_drop_down.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_text_form_field.dart';
+import '../pengajuan_cuti_setengah_hari_pegawai_screen/pengajuan_cuti_setengah_hari_pegawai_screen.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 // ignore_for_file: must_be_immutable
-class PengajuanCutiPegawaiScreen extends StatelessWidget {
+class PengajuanCutiPegawaiScreen extends StatefulWidget {
   PengajuanCutiPegawaiScreen({Key? key}) : super(key: key);
 
-  List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
+  @override
+  _PengajuanCutiPegawaiScreenState createState() =>
+      _PengajuanCutiPegawaiScreenState();
+}
+
+class _PengajuanCutiPegawaiScreenState
+    extends State<PengajuanCutiPegawaiScreen> {
+  List<String> dropdownItemList = [
+    "Tahunan",
+    "Besar",
+    "Sakit",
+    "Melahirkan",
+    "Alasan Penting",
+    "Cuti Luar Tanggungan",
+    "Perpanjangan CLTN",
+    "Cuti Setengah Hari"
+  ];
+  String selectedOption = "Tahunan"; // Track selected dropdown option
+
   TextEditingController group37040oneController = TextEditingController();
   TextEditingController stashdatadateliController = TextEditingController();
   TextEditingController berikanController = TextEditingController();
+  TextEditingController mulaiController = TextEditingController();
+
+  DateTime? selectedMulaiDate;
+  DateTime? selectedSelesaiDate;
+
+  Future<void> _selectDate(BuildContext context,
+      TextEditingController controller, DateTime? initialDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate ?? DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = DateFormat('dd/MM/yyyy').format(picked);
+        if (controller == mulaiController) {
+          selectedMulaiDate = picked;
+        } else if (controller == stashdatadateliController) {
+          selectedSelesaiDate = picked;
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +127,6 @@ class PengajuanCutiPegawaiScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   Widget _buildOpsijeniscuti(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -95,40 +139,72 @@ class PengajuanCutiPegawaiScreen extends StatelessWidget {
             style: CustomTextStyles.titleLargeErrorContainer,
           ),
           SizedBox(height: 12.h),
-          CustomDropDown(
-            icon: Container(
-              margin: EdgeInsets.only(left: 16.h),
-              child: CustomImageView(
-                imagePath: ImageConstant.imgArrowdownErrorcontainer26x18,
-                height: 26.h,
-                width: 18.h,
-                fit: BoxFit.contain,
+          Container(
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+              color: appTheme.whiteA700,
+              borderRadius: BorderRadius.circular(4.h),
+              border: Border.all(color: appTheme.gray400, width: 1),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 8.h),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: selectedOption,
+                items: dropdownItemList.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedOption = value!;
+                    if (value == "Cuti Setengah Hari") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PengajuanCutiSetengahHariPegawaiScreen(),
+                        ),
+                      );
+                    }
+                  });
+                },
+                isExpanded: true, // Ensures the dropdown expands fully
+                icon: Icon(Icons.arrow_drop_down), // Ensures arrow is visible
               ),
             ),
-            iconSize: 26.h,
-            hintText: "Tahunan",
-            items: dropdownItemList,
-            contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
-          )
+          ),
         ],
       ),
     );
   }
 
-  /// Section Widget
   Widget _buildGroup37040one(BuildContext context) {
-    return CustomTextFormField(
+    return TextFormField(
       controller: group37040oneController,
-      hintText: "0",
-      hintStyle: theme.textTheme.titleSmall!,
-      contentPadding: EdgeInsets.all(14.h),
-      borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL4,
-      filled: true,
-      fillColor: appTheme.whiteA700,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      style: theme.textTheme.bodySmall,
+      decoration: InputDecoration(
+        hintText: "Masukkan Lama Cuti (Hari)",
+        hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+        contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+        filled: true,
+        fillColor: appTheme.whiteA700,
+        border: TextFormFieldStyleHelper.outlineErrorContainerTL4,
+        enabledBorder: TextFormFieldStyleHelper.outlineErrorContainerTL4,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4.h),
+          borderSide: BorderSide(
+            color: theme.colorScheme.primary,
+            width: 1.0,
+          ),
+        ),
+      ),
     );
   }
 
-  /// Section Widget
   Widget _buildColumnmdone(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -146,177 +222,140 @@ class PengajuanCutiPegawaiScreen extends StatelessWidget {
       ),
     );
   }
-/// Section Widget
-Widget _buildMulai(BuildContext context) {
-  return Container(
-    width: double.maxFinite,
-    margin: EdgeInsets.only(right: 2.h),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Mulai",
-          style: CustomTextStyles.titleLargeErrorContainer,
-        ),
-        SizedBox(height: 10.h),
-        SizedBox(
-          height: 50.h,
-          width: double.maxFinite,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Card(
-                clipBehavior: Clip.antiAlias,
-                elevation: 0,
-                margin: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: theme.colorScheme.errorContainer,
-                    width: 2.h,
-                  ),
-                  borderRadius: BorderRadiusStyle.roundedBorder4,
-                ),
-                child: Container(
-                  height: 50.h,
-                  padding: EdgeInsets.only(right: 12.h),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadiusStyle.roundedBorder4,
-                    border: Border.all(
-                      color: theme.colorScheme.errorContainer,
-                      width: 2.h,
-                    ),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.centerRight,
-                    children: [
-                      CustomImageView(
-                        imagePath: ImageConstant.imgVector,
-                        height: 12.h,
-                        width: 14.h,
-                        margin: EdgeInsets.only(right: 4.h),
-                      ),
-                      CustomImageView(
-                        imagePath: ImageConstant.imgVectorErrorcontainer,
-                        height: 22.h,
-                        width: 22.h,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 14.h),
-                  child: Text(
-                    "Pilih Tanggal Mulai",
-                    style: CustomTextStyles.bodyMediumErrorContainer_1,
-                  ),
-                ),
-              )
-            ],
+
+  Widget _buildMulai(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(right: 2.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Mulai",
+            style: CustomTextStyles.titleLargeErrorContainer,
           ),
-        )
-      ],
-    ),
-  );
-}
-
-/// Section Widget
-Widget _buildStashdatadateli(BuildContext context) {
-  return CustomTextFormField(
-    controller: stashdatadateliController,
-    hintText: "Pilih Tanggal Selesai",
-    hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-    suffix: Container(
-      margin: EdgeInsets.fromLTRB(16.h, 12.h, 10.h, 12.h),
-      child: CustomImageView(
-        imagePath: ImageConstant.imgStashdatadatelight,
-        height: 26.h,
-        width: 32.h,
-        fit: BoxFit.contain,
+          SizedBox(height: 10.h),
+          GestureDetector(
+            onTap: () =>
+                _selectDate(context, mulaiController, selectedMulaiDate),
+            child: AbsorbPointer(
+              child: CustomTextFormField(
+                controller: mulaiController,
+                hintText: "Pilih Tanggal Mulai",
+                hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+                borderDecoration:
+                    TextFormFieldStyleHelper.outlineErrorContainerTL4,
+                filled: true,
+                fillColor: appTheme.whiteA700,
+              ),
+            ),
+          )
+        ],
       ),
-    ),
-    suffixConstraints: BoxConstraints(
-      maxHeight: 50.h,
-    ),
-    contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
-    borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL41,
-  );
-}
+    );
+  }
 
-/// Section Widget
-Widget _buildSelesai(BuildContext context) {
-  return Container(
-    width: double.maxFinite,
-    margin: EdgeInsets.only(right: 2.h),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Selesai",
-          style: CustomTextStyles.titleLargeErrorContainer,
+  Widget _buildStashdatadateli(BuildContext context) {
+    return CustomTextFormField(
+      controller: stashdatadateliController,
+      hintText: "Pilih Tanggal Selesai",
+      hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+      suffix: Container(
+        margin: EdgeInsets.fromLTRB(16.h, 12.h, 10.h, 12.h),
+        child: CustomImageView(
+          imagePath: ImageConstant.imgStashdatadatelight,
+          height: 26.h,
+          width: 32.h,
+          fit: BoxFit.contain,
         ),
-        SizedBox(height: 10.h),
-        _buildStashdatadateli(context)
-      ],
-    ),
-  );
-}
+      ),
+      suffixConstraints: BoxConstraints(
+        maxHeight: 50.h,
+      ),
+      contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+      borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL41,
+    );
+  }
 
-/// Section Widget
-Widget _buildBerikan(BuildContext context) {
-  return CustomTextFormField(
-    controller: berikanController,
-    hintText: "Berikan Alasan...",
-    hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-    textInputAction: TextInputAction.done,
-    contentPadding: EdgeInsets.all(14.h),
-    borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL4,
-    filled: true,
-    fillColor: appTheme.whiteA700,
-  );
-}
+  Widget _buildSelesai(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(right: 2.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Selesai",
+            style: CustomTextStyles.titleLargeErrorContainer,
+          ),
+          SizedBox(height: 10.h),
+          GestureDetector(
+            onTap: () => _selectDate(
+                context, stashdatadateliController, selectedSelesaiDate),
+            child: AbsorbPointer(
+              child: CustomTextFormField(
+                controller: stashdatadateliController,
+                hintText: "Pilih Tanggal Selesai",
+                hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+                borderDecoration:
+                    TextFormFieldStyleHelper.outlineErrorContainerTL4,
+                filled: true,
+                fillColor: appTheme.whiteA700,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
 
-/// Section Widget
-Widget _buildColumnmdfour(BuildContext context) {
-  return Container(
-    width: double.maxFinite,
-    margin: EdgeInsets.only(right: 2.h),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Alasan",
-          style: CustomTextStyles.titleLargeErrorContainer,
-        ),
-        SizedBox(height: 12.h),
-        _buildBerikan(context)
-      ],
-    ),
-  );
-}
+  Widget _buildColumnmdfour(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(right: 2.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Alasan",
+            style: CustomTextStyles.titleLargeErrorContainer,
+          ),
+          SizedBox(height: 12.h),
+          CustomTextFormField(
+            controller: berikanController,
+            hintText: "Berikan Alasan...",
+            hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+            contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+            borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL4,
+            filled: true,
+            fillColor: appTheme.whiteA700,
+          ),
+        ],
+      ),
+    );
+  }
 
-/// Section Widget
-Widget _buildSubmit(BuildContext context) {
-  return CustomElevatedButton(
-    height: 32.h,
-    width: 76.h,
-    text: "Submit",
-    margin: EdgeInsets.only(right: 2.h),
-    buttonStyle: CustomButtonStyles.fillTeal,
-    buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-    onPressed: () {},
-  );
-}
+  Widget _buildSubmit(BuildContext context) {
+    return CustomElevatedButton(
+      height: 50.h,
+      text: "Submit",
+      buttonStyle: CustomButtonStyles.fillTeal,
+      buttonTextStyle: CustomTextStyles.titleMediumWhiteA700,
+      onPressed: () {
+        print("Submit pressed");
+      },
+    );
+  }
 
-/// Navigates back to the previous screen.
-onTapArrowleftone(BuildContext context) {
-  Navigator.pop(context);
-}
+  /// Navigates back to the previous screen.
+  onTapArrowleftone(BuildContext context) {
+    Navigator.pop(context);
+  }
 
-/// Navigates to the submitBerhasilScreen when the action is triggered.
-onTapSubmit(BuildContext context) {
-  Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
-}
+  /// Navigates to the submitBerhasilScreen when the action is triggered.
+  onTapSubmit(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
+  }
 }

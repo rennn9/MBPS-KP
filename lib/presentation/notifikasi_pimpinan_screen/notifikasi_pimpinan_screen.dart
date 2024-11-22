@@ -79,7 +79,12 @@ class NotifikasiPimpinanScreen extends StatelessWidget {
         itemCount: 5,
         itemBuilder: (context, index) {
           return Listandi1ItemWidget(
-            onTapRowandilatifah: () {},
+            onTapRowandilatifah: () {
+              Navigator.pushNamed(
+                context,
+                AppRoutes.detailPengajuanCutiPimpinanOneScreen,
+              );
+            },
           );
         },
       ),

@@ -22,7 +22,7 @@ class NotifikasiTidakAdaScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [_buildColumnscreensho(context)],
-          ),
+          ), 
         ),
       ),
     );
@@ -53,7 +53,7 @@ class NotifikasiTidakAdaScreen extends StatelessWidget {
       child: Column(
         children: [
           CustomImageView(
-            imagePath: ImageConstant.imgAvatars3dAvatar21120x120,
+            imagePath: ImageConstant.imgScreenshot2024,
             height: 152.h,
             width: 142.h,
           ),

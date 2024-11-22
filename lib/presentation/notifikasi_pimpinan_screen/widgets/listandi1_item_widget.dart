@@ -5,14 +5,12 @@ import '../../../core/app_export.dart';
 class Listandi1ItemWidget extends StatelessWidget {
   Listandi1ItemWidget({Key? key, this.onTapRowandilatifah}) : super(key: key);
 
-  VoidCallback? onTapRowandilatifah;
+  final VoidCallback? onTapRowandilatifah;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        onTapRowandilatifah?.call();
-      },
+      onTap: onTapRowandilatifah,
       child: Container(
         padding: EdgeInsets.all(6.h),
         decoration: BoxDecoration(
@@ -45,7 +43,7 @@ class Listandi1ItemWidget extends StatelessWidget {
                       imagePath: ImageConstant.imgCalendarErrorcontainer,
                       height: 30.h,
                       width: 32.h,
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -64,7 +62,7 @@ class Listandi1ItemWidget extends StatelessWidget {
                     Text(
                       "Distribusi",
                       style: theme.textTheme.bodySmall,
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -84,7 +82,7 @@ class Listandi1ItemWidget extends StatelessWidget {
                 textAlign: TextAlign.left,
                 style: theme.textTheme.labelSmall,
               ),
-            )
+            ),
           ],
         ),
       ),
