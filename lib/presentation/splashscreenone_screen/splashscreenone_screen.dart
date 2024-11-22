@@ -62,9 +62,11 @@ class SplashscreenoneScreen extends StatelessWidget {
                       width: 42.h,
                       padding: EdgeInsets.all(10.h),
                       decoration: IconButtonStyleHelper.outlineErrorContainer,
-                      onTap: () {},
+                      onTap: () => onTapBtnArrowforward(
+                          context), // Navigasi ditambahkan di sini
                       child: CustomImageView(
                         imagePath: ImageConstant.imgArrowForwardIos,
+                        
                       ),
                     )
                   ],

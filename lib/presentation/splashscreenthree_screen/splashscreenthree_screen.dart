@@ -70,13 +70,17 @@ class SplashscreenthreeScreen extends StatelessWidget {
                               width: 32.h,
                               padding: EdgeInsets.all(8.h),
                               decoration: IconButtonStyleHelper.none,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.splashscreentwoScreen);
+                              },
                               child: CustomImageView(
                                 imagePath:
                                     ImageConstant.imgArrowForwardIosGreen50001,
                               ),
                             ),
-                            CustomElevatedButton(
+                            Padding(padding: EdgeInsets.symmetric(vertical: 50.h),
+                            child: CustomElevatedButton(
                               height: 26.h,
                               width: 78.h,
                               text: "Next",
@@ -93,8 +97,12 @@ class SplashscreenthreeScreen extends StatelessWidget {
                               buttonStyle: CustomButtonStyles.fillPrimary,
                               buttonTextStyle:
                                   CustomTextStyles.labelMediumRobotoWhiteA700,
-                              onPressed: () {},
+                              onPressed: () {
+                                  Navigator.pushNamed(context,
+                                      AppRoutes.splashscreenfourScreen);
+                                },
                               alignment: Alignment.topCenter,
+                            ),
                             ),
                           ],
                         ),
@@ -117,6 +125,9 @@ class SplashscreenthreeScreen extends StatelessWidget {
       actions: [
         AppbarSubtitleOne(
           text: "Skip",
+          onTap: () {
+            Navigator.pushNamed(context, AppRoutes.signupUpScreen);
+          },
         ),
         AppbarTrailingImage(
           imagePath: ImageConstant.imgArrowRight,

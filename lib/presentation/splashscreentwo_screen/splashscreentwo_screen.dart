@@ -72,15 +72,19 @@ class SplashscreentwoScreen extends StatelessWidget {
                             CustomIconButton(
                               height: 32.h,
                               width: 32.h,
-                              padding: EdgeInsets.all(8.h),
+                              padding: EdgeInsets.all(10.h),
                               decoration: IconButtonStyleHelper.none,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.splashscreenoneScreen);
+                              },
                               child: CustomImageView(
                                 imagePath:
                                     ImageConstant.imgArrowForwardIosGreen50001,
                               ),
                             ),
-                            CustomElevatedButton(
+                            Padding(padding: EdgeInsets.symmetric(vertical: 50.h),
+                            child: CustomElevatedButton(
                               height: 26.h,
                               width: 78.h,
                               text: "Next",
@@ -97,10 +101,15 @@ class SplashscreentwoScreen extends StatelessWidget {
                               buttonStyle: CustomButtonStyles.fillPrimary,
                               buttonTextStyle:
                                   CustomTextStyles.labelMediumRobotoWhiteA700,
-                              onPressed: () {},
+                              onPressed: () {
+                                  Navigator.pushNamed(context,
+                                      AppRoutes.splashscreenthreeScreen);
+                                },
                               alignment: Alignment.topCenter,
-                            ),
+                              ),  
+                              ),
                           ],
+
                         ),
                       ),
                     ],
@@ -121,6 +130,11 @@ class SplashscreentwoScreen extends StatelessWidget {
       actions: [
         AppbarSubtitleOne(
           text: "Skip",
+          onTap: () {
+            Navigator.pushNamed(
+                context,
+                AppRoutes.signupUpScreen); 
+          },
         ),
         AppbarTrailingImage(
           imagePath: ImageConstant.imgArrowRight,

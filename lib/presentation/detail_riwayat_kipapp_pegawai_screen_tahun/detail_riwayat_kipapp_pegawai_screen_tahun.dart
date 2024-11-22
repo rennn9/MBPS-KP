@@ -121,11 +121,11 @@ class DetailRiwayatKipappPegawaiScreenTahun extends StatelessWidget {
                               ),
                               SizedBox(height: 32.h),
                               _buildJanuarione(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildFebruarione(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildMaretone(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildAprilone(context),
                               
                             ],
@@ -151,7 +151,9 @@ class DetailRiwayatKipappPegawaiScreenTahun extends StatelessWidget {
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(

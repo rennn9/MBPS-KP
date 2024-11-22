@@ -190,6 +190,10 @@ class DetailAbsensiManualKetuaTimScreen extends StatelessWidget {
                                     Expanded(
                                       child: CustomElevatedButton(
                                         text: "Tolak",
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, '/dashboard_ketua_tim_screen');
+                                        },
                                       ),
                                     ),
                                     SizedBox(width: 16.h),
@@ -198,6 +202,10 @@ class DetailAbsensiManualKetuaTimScreen extends StatelessWidget {
                                         text: "Terima",
                                         buttonStyle:
                                             CustomButtonStyles.fillGreenA,
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, '/dashboard_ketua_tim_screen');
+                                        },
                                       ),
                                     )
                                   ],
@@ -254,60 +262,57 @@ class DetailAbsensiManualKetuaTimScreen extends StatelessWidget {
       ),
     );
   }
-  /// Section Widget
-PreferredSizeWidget _buildAppbar(BuildContext context) {
-  return CustomAppBar(
-    leadingWidth: 40.h,
-    leading: AppbarLeadingImage(
-      imagePath: ImageConstant.imgArrowLeftWhiteA700,
-      margin: EdgeInsets.only(left: 30.h),
-      onTap: () {},
-    ),
-    centerTitle: true,
-    title: AppbarTitle(
-      text: "Presensi Manual",
-    ),
-    styleType: Style.bgFillTeal200,
-  );
-}
 
-/// Common widget
-Widget _buildRowtanggal(
-  BuildContext context, {
-  required String tanggalOne,
-  required String p17oktober2024,
-}) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.only(top: 2.h),
-          child: Text(
-            tanggalOne,
-            style: theme.textTheme.labelLarge!.copyWith(
-              color: theme.colorScheme.errorContainer.withOpacity(0.4),
+  /// App Bar
+  PreferredSizeWidget _buildAppbar(BuildContext context) {
+    return CustomAppBar(
+      leadingWidth: 40.h,
+      leading: AppbarLeadingImage(
+        imagePath: ImageConstant.imgArrowLeftWhiteA700,
+        margin: EdgeInsets.only(left: 30.h),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+      centerTitle: true,
+      title: AppbarTitle(
+        text: "Presensi Manual",
+      ),
+      styleType: Style.bgFillTeal200,
+    );
+  }
+
+  /// Row Builder
+  Widget _buildRowtanggal(
+    BuildContext context, {
+    required String tanggalOne,
+    required String p17oktober2024,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: EdgeInsets.only(top: 2.h),
+            child: Text(
+              tanggalOne,
+              style: theme.textTheme.labelLarge!.copyWith(
+                color: theme.colorScheme.errorContainer.withOpacity(0.4),
+              ),
             ),
           ),
         ),
-      ),
-      Padding(
-        padding: EdgeInsets.only(right: 24.h),
-        child: Text(
-          p17oktober2024,
-          style: CustomTextStyles.labelLargeErrorContainer.copyWith(
-            color: theme.colorScheme.errorContainer.withOpacity(1),
+        Padding(
+          padding: EdgeInsets.only(right: 24.h),
+          child: Text(
+            p17oktober2024,
+            style: CustomTextStyles.labelLargeErrorContainer.copyWith(
+              color: theme.colorScheme.errorContainer.withOpacity(1),
+            ),
           ),
-        ),
-      )
-    ],
-  );
+        )
+      ],
+    );
+  }
 }
-
-/// Navigates back to the previous screen.
-onTapArrowleftone(BuildContext context) {
-  Navigator.pop(context);
-}
-}
-

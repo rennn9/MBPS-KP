@@ -172,6 +172,10 @@ class DetailPengajuanCutiKetuaTimScreen extends StatelessWidget {
                                     Expanded(
                                       child: CustomElevatedButton(
                                         text: "Tolak",
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, '/dashboard_ketua_tim_screen');
+                                              },
                                       ),
                                     ),
                                     SizedBox(width: 16.h),
@@ -180,6 +184,10 @@ class DetailPengajuanCutiKetuaTimScreen extends StatelessWidget {
                                         text: "Terima",
                                         buttonStyle:
                                             CustomButtonStyles.fillGreenA,
+                                            onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, '/dashboard_ketua_tim_screen');
+                                        },
                                       ),
                                     )
                                   ],
@@ -212,7 +220,9 @@ PreferredSizeWidget _buildAppbar(BuildContext context) {
     leading: AppbarLeadingImage(
       imagePath: ImageConstant.imgArrowLeftWhiteA700,
       margin: EdgeInsets.only(left: 30.h),
-      onTap: () {},
+      onTap: () {
+          Navigator.pop(context);
+        },
     ),
     centerTitle: true,
     title: AppbarTitle(

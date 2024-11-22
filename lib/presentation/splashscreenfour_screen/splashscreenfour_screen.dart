@@ -40,9 +40,14 @@ class SplashscreenfourScreen extends StatelessWidget {
                 margin: EdgeInsets.only(
                   left: 44.h,
                   right: 38.h,
+                  
                 ),
                 buttonStyle: CustomButtonStyles.fillPrimaryTL5,
                 buttonTextStyle: CustomTextStyles.labelLargeRobotoWhiteA700,
+                onPressed: () {
+                  Navigator.pushNamed(context,
+                      AppRoutes.signupUpScreen); // Navigasi ke halaman Sign Up
+                },
               ),
             ],
           ),
@@ -58,6 +63,9 @@ class SplashscreenfourScreen extends StatelessWidget {
       actions: [
         AppbarSubtitleOne(
           text: "Skip",
+          onTap: () {
+            Navigator.pushNamed(context, AppRoutes.signupUpScreen);
+          },
         ),
         AppbarTrailingImage(
           imagePath: ImageConstant.imgArrowRight,
