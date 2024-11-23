@@ -10,10 +10,15 @@ import '../../widgets/custom_elevated_button.dart';
 
 // ignore_for_file: must_be_immutable
 
-class KipappPegawaiOneScreen extends StatelessWidget {
+class KipappPegawaiOneScreen extends StatefulWidget  {
   KipappPegawaiOneScreen({Key? key}) : super(key: key);
+  @override
+  _KipappPegawaiOneScreenState createState() => _KipappPegawaiOneScreenState();
+}
 
-  List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
+  class _KipappPegawaiOneScreenState extends State<KipappPegawaiOneScreen> {
+  List<String> dropdownItemList = ["2024", "2025", "2026"];
+
 
   bool januarione = false;
   bool februarione = false;
@@ -167,42 +172,44 @@ class KipappPegawaiOneScreen extends StatelessWidget {
                                     DropDownStyleHelper.fillIndigo,
                                 fillColor: appTheme.indigo50,
                               ),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 10.h),
                               _buildJanuarione(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 10.h),
                               _buildFebruarione(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildMaretone(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 10.h),
                               _buildAprilone(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 10.h),
                               _buildMeione(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildJunione(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildJulione(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildAgustusone(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildSeptemberone(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildOktoberone(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildNovemberone(context),
-                              SizedBox(height: 14.h),
+                              SizedBox(height: 12.5.h),
                               _buildDesemberone(context),
-                              SizedBox(height: 12.h),
+                              SizedBox(height: 12.5.h),
                             ],
                           ),
                         ),
-                        SizedBox(height: 30.h),
-                        CustomElevatedButton(
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          child: CustomElevatedButton(
                           height: 32.h,
                           width: 76.h,
                           text: "Submit",
                           buttonStyle: CustomButtonStyles.fillTeal,
                           buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
                           onPressed: () {},
+                        ),
                         ),
                       ],
                     ),
@@ -234,209 +241,197 @@ class KipappPegawaiOneScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
+ Widget _buildMonthCheckbox(
+      {required BuildContext context,
+      required String label,
+      required bool value,
+      required ValueChanged<bool?> onChanged}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0), // Radius sudut container
+        border: Border.all(
+            color: const Color.fromARGB(255, 0, 0, 0)), // Warna border
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Checkbox(
+            value: value,
+            onChanged: onChanged,
+            activeColor: Colors.blue[600],
+            checkColor: Colors.white,
+          ),
+          const SizedBox(width: 8.0), // Jarak antara checkbox dan teks
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13.0,
+              fontWeight: FontWeight.w500,
+              color: Colors.black, // Warna teks hitam
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildJanuarione(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Januari",
-        value: januarione,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          januarione = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Januari",
+      value: januarione,
+      onChanged: (value) {
+        setState(() {
+          januarione = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildFebruarione(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Februari",
-        value: februarione,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          februarione = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Februari",
+      value: februarione,
+      onChanged: (value) {
+        setState(() {
+          februarione = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
-  Widget _buildMaretone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Maret",
-        value: maretone,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          maretone = value;
-        },
-      ),
+ Widget _buildMaretone(BuildContext context) {
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Maret",
+      value: maretone,
+      onChanged: (value) {
+        setState(() {
+          maretone = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildAprilone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "April",
-        value: aprilone,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          aprilone = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "April",
+      value: aprilone,
+      onChanged: (value) {
+        setState(() {
+          aprilone = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildMeione(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Mei",
-        value: meione,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          meione = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Mei",
+      value: meione,
+      onChanged: (value) {
+        setState(() {
+          meione = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildJunione(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Juni",
-        value: junione,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          junione = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Juni",
+      value: junione,
+      onChanged: (value) {
+        setState(() {
+          junione = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
-  Widget _buildJulione(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Juli",
-        value: julione,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          julione = value;
-        },
-      ),
+    Widget _buildJulione(BuildContext context) {
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Juli",
+      value: julione,
+      onChanged: (value) {
+        setState(() {
+          julione = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildAgustusone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Agustus",
-        value: agustusone,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          agustusone = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Agustus",
+      value: agustusone,
+      onChanged: (value) {
+        setState(() {
+          agustusone = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildSeptemberone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "September",
-        value: septemberone,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          septemberone = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "September",
+      value: septemberone,
+      onChanged: (value) {
+        setState(() {
+          septemberone = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildOktoberone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Oktober",
-        value: oktoberone,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          oktoberone = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Oktober",
+      value: oktoberone,
+      onChanged: (value) {
+        setState(() {
+          oktoberone = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildNovemberone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "November",
-        value: novemberone,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          novemberone = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "November",
+      value: novemberone,
+      onChanged: (value) {
+        setState(() {
+          novemberone = value ?? false;
+        });
+      },
     );
   }
 
-  /// Section Widget
   Widget _buildDesemberone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Desember",
-        value: desemberone,
-        padding: EdgeInsets.fromLTRB(26.h, 14.h, 30.h, 14.h),
-        textStyle: CustomTextStyles.bodyMediumErrorContainer,
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          desemberone = value;
-        },
-      ),
+    return _buildMonthCheckbox(
+      context: context,
+      label: "Desember",
+      value: desemberone,
+      onChanged: (value) {
+        setState(() {
+          desemberone = value ?? false;
+        });
+      },
     );
   }
+
   /// Navigates back to the previous screen.
   onTapArrowleftone(BuildContext context) {
     Navigator.pop(context); // Navigasi kembali ke layar sebelumnya
