@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/app_export.dart';
 import 'widgets/listpresensiman1_item_widget.dart';
+import '../profile_info_ketua_tim_screen/profile_info_ketua_tim_screen.dart';
+import '../notifikasi_ketua_tim_screen/notifikasi_ketua_tim_screen.dart';
 
 class DashboardKetuaTimScreen extends StatefulWidget {
   DashboardKetuaTimScreen({Key? key}) : super(key: key);
@@ -131,89 +133,104 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
     );
   }
 
-  Widget _buildColumnprice(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Container(
-        width: double.maxFinite,
-        margin: EdgeInsets.only(top: 24, right: 18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              width: double.maxFinite,
-              margin: EdgeInsets.symmetric(horizontal: 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomImageView(
-                    imagePath: ImageConstant.imgLogoBps,
-                    height: 28,
-                    width: 40,
-                    margin: EdgeInsets.only(left: 26),
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 10, top: 4),
-                      child: Text(
-                        "BADAN PUSAT STATISTIK",
-                        style: theme.textTheme.titleSmall,
-                      ),
+Widget _buildColumnprice(BuildContext context) {
+  return Align(
+    alignment: Alignment.topCenter,
+    child: Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(top: 24, right: 18),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            width: double.maxFinite,
+            margin: EdgeInsets.symmetric(horizontal: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomImageView(
+                  imagePath: ImageConstant.imgLogoBps,
+                  height: 28,
+                  width: 40,
+                  margin: EdgeInsets.only(left: 26),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10, top: 4),
+                    child: Text(
+                      "BADAN PUSAT STATISTIK",
+                      style: theme.textTheme.titleSmall,
                     ),
                   ),
-                  Spacer(),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgMdnotificationsnone,
-                    height: 24,
-                    width: 26,
-                    onTap: () {},
-                  ),
-                ],
-              ),
+                ),
+                Spacer(),
+                CustomImageView(
+                  imagePath: ImageConstant.imgMdnotificationsnone,
+                  height: 24,
+                  width: 26,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotifikasiKetuaTimScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.maxFinite,
-              child: GestureDetector(
-                onTap: () {},
-                child: Container(
-                  margin: EdgeInsets.only(left: 18),
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: appTheme.whiteA700,
-                    borderRadius: BorderRadiusStyle.roundedBorder14,
-                    border: Border.all(color: appTheme.gray30001, width: 1),
+          ),
+          SizedBox(height: 16),
+          SizedBox(
+            width: double.maxFinite,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileInfoKetuaTimScreen(),
                   ),
-                  child: Row(
-                    children: [
-                      CustomImageView(
-                        imagePath: ImageConstant.imgAvatars3dAvatar21,
-                        height: 40,
-                        width: 40,
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.only(left: 18),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                decoration: BoxDecoration(
+                  color: appTheme.whiteA700,
+                  borderRadius: BorderRadiusStyle.roundedBorder14,
+                  border: Border.all(color: appTheme.gray30001, width: 1),
+                ),
+                child: Row(
+                  children: [
+                    CustomImageView(
+                      imagePath: ImageConstant.imgAvatars3dAvatar21,
+                      height: 40,
+                      width: 40,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Hi, Ketua Tim",
+                              style: theme.textTheme.titleSmall),
+                          Text("IPDS", style: theme.textTheme.bodySmall),
+                        ],
                       ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Hi, Ketua Tim",
-                                style: theme.textTheme.titleSmall),
-                            Text("IPDS", style: theme.textTheme.bodySmall)
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildDataTable() {
     return Container(

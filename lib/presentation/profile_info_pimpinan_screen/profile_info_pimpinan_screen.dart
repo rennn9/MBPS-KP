@@ -4,6 +4,8 @@ import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_text_form_field.dart';
+import '../dashboard_pimpinan_screen/dashboard_pimpinan_screen.dart';
+
 
 // ignore_for_file: must_be_immutable
 
@@ -108,7 +110,14 @@ class ProfileInfoPimpinanScreen extends StatelessWidget {
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashboardPimpinanScreen(),
+            ),
+          );
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(

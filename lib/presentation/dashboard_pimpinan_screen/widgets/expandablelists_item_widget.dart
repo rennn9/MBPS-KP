@@ -1,52 +1,82 @@
 import 'package:flutter/material.dart';
-import '../../../core/app_export.dart';
-import '../../../theme/custom_button_style.dart';
 
-// ignore_for_file: must_be_immutable
+class ExpandableListsExample extends StatelessWidget {
+  final List<Map<String, String>> dataIPDS = [
+    {'Nama': 'Alice', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
+    {'Nama': 'Bob', 'Jenis Pengajuan': 'Izin', 'Status': 'Ditolak'},
+  ];
+
+  final List<Map<String, String>> dataAnother = [
+    {'Nama': 'Charlie', 'Jenis Pengajuan': 'Lembur', 'Status': 'Menunggu Persetujuan'},
+    {'Nama': 'David', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Expandable Dropdown Example")),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ExpandablelistsItemWidget(
+                tableData: dataIPDS,
+                onTapRowone: () {
+                  print("Dropdown IPDS clicked");
+                },
+                label: "IPDS",
+              ),
+              SizedBox(height: 16), // Jarak antar dropdown
+              ExpandablelistsItemWidget(
+                tableData: dataAnother,
+                onTapRowone: () {
+                  print("Dropdown Another clicked");
+                },
+                label: "UMUM",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class ExpandablelistsItemWidget extends StatelessWidget {
-  ExpandablelistsItemWidget({Key? key, this.onTapRowone, required this.tableData}) : super(key: key);
-
-  VoidCallback? onTapRowone;
+  final VoidCallback? onTapRowone;
   final List<Map<String, String>> tableData;
+  final String label;
+
+  ExpandablelistsItemWidget({
+    Key? key,
+    this.onTapRowone,
+    required this.tableData,
+    required this.label,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: appTheme.whiteA700,
-        borderRadius: BorderRadiusStyle.roundedBorder10,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: appTheme.blue4003f,
-            spreadRadius: 2.h,
-            blurRadius: 2.h,
+            color: Colors.blue.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 2,
             offset: Offset(0, 0),
-          )
+          ),
         ],
       ),
-      margin: EdgeInsets.only(right: 4.h),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          tilePadding: EdgeInsets.only(
-            left: 14.h,
-            right: 4.h,
-          ),
-          title: SizedBox(
-            width: double.maxFinite,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 4.h),
-                  child: Text(
-                    "IPDS",
-                    style: CustomTextStyles.titleSmallExtraBold,
-                  ),
-                )
-              ],
-            ),
+          tilePadding: EdgeInsets.symmetric(horizontal: 14),
+          title: Text(
+            label,
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           children: [
             _buildDataTable(),
@@ -58,79 +88,72 @@ class ExpandablelistsItemWidget extends StatelessWidget {
 
   Widget _buildDataTable() {
     return Container(
-      width: double.infinity, // Memastikan tabel memenuhi lebar dropdown
-      padding: EdgeInsets.all(8.h),
-      child: DataTable(
-        headingRowColor: MaterialStateProperty.all(appTheme.whiteA700),
-        dataRowColor: MaterialStateProperty.all(appTheme.whiteA700),
-        columnSpacing: 8, // Jarak antar kolom
-        columns: [
-          DataColumn(
-            label: Flexible(
-              child: Center(
-                child: Text(
-                  'Nama',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.black), // Warna teks hitam
-                ),
+      width: double.infinity,
+      padding: EdgeInsets.all(8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical, // Hanya memungkinkan scroll vertikal
+        child: Table(
+          columnWidths: const <int, TableColumnWidth>{
+            0: IntrinsicColumnWidth(),
+            1: IntrinsicColumnWidth(),
+            2: IntrinsicColumnWidth(),
+          },
+          border: TableBorder.all(color: Colors.black12, width: 1),
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          children: [
+            TableRow(
+              decoration: BoxDecoration(
+                color: Colors.white,
               ),
+              children: [
+                _buildHeaderCell('Nama'),
+                _buildHeaderCell('Jenis Pengajuan'),
+                _buildHeaderCell('Status'),
+              ],
             ),
-          ),
-          DataColumn(
-            label: Flexible(
-              child: Center(
-                child: Text(
-                  'Jenis Pengajuan',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.black), // Warna teks hitam
-                ),
-              ),
-            ),
-          ),
-          DataColumn(
-            label: Flexible(
-              child: Center(
-                child: Text(
-                  'Status',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.black), // Warna teks hitam
-                ),
-              ),
-            ),
-          ),
-        ],
-        rows: tableData.map((row) {
-          return DataRow(
-            cells: [
-              _buildMultiLineCell(row['Nama']!),
-              _buildMultiLineCell(row['Jenis Pengajuan']!),
-              _buildStatusCell(row['Status']!), // Memanggil fungsi khusus untuk status
-            ],
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  DataCell _buildMultiLineCell(String text) {
-    return DataCell(
-      Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.visible, // Memungkinkan teks melanjutkan ke bawah
-          maxLines: null, // Tidak ada batasan baris
-          style: TextStyle(color: Colors.black), // Warna teks hitam
+            ...tableData.map((row) {
+              return TableRow(
+                children: [
+                  _buildMultiLineCell(row['Nama'] ?? ''),
+                  _buildMultiLineCell(row['Jenis Pengajuan'] ?? ''),
+                  _buildStatusCell(row['Status'] ?? ''),
+                ],
+              );
+            }).toList(),
+          ],
         ),
       ),
     );
   }
 
-  DataCell _buildStatusCell(String status) {
-    // Tentukan warna berdasarkan status
+  Widget _buildHeaderCell(String text) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMultiLineCell(String text) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.visible,
+        maxLines: null, // Mengizinkan teks sambung ke bawah
+        style: TextStyle(color: Colors.black),
+      ),
+    );
+  }
+
+  Widget _buildStatusCell(String status) {
     Color statusColor;
     switch (status) {
       case 'Disetujui':
@@ -143,27 +166,23 @@ class ExpandablelistsItemWidget extends StatelessWidget {
         statusColor = Colors.yellow;
         break;
       default:
-        statusColor = Colors.grey; // Warna default jika status tidak dikenali
+        statusColor = Colors.grey;
     }
 
-    return DataCell(
-      Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 4.h),
-          decoration: BoxDecoration(
-            color: statusColor,
-            borderRadius: BorderRadius.circular(4.h),
-          ),
-          child: Text(
-            status,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.visible,
-            maxLines: null,
-            style: TextStyle(
-              color: Colors.black, // Teks warna hitam untuk kontras
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: statusColor,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        status,
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.visible,
+        maxLines: null,
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

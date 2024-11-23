@@ -6,6 +6,7 @@ import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_outlined_button.dart';
 import 'widgets/listandi1_item_widget.dart';
+import '../dashboard_pimpinan_screen/dashboard_pimpinan_screen.dart';
 
 class NotifikasiPimpinanScreen extends StatelessWidget {
   const NotifikasiPimpinanScreen({Key? key}) : super(key: key);
@@ -43,7 +44,14 @@ class NotifikasiPimpinanScreen extends StatelessWidget {
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashboardPimpinanScreen(),
+            ),
+          );
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(

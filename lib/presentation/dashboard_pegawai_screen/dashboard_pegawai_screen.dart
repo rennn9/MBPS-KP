@@ -3,6 +3,12 @@ import '../../core/app_export.dart';
 import 'widgets/listpresensiman_item_widget.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/custom_elevated_button.dart';
+import '../profile_info_screen/profile_info_screen.dart';
+import '../menu_absen_manual_pegawai_1_screen/menu_absen_manual_pegawai_1_screen.dart';
+import '../pengajuan_cuti_pegawai_screen/pengajuan_cuti_pegawai_screen.dart';
+import '../kipapp_pegawai_one_screen/kipapp_pegawai_one_screen.dart';
+import '../riwayat_screen/riwayat_screen.dart';
+
 
 class DashboardPegawaiScreen extends StatefulWidget {
   DashboardPegawaiScreen({Key? key}) : super(key: key);
@@ -40,16 +46,22 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
                         _buildListpresensiman(context),
                         SizedBox(height: 14),
                         // Tombol Riwayat
-                        CustomElevatedButton(
-                          height: 50.h,
-                          text: "Riwayat",
-                          margin: EdgeInsets.symmetric(horizontal: 10.h),
-                          buttonStyle: CustomButtonStyles.fillWhiteA,
-                          buttonTextStyle: CustomTextStyles.titleSmallPrimary,
-                          onPressed: () {
-                            // Tambahkan logika untuk tombol "Riwayat"
-                          },
-                        ),
+CustomElevatedButton(
+  height: 50.h,
+  text: "Riwayat",
+  margin: EdgeInsets.symmetric(horizontal: 10.h),
+  buttonStyle: CustomButtonStyles.fillWhiteA,
+  buttonTextStyle: CustomTextStyles.titleSmallPrimary,
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RiwayatScreen(),
+      ),
+    );
+  },
+),
+
                         SizedBox(height: 20),
                       ],
                     ),
@@ -70,39 +82,65 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
   }
 
   Widget _buildListpresensiman(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          direction: Axis.horizontal,
-          spacing: 10,
-          children: List.generate(
-            3,
-            (index) {
-              final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
-              final imagePaths = [
-                ImageConstant.imgEdit,
-                ImageConstant.imgCalendar,
-                ImageConstant.imgDownload
-              ];
-              return ListpresensimanItemWidget(
-                text: texts[index],
-                imagePath: imagePaths[index],
-                isSelected: selectedIndex == index,
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                selectedTextColor: Color(0xFF3E9B97),
-              );
-            },
-          ),
+  return Container(
+    width: double.maxFinite,
+    child: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Wrap(
+        direction: Axis.horizontal,
+        spacing: 10,
+        children: List.generate(
+          3,
+          (index) {
+            final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
+            final imagePaths = [
+              ImageConstant.imgEdit,
+              ImageConstant.imgCalendar,
+              ImageConstant.imgDownload
+            ];
+            return ListpresensimanItemWidget(
+              text: texts[index],
+              imagePath: imagePaths[index],
+              isSelected: selectedIndex == index,
+              onTap: () {
+                setState(() {
+                  selectedIndex = index;
+                });
+                // Navigasi berdasarkan indeks
+                if (index == 0) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MenuAbsenManualPegawai1Screen(),
+                    ),
+                  );
+                } else if (index == 1) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PengajuanCutiPegawaiScreen(),
+                    ),
+                  );
+                } else if (index == 2) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => KipappPegawaiOneScreen(),
+                    ),
+                  );
+                }
+              },
+              selectedTextColor: Color(0xFF3E9B97),
+            );
+          },
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildColumnprice(BuildContext context) {
     return Align(
@@ -160,40 +198,43 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
                 children: [
                   SizedBox(
                     width: double.maxFinite,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomImageView(
-                          imagePath: ImageConstant.imgAvatars3dAvatar21,
-                          height: 40.h,
-                          width: 40.h,
-                          alignment: Alignment.center,
-                          onTap: () {},
-                        ),
-                        SizedBox(width: 8.h),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {},
-                                child: Text(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileInfoScreen(),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomImageView(
+                            imagePath: ImageConstant.imgAvatars3dAvatar21,
+                            height: 40.h,
+                            width: 40.h,
+                            alignment: Alignment.center,
+                          ),
+                          SizedBox(width: 8.h),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
                                   "Hi, Ruthveralda Sakoikoi",
                                   style: theme.textTheme.titleSmall,
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () {},
-                                child: Text(
+                                Text(
                                   "IPDS",
                                   style: CustomTextStyles
                                       .labelMediumErrorContainer,
                                 ),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: 14.h),

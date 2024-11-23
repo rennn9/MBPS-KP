@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../core/app_export.dart';
 import 'widgets/expandablelists_item_widget.dart';
 import 'widgets/listpresensiman2_item_widget.dart';
+import '../notifikasi_pimpinan_screen/notifikasi_pimpinan_screen.dart';
+import '../profile_info_pimpinan_screen/profile_info_pimpinan_screen.dart';
+
 
 class DashboardPimpinanScreen extends StatefulWidget {
   DashboardPimpinanScreen({Key? key}) : super(key: key);
@@ -22,11 +25,30 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
   String selectedDropdownItem = "Semua Permohonan";
   final FocusNode dropdownFocusNode = FocusNode();
 
-  // Data untuk tabel yang akan diubah sesuai dropdown yang dipilih
-  List<Map<String, String>> tableData = [
-    {'Nama': 'Javier', 'Jenis Pengajuan': 'Presensi Manual', 'Status': 'Menunggu Persetujuan'},
-    {'Nama': 'Alicia', 'Jenis Pengajuan': 'Cuti Tahunan', 'Status': 'Disetujui'},
-    {'Nama': 'Mark', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
+  // Data untuk beberapa dropdown dengan tabel
+  final List<Map<String, dynamic>> expandableData = [
+    {
+      "label": "IPDS",
+      "tableData": [
+        {
+          'Nama': 'Javier',
+          'Jenis Pengajuan': 'Presensi Manual',
+          'Status': 'Menunggu Persetujuan'
+        },
+        {
+          'Nama': 'Alicia',
+          'Jenis Pengajuan': 'Cuti Tahunan',
+          'Status': 'Disetujui'
+        },
+      ],
+    },
+    {
+      "label": "UMUM",
+      "tableData": [
+        {'Nama': 'Mark', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
+        {'Nama': 'Sophia', 'Jenis Pengajuan': 'Lembur', 'Status': 'Disetujui'},
+      ],
+    },
   ];
 
   @override
@@ -67,28 +89,35 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
                             onSelected: (String? value) {
                               setState(() {
                                 selectedDropdownItem = value!;
-                                // Update table data based on dropdown selection
-                                _updateTableData(value);
+                                // Update logic for dropdown selection
                               });
                             },
-                            dropdownMenuEntries: dropdownItemList.map((String value) {
+                            dropdownMenuEntries:
+                                dropdownItemList.map((String value) {
                               return DropdownMenuEntry<String>(
                                 value: value,
                                 label: value,
                               );
                             }).toList(),
-                            focusNode: dropdownFocusNode..canRequestFocus = false,
                           ),
                         ),
                         SizedBox(height: 20),
 
-                        // Expandable list widget with dynamic table data
-                        ExpandablelistsItemWidget(
-                          tableData: tableData,  // Passing dynamic data
-                          onTapRowone: () {
-                            // Add functionality for tap event if needed
-                          },
-                        ),
+                        // Expandable lists with dynamic data
+                        ...expandableData.map((data) {
+                          return Column(
+                            children: [
+                              ExpandablelistsItemWidget(
+                                tableData: data["tableData"],
+                                label: data["label"],
+                                onTapRowone: () {
+                                  // Handle tap events if needed
+                                },
+                              ),
+                              SizedBox(height: 16), // Space between dropdowns
+                            ],
+                          );
+                        }).toList(),
                       ],
                     ),
                   ),
@@ -107,117 +136,137 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
     );
   }
 
-  void _updateTableData(String selectedItem) {
-    // Update table data based on the selected dropdown item
-    switch (selectedItem) {
-      case "Hari Ini":
-        tableData = [
-          {'Nama': 'Rina', 'Jenis Pengajuan': 'Liburan', 'Status': 'Menunggu Persetujuan'},
-        ];
-        break;
-      case "Minggu Ini":
-        tableData = [
-          {'Nama': 'Andi', 'Jenis Pengajuan': 'Pengunduran Diri', 'Status': 'Disetujui'},
-        ];
-        break;
-      case "Bulan Ini":
-        tableData = [
-          {'Nama': 'Budi', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
-        ];
-        break;
-      default:
-        tableData = [
-          {'Nama': 'Javier', 'Jenis Pengajuan': 'Presensi Manual', 'Status': 'Menunggu Persetujuan'},
-          {'Nama': 'Alicia', 'Jenis Pengajuan': 'Cuti Tahunan', 'Status': 'Disetujui'},
-          {'Nama': 'Mark', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
-        ];
-        break;
-    }
-  }
+  // void _updateTableData(String selectedItem) {
+  //   // Update table data based on the selected dropdown item
+  //   switch (selectedItem) {
+  //     case "Hari Ini":
+  //       tableData = [
+  //         {'Nama': 'Rina', 'Jenis Pengajuan': 'Liburan', 'Status': 'Menunggu Persetujuan'},
+  //       ];
+  //       break;
+  //     case "Minggu Ini":
+  //       tableData = [
+  //         {'Nama': 'Andi', 'Jenis Pengajuan': 'Pengunduran Diri', 'Status': 'Disetujui'},
+  //       ];
+  //       break;
+  //     case "Bulan Ini":
+  //       tableData = [
+  //         {'Nama': 'Budi', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
+  //       ];
+  //       break;
+  //     default:
+  //       tableData = [
+  //         {'Nama': 'Javier', 'Jenis Pengajuan': 'Presensi Manual', 'Status': 'Menunggu Persetujuan'},
+  //         {'Nama': 'Alicia', 'Jenis Pengajuan': 'Cuti Tahunan', 'Status': 'Disetujui'},
+  //         {'Nama': 'Mark', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
+  //       ];
+  //       break;
+  //   }
+  // }
 
-  Widget _buildColumnprice(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Container(
-        width: double.maxFinite,
-        margin: EdgeInsets.only(top: 24, right: 18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              width: double.maxFinite,
-              margin: EdgeInsets.symmetric(horizontal: 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomImageView(
-                    imagePath: ImageConstant.imgLogoBps,
-                    height: 28,
-                    width: 40,
-                    margin: EdgeInsets.only(left: 26),
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 10, top: 4),
-                      child: Text(
-                        "BADAN PUSAT STATISTIK",
-                        style: theme.textTheme.titleSmall,
-                      ),
+Widget _buildColumnprice(BuildContext context) {
+  return Align(
+    alignment: Alignment.topCenter,
+    child: Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(top: 24, right: 18),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            width: double.maxFinite,
+            margin: EdgeInsets.symmetric(horizontal: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomImageView(
+                  imagePath: ImageConstant.imgLogoBps,
+                  height: 28,
+                  width: 40,
+                  margin: EdgeInsets.only(left: 26),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10, top: 4),
+                    child: Text(
+                      "BADAN PUSAT STATISTIK",
+                      style: theme.textTheme.titleSmall,
                     ),
                   ),
-                  Spacer(),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgMdnotificationsnone,
-                    height: 24,
-                    width: 26,
-                    onTap: () {},
-                  ),
-                ],
-              ),
+                ),
+                Spacer(),
+                CustomImageView(
+                  imagePath: ImageConstant.imgMdnotificationsnone,
+                  height: 24,
+                  width: 26,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotifikasiPimpinanScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.maxFinite,
-              child: GestureDetector(
-                onTap: () {},
-                child: Container(
-                  margin: EdgeInsets.only(left: 18),
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: appTheme.whiteA700,
-                    borderRadius: BorderRadiusStyle.roundedBorder14,
-                    border: Border.all(color: appTheme.gray30001, width: 1),
+          ),
+          SizedBox(height: 16),
+          SizedBox(
+            width: double.maxFinite,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileInfoPimpinanScreen(),
                   ),
-                  child: Row(
-                    children: [
-                      CustomImageView(
-                        imagePath: ImageConstant.imgAvatars3dAvatar21,
-                        height: 40,
-                        width: 40,
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.only(left: 18),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                decoration: BoxDecoration(
+                  color: appTheme.whiteA700,
+                  borderRadius: BorderRadiusStyle.roundedBorder14,
+                  border: Border.all(color: appTheme.gray30001, width: 1),
+                ),
+                child: Row(
+                  children: [
+                    CustomImageView(
+                      imagePath: ImageConstant.imgAvatars3dAvatar21,
+                      height: 40,
+                      width: 40,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Hi, Pimpinan",
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          Text(
+                            "IPDS",
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Hi, Pimpinan",
-                                style: theme.textTheme.titleSmall),
-                            Text("IPDS", style: theme.textTheme.bodySmall)
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildListpresensiman(BuildContext context) {
     return Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projectbps/presentation/dashboard_ketua_tim_screen/dashboard_ketua_tim_screen.dart';
 import '../../core/app_export.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
@@ -109,7 +110,14 @@ class ProfileInfoKetuaTimScreen extends StatelessWidget {
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashboardKetuaTimScreen(),
+            ),
+          );
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(
