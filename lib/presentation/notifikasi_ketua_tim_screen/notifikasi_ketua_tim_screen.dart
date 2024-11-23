@@ -66,7 +66,6 @@ class NotifikasiKetuaTimScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   Widget _buildListandi(BuildContext context) {
     return Expanded(
       child: ListView.separated(
@@ -81,7 +80,12 @@ class NotifikasiKetuaTimScreen extends StatelessWidget {
         itemCount: 5,
         itemBuilder: (context, index) {
           return ListandiItemWidget(
-            onTapRowandilatifah: () {},
+            onTapRowandilatifah: () {
+              Navigator.pushNamed(
+                context,
+                AppRoutes.detailPengajuanCutiKetuaTimOneScreen,
+              );
+            },
           );
         },
       ),

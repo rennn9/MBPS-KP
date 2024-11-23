@@ -87,8 +87,7 @@ class KipappPegawaiOneScreen extends StatefulWidget  {
                                       ),
                                       Text(
                                         "Bulanan",
-                                        style: CustomTextStyles
-                                            .titleMediumWhiteA700,
+                                        style: CustomTextStyles.titleMediumWhiteA700,
                                       ),
                                     ],
                                   ),
@@ -117,14 +116,10 @@ class KipappPegawaiOneScreen extends StatefulWidget  {
                                           height: 32.h,
                                           width: 36.h,
                                         ),
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
+                                        Text(
                                             "Tahunan",
-                                            style: CustomTextStyles
-                                                .titleMediumPrimary,
+                                            style: CustomTextStyles.titleMediumPrimary,
                                           ),
-                                        ),
                                       ],
                                     ),
                                   ),

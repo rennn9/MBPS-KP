@@ -8,13 +8,30 @@ import '../../widgets/custom_drop_down.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_radio_button.dart';
 import '../../widgets/custom_text_form_field.dart';
+import '../pengajuan_cuti_pegawai_screen/pengajuan_cuti_pegawai_screen.dart';
 
 // ignore_for_file: must_be_immutable
 
-class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
-  PengajuanCutiSetengahHariPegawaiScreen({Key? key}) : super(key: key);
+class PengajuanCutiSetengahHariPegawaiScreen extends StatefulWidget {
+  @override
+  _PengajuanCutiSetengahHariPegawaiScreenState createState() =>
+      _PengajuanCutiSetengahHariPegawaiScreenState();
+}
 
-  List<String> dropdownItemList = ["Item One", "Item Two", "Item Three"];
+class _PengajuanCutiSetengahHariPegawaiScreenState
+    extends State<PengajuanCutiSetengahHariPegawaiScreen> {
+  List<String> dropdownItemList = [
+    "Tahunan",
+    "Besar",
+    "Sakit",
+    "Melahirkan",
+    "Alasan Penting",
+    "Cuti Luar Tanggungan                                 ",
+    "Perpanjangan CLTN",
+    "Cuti Setengah Hari"
+  ];
+  String selectedOption =
+      "Cuti Setengah Hari"; // Default to "Cuti Setengah Hari"
   TextEditingController berikanController = TextEditingController();
   String radioGroup = "";
 
@@ -41,7 +58,7 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildColumnmdone(context),
+                      _buildDropdown(context),
                       SizedBox(height: 14.h),
                       _buildColumnmdtwo(context),
                       SizedBox(height: 14.h),
@@ -62,7 +79,9 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
                         margin: EdgeInsets.only(right: 6.h),
                         buttonStyle: CustomButtonStyles.fillTeal,
                         buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-                        onPressed: () {},
+                        onPressed: () {
+                          print("Selected session: $radioGroup");
+                        },
                         alignment: Alignment.centerRight,
                       ),
                     ],
@@ -77,14 +96,15 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 43.h,
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(
@@ -94,11 +114,10 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildColumnmdone(BuildContext context) {
+  Widget _buildDropdown(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      margin: EdgeInsets.only(right: 8.h),
+      margin: EdgeInsets.only(right: 2.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -107,27 +126,47 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
             style: CustomTextStyles.titleLargeErrorContainer,
           ),
           SizedBox(height: 12.h),
-          CustomDropDown(
-            icon: Container(
-              margin: EdgeInsets.only(left: 16.h),
-              child: CustomImageView(
-                imagePath: ImageConstant.imgArrowdownErrorcontainer26x18,
-                height: 26.h,
-                width: 18.h,
-                fit: BoxFit.contain,
+          Container(
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+              color: appTheme.whiteA700,
+              borderRadius: BorderRadius.circular(8.h),
+              border: Border.all(color: appTheme.gray400, width: 1),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 8.h),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: selectedOption,
+                items: dropdownItemList.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedOption = value!;
+                    if (value != "Cuti Setengah Hari") {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PengajuanCutiPegawaiScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    }
+                  });
+                },
+                isExpanded: true, // Ensures the dropdown expands fully
+                icon: Icon(Icons.arrow_drop_down), // Ensures arrow is visible
               ),
             ),
-            iconSize: 26.h,
-            hintText: "Tahunan",
-            items: dropdownItemList,
-            contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
           ),
         ],
       ),
     );
   }
 
-  /// Section Widget
   Widget _buildColumnmdtwo(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -135,22 +174,9 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 28.h,
-            width: 68.h,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Text(
-                  "Alasan",
-                  style: CustomTextStyles.titleLargeErrorContainer,
-                ),
-                Text(
-                  "Alasan",
-                  style: CustomTextStyles.titleLargeErrorContainer,
-                ),
-              ],
-            ),
+          Text(
+            "Alasan",
+            style: CustomTextStyles.titleLargeErrorContainer,
           ),
           SizedBox(height: 12.h),
           CustomTextFormField(
@@ -168,10 +194,9 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
   Widget _buildGroup1134(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 22.h),
+      padding: EdgeInsets.only(left: 8.h),
       child: Column(
         children: [
           CustomRadioButton(
@@ -180,7 +205,9 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
             groupValue: radioGroup,
             isExpandedText: true,
             onChange: (value) {
-              radioGroup = value;
+              setState(() {
+                radioGroup = value;
+              });
             },
           ),
           Padding(
@@ -191,22 +218,14 @@ class PengajuanCutiSetengahHariPegawaiScreen extends StatelessWidget {
               groupValue: radioGroup,
               isExpandedText: true,
               onChange: (value) {
-                radioGroup = value;
+                setState(() {
+                  radioGroup = value;
+                });
               },
             ),
           ),
         ],
       ),
     );
-  }
-
-  /// Navigates back to the previous screen.
-  onTapArrowleftone(BuildContext context) {
-    Navigator.pop(context);
-  }
-
-  /// Navigates to the submitBerhasilScreen when the action is triggered.
-  onTapSubmit(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
   }
 }

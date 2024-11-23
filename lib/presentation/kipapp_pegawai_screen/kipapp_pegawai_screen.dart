@@ -103,14 +103,12 @@ class KipappPegawaiScreen extends StatelessWidget {
                             imagePath: ImageConstant.imgClose,
                             height: 32.h,
                             width: 36.h,
+                            onTap: () {},
                           ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              "Tahunan",
-                              style: CustomTextStyles.titleMediumPrimary,
+                          Text(
+                            "Tahunan",
+                              style: CustomTextStyles.titleMediumPrimary,  
                             ),
-                          )
                         ],
                       ),
                     ),

@@ -61,12 +61,12 @@ class ProfileInfoScreen extends StatelessWidget {
                           style: CustomTextStyles.labelMediumErrorContainer,
                         ),
                       ),
-                      SizedBox(height: 36.h),
+                      SizedBox(height: 20.h),
                       Text(
                         "E-mail",
                         style: CustomTextStyles.labelMediumBluegray200,
                       ),
-                      SizedBox(height: 4.h),
+                      SizedBox(height: 2.h),
                       CustomTextFormField(
                         controller: emailController,
                         hintText: "ruth@email.com",
@@ -146,7 +146,9 @@ class ProfileInfoScreen extends StatelessWidget {
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(

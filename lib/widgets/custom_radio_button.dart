@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/app_export.dart';
 
-// ignore_for_file: must_be_immutable
 class CustomRadioButton extends StatelessWidget {
   CustomRadioButton({
     Key? key,
@@ -10,9 +9,9 @@ class CustomRadioButton extends StatelessWidget {
     this.alignment,
     this.isRightCheck,
     this.iconSize,
-    this.value,
-    this.groupValue,
-    this.text,
+    required this.value,
+    required this.groupValue,
+    required this.text,
     this.width,
     this.padding,
     this.textStyle,
@@ -20,6 +19,8 @@ class CustomRadioButton extends StatelessWidget {
     this.textAlignment,
     this.gradient,
     this.backgroundColor,
+    this.disabledColor = Colors.grey, // Add default grey color
+    this.activeColor = Colors.blue, // Add active color
     this.isExpandedText = false,
   }) : super(key: key);
 
@@ -27,10 +28,10 @@ class CustomRadioButton extends StatelessWidget {
   final Alignment? alignment;
   final bool? isRightCheck;
   final double? iconSize;
-  String? value;
-  final String? groupValue;
+  final String value;
+  final String groupValue;
   final Function(String) onChange;
-  final String? text;
+  final String text;
   final double? width;
   final EdgeInsetsGeometry? padding;
   final TextStyle? textStyle;
@@ -38,80 +39,58 @@ class CustomRadioButton extends StatelessWidget {
   final TextAlign? textAlignment;
   final Gradient? gradient;
   final Color? backgroundColor;
+  final Color disabledColor; // New parameter for disabled state
+  final Color activeColor; // New parameter for active state
   final bool isExpandedText;
 
   @override
   Widget build(BuildContext context) {
-    return alignment != null
-        ? Align(
-            alignment: alignment ?? Alignment.center,
-            child: buildRadioButtonWidget,
-          )
-        : buildRadioButtonWidget;
-  }
+    final isSelected = value == groupValue;
 
-  bool get isGradient => gradient != null;
-
-  BoxDecoration get gradientDecoration => BoxDecoration(gradient: gradient);
-
-  Widget get buildRadioButtonWidget => GestureDetector(
+    return Align(
+      alignment: alignment ?? Alignment.centerLeft,
+      child: GestureDetector(
         onTap: () {
-          onChange(value!);
+          onChange(value);
         },
         child: Container(
           decoration: decoration,
           width: width,
-          padding: padding,
-          child: (isRightCheck ?? false)
-              ? rightSideRadioButton
-              : leftSideRadioButton,
+          padding: padding ?? EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          child: Row(
+            children: [
+              Radio<String>(
+                value: value,
+                groupValue: groupValue,
+                activeColor: activeColor,
+                fillColor: MaterialStateProperty.resolveWith((states) {
+                  return isSelected ? activeColor : disabledColor;
+                }),
+                onChanged: (val) {
+                  onChange(val!);
+                },
+              ),
+              SizedBox(width: 8), // Add space between radio and text
+              if (isExpandedText)
+                Expanded(child: textWidget(isSelected))
+              else
+                textWidget(isSelected),
+            ],
+          ),
         ),
-      );
+      ),
+    );
+  }
 
-  Widget get leftSideRadioButton => Row(
-        children: [
-          radioButtonWidget,
-          SizedBox(
-            width: text != null && text!.isNotEmpty ? 8 : 0,
-          ),
-          isExpandedText ? Expanded(child: textWidget) : textWidget
-        ],
-      );
-
-  Widget get rightSideRadioButton => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          isExpandedText ? Expanded(child: textWidget) : textWidget,
-          SizedBox(
-            width: text != null && text!.isNotEmpty ? 8 : 0,
-          ),
-          radioButtonWidget
-        ],
-      );
-
-  Widget get textWidget => Text(
-        text ?? "",
+  Widget textWidget(bool isSelected) => Text(
+        text,
         textAlign: textAlignment ?? TextAlign.start,
         overflow: overflow,
-        style: textStyle ?? CustomTextStyles.bodyMediumErrorContainer,
+        style: textStyle?.copyWith(
+              color: isSelected ? Colors.black : disabledColor,
+            ) ??
+            TextStyle(
+              color: isSelected ? Colors.black : disabledColor,
+            ),
       );
-
-  Widget get radioButtonWidget => SizedBox(
-        height: iconSize,
-        width: iconSize,
-        child: Radio<String>(
-          visualDensity: VisualDensity(
-            vertical: -4,
-            horizontal: -4,
-          ),
-          value: value ?? "",
-          groupValue: groupValue,
-          onChanged: (value) {
-            onChange(value!);
-          },
-        ),
-      );
-
-  BoxDecoration get radioButtonDecoration =>
-      BoxDecoration(color: backgroundColor);
 }

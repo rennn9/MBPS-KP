@@ -28,6 +28,15 @@ class _MenuAbsenManualPegawai1ScreenState
   String selectedOption = 'WFO'; // Track selected option
   DateTime selectedDate = DateTime.now();
 
+  // Check if all fields are filled
+  // Check if all fields (except WFO/WFOL) are filled and valid
+  bool isFormValid() {
+    return stashdatadateliController.text.isNotEmpty &&
+        masukkanjamController.text.isNotEmpty &&
+        group37017oneController.text.isNotEmpty &&
+        weuipencilfilleController.text.isNotEmpty;
+  }
+
   // Date Picker function
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -270,7 +279,7 @@ class _MenuAbsenManualPegawai1ScreenState
     );
   }
 
-    /// Section Widget
+  /// Section Widget
   Widget _buildColumnmdtwo(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -357,7 +366,7 @@ class _MenuAbsenManualPegawai1ScreenState
     );
   }
 
-  /// Section Widget
+    /// Section Widget
   Widget _buildSubmit(BuildContext context) {
     return CustomElevatedButton(
       height: 32.h,
@@ -366,7 +375,7 @@ class _MenuAbsenManualPegawai1ScreenState
       margin: EdgeInsets.only(right: 2.h),
       buttonStyle: CustomButtonStyles.fillTeal,
       buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-      onPressed: () => onTapSubmit(context), // Calls onTapSubmit function
+      onPressed: isFormValid() ? () => onTapSubmit(context) : null, // Disable the button if the form is invalid
     );
   }
 
