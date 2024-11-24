@@ -12,8 +12,11 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
 
   TextEditingController loremipsumoneController = TextEditingController();
 
+  final String alasanCuti =
+    "Data alasan cuti yang diambil dari folder pengajuan"; // Contoh data statis
+
   final String teamLeaderDecision =
-      "Ditolak oleh Ketua Tim"; // Bisa diganti menjadi "Diterima oleh Ketua Tim"
+    "Ditolak oleh Ketua Tim"; // Bisa diganti menjadi "Diterima oleh Ketua Tim"
 
   final List<String> statusList = [
     "Diajukan",
@@ -125,13 +128,22 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        CustomTextFormField(
-                          controller: loremipsumoneController,
-                          hintText: "Lagi mager bangun pagi aja pak.",
-                          textInputAction: TextInputAction.done,
-                          maxLines: 4,
-                          contentPadding:
-                              EdgeInsets.fromLTRB(10.h, 8.h, 10.h, 12.h),
+                        Container(
+                          width: double.maxFinite,
+                          padding: EdgeInsets.all(10.h),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceVariant,
+                            borderRadius: BorderRadius.circular(8.h),
+                            border: Border.all(
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.12)),
+                          ),
+                          child: Text(
+                            alasanCuti,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontStyle: FontStyle.normal),
+                          ),
                         ),
                         SizedBox(height: 8.h),
                         Align(

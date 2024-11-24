@@ -12,6 +12,9 @@ class DetailRiwayatPegawaiOneScreen extends StatelessWidget {
 
   TextEditingController loremipsumoneController = TextEditingController();
 
+  final String alasanCuti =
+    "Data alasan cuti yang diambil dari folder pengajuan"; // Contoh data statis
+
   final String teamLeaderDecision =
       "Ditolak oleh Ketua Tim"; // Bisa diganti menjadi "Diterima oleh Ketua Tim"
 
@@ -126,13 +129,22 @@ class DetailRiwayatPegawaiOneScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        CustomTextFormField(
-                          controller: loremipsumoneController,
-                          hintText: "Ada yang mau diurus di Kantor Pajak pak...",
-                          textInputAction: TextInputAction.done,
-                          maxLines: 4,
-                          contentPadding:
-                              EdgeInsets.fromLTRB(10.h, 8.h, 10.h, 12.h),
+                        Container(
+                          width: double.maxFinite,
+                          padding: EdgeInsets.all(10.h),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceVariant,
+                            borderRadius: BorderRadius.circular(8.h),
+                            border: Border.all(
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.12)),
+                          ),
+                          child: Text(
+                            alasanCuti,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontStyle: FontStyle.normal),
+                          ),
                         ),
                         SizedBox(height: 8.h),
                         Align(

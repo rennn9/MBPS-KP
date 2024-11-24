@@ -12,8 +12,11 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
 
   TextEditingController loremipsumoneController = TextEditingController();
 
+  final String alasanCuti =
+    "Data alasan cuti yang diambil dari folder pengajuan"; // Contoh data statis
+
   final String teamLeaderDecision =
-      "Ditolak oleh Ketua Tim"; // Bisa diganti menjadi "Diterima oleh Ketua Tim"
+    "Ditolak oleh Ketua Tim"; // Bisa diganti menjadi "Diterima oleh Ketua Tim"
 
   final List<String> statusList = [
     "Diajukan",
@@ -136,13 +139,22 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        CustomTextFormField(
-                          controller: loremipsumoneController,
-                          hintText: "Lorem ipsum .....",
-                          textInputAction: TextInputAction.done,
-                          maxLines: 4,
-                          contentPadding: EdgeInsets.fromLTRB(
-                              10.h, 8.h, 10.h, 12.h),
+                        Container(
+                          width: double.maxFinite,
+                          padding: EdgeInsets.all(10.h),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceVariant,
+                            borderRadius: BorderRadius.circular(8.h),
+                            border: Border.all(
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.12)),
+                          ),
+                          child: Text(
+                            alasanCuti,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontStyle: FontStyle.normal),
+                          ),
                         ),
                         SizedBox(height: 8.h),
                         Align(
@@ -152,14 +164,14 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             style: theme.textTheme.labelLarge,
                           ),
                         ),
-                        SizedBox(height: 6.h),
+                        SizedBox(height: 10.h),
                         SizedBox(
                           width: double.maxFinite,
                           child: Timeline.tileBuilder(
                             shrinkWrap: true,
                             theme: TimelineThemeData(
-                              nodePosition: 0.2,
-                              indicatorPosition: 0.5,
+                              nodePosition: 0.05,
+                              indicatorPosition: 0,
                             ),
                             builder: TimelineTileBuilder.connected(
                               connectionDirection: ConnectionDirection.before,
