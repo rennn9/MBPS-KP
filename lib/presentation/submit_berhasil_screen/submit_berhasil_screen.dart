@@ -40,7 +40,7 @@ class SubmitBerhasilScreen extends StatelessWidget {
                           "Silakan tunggu konfirmasi lebih lanjut",
                           style: theme.textTheme.titleMedium,
                         ),
-                        SizedBox(height: 326.h),
+                        SizedBox(height: 300.h),
                         CustomElevatedButton(
                           height: 32.h,
                           width: 84.h,
@@ -52,22 +52,6 @@ class SubmitBerhasilScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 64.h),
-                  Container(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 14.h,
-                      vertical: 190.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: appTheme.cyan100,
-                      borderRadius: BorderRadiusStyle.roundedBorder186,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [_buildColumn(context)],
-                    ),
-                  )
                 ],
               ),
             ),

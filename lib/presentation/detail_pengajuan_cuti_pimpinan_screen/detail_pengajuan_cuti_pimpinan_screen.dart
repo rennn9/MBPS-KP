@@ -184,7 +184,7 @@ class DetailPengajuanCutiPimpinanScreen extends StatelessWidget {
                                         text: "Tolak",
                                         onPressed: () {
                                           Navigator.pushNamed(context,
-                                              '/ddashboard_pimpinan_screen');
+                                              '/dashboard_pimpinan_screen');
                                         },
                                       ),
                                     ),

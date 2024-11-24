@@ -314,7 +314,7 @@ class _KipappPegawaiTwoScreenState extends State<KipappPegawaiTwoScreen> {
       value: tahun2028one,
       onChanged: (value) {
         setState(() {
-          tahun2024one = value ?? false;
+          tahun2028one = value ?? false;
         });
       },
     );
