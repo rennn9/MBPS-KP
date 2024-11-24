@@ -4,7 +4,6 @@ import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
-import '../../widgets/custom_checkbox_button.dart';
 import '../../widgets/custom_drop_down.dart';
 import '../../widgets/custom_elevated_button.dart';
 
@@ -32,6 +31,20 @@ class KipappPegawaiOneScreen extends StatefulWidget  {
   bool oktoberone = false;
   bool novemberone = false;
   bool desemberone = false;
+
+  bool get isSubmitEnabled =>
+      januarione ||
+      februarione ||
+      maretone ||
+      aprilone ||
+      meione ||
+      junione ||
+      julione ||
+      agustusone ||
+      septemberone ||
+      oktoberone ||
+      novemberone ||
+      desemberone ;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +109,10 @@ class KipappPegawaiOneScreen extends StatefulWidget  {
                               SizedBox(width: 18.h),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.pushNamed(context,
+                                        AppRoutes.kipappPegawaiTwoScreen);
+                                  },
                                   child: Container(
                                     width: double.maxFinite,
                                     padding:
@@ -201,9 +217,18 @@ class KipappPegawaiOneScreen extends StatefulWidget  {
                           height: 32.h,
                           width: 76.h,
                           text: "Submit",
-                          buttonStyle: CustomButtonStyles.fillTeal,
-                          buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-                          onPressed: () {},
+                            buttonStyle: isSubmitEnabled
+                                ? CustomButtonStyles.fillTeal
+                                : CustomButtonStyles
+                                    .fillGray, // Gaya tombol untuk tombol non-aktif
+                            buttonTextStyle:
+                                CustomTextStyles.titleSmallWhiteA700,
+                            onPressed: isSubmitEnabled
+                                ? () {
+                                    Navigator.pushNamed(
+                                        context, '/submit_berhasil_screen');
+                                  }
+                                : null, // Tombol tidak aktif jika isSubmitEnabled = false
                         ),
                         ),
                       ],
@@ -226,7 +251,9 @@ class KipappPegawaiOneScreen extends StatefulWidget  {
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         height: 16.h,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(

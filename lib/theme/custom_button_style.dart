@@ -92,6 +92,12 @@ class CustomButtonStyles {
         elevation: 0,
         padding: EdgeInsets.zero,
       );
+        static final ButtonStyle fillGray = ElevatedButton.styleFrom(
+    backgroundColor: Colors.grey[400], // Warna tombol non-aktif
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+  );
 
   // Outline button style
   static ButtonStyle get outlineGray => OutlinedButton.styleFrom(
