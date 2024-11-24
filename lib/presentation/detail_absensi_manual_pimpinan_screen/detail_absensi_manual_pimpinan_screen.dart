@@ -5,7 +5,6 @@ import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_elevated_button.dart';
-import '../../widgets/custom_text_form_field.dart';
 
 // ignore_for_file: must_be_immutable
 class DetailAbsensiManualPimpinanScreen extends StatelessWidget {
@@ -167,16 +166,35 @@ class DetailAbsensiManualPimpinanScreen extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(height: 6.h),
-                              Padding(
-                                padding: EdgeInsets.only(left: 4.h),
-                                child: CustomTextFormField(
-                                  controller: descriptionController,
-                                  hintText:
-                                      "Lorem ipsum dolor sit amet consectetur. Arcu quisque pretium feugiat sapien egestas consectetur. A maecenas purus at odio a lorem. Fermentum vel auctor suspendisse id volutpat viverra aliquam enim. Vitae quis mattis eu ultricies vulputate ipsum eu.",
-                                  textInputAction: TextInputAction.done,
-                                  maxLines: 6,
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(12.h, 8.h, 12.h, 4.h),
+                             Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 4.h),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.h,
+                                        vertical: 8
+                                            .h), // Menambah padding agar teks tidak menempel
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8
+                                          .h), // Menambahkan border-radius jika diinginkan
+                                      border: Border.all(
+                                        color: appTheme
+                                            .blueGray100, // Menambahkan border dengan warna
+                                        width: 1.h, // Ketebalan border
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Lorem ipsum dolor sit amet consectetur. Arcu quisque pretium feugiat sapien egestas consectetur. A maecenas purus at odio a lorem.",
+                                      style: CustomTextStyles
+                                          .labelLargeErrorContainer
+                                          .copyWith(
+                                        color: theme.colorScheme.errorContainer
+                                            .withOpacity(
+                                                1), // Anda bisa menyesuaikan gaya teks di sini
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 10.h),
