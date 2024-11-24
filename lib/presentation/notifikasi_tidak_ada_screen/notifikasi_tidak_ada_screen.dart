@@ -3,6 +3,7 @@ import '../../core/app_export.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
+import '../dashboard_pegawai_screen/dashboard_pegawai_screen.dart';
 
 class NotifikasiTidakAdaScreen extends StatelessWidget {
   const NotifikasiTidakAdaScreen({Key? key}) : super(key: key);
@@ -35,7 +36,16 @@ class NotifikasiTidakAdaScreen extends StatelessWidget {
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  DashboardPegawaiScreen(), // Update with the correct screen class
+            ),
+            (route) => false, // Clears the navigation stack
+          );
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(

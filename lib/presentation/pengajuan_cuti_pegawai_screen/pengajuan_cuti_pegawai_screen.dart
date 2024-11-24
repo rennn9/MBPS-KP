@@ -8,6 +8,7 @@ import '../../widgets/custom_drop_down.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_text_form_field.dart';
 import '../pengajuan_cuti_setengah_hari_pegawai_screen/pengajuan_cuti_setengah_hari_pegawai_screen.dart';
+import '../dashboard_pegawai_screen/dashboard_pegawai_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
@@ -110,14 +111,22 @@ class _PengajuanCutiPegawaiScreenState
     );
   }
 
-  /// Section Widget
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 43.h,
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  DashboardPegawaiScreen(), // Update with the correct screen class
+            ),
+            (route) => false, // Clears the navigation stack
+          );
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(
@@ -343,9 +352,7 @@ class _PengajuanCutiPegawaiScreenState
       text: "Submit",
       buttonStyle: CustomButtonStyles.fillTeal,
       buttonTextStyle: CustomTextStyles.titleMediumWhiteA700,
-      onPressed: () {
-        print("Submit pressed");
-      },
+      onPressed: () => onTapSubmit(context),
     );
   }
 

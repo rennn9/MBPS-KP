@@ -9,6 +9,7 @@ import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_radio_button.dart';
 import '../../widgets/custom_text_form_field.dart';
 import '../pengajuan_cuti_pegawai_screen/pengajuan_cuti_pegawai_screen.dart';
+import '../dashboard_pegawai_screen/dashboard_pegawai_screen.dart';
 
 // ignore_for_file: must_be_immutable
 
@@ -79,9 +80,7 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
                         margin: EdgeInsets.only(right: 6.h),
                         buttonStyle: CustomButtonStyles.fillTeal,
                         buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-                        onPressed: () {
-                          print("Selected session: $radioGroup");
-                        },
+                        onPressed: () => onTapSubmit(context),
                         alignment: Alignment.centerRight,
                       ),
                     ],
@@ -103,7 +102,14 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
         onTap: () {
-          Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  DashboardPegawaiScreen(), // Update with the correct screen class
+            ),
+            (route) => false, // Clears the navigation stack
+          );
         },
       ),
       centerTitle: true,
@@ -227,5 +233,10 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
         ],
       ),
     );
+  }
+
+   /// Navigates to the submitBerhasilScreen when the action is triggered.
+  onTapSubmit(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
   }
 }

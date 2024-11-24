@@ -47,7 +47,7 @@ class SubmitBerhasilScreen extends StatelessWidget {
                           text: "Close",
                           buttonStyle: CustomButtonStyles.fillTeal,
                           buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-                          onPressed: () {},
+                          onPressed: () => onTapClose(context), // Updated here
                         )
                       ],
                     ),
@@ -97,6 +97,6 @@ class SubmitBerhasilScreen extends StatelessWidget {
 
   /// Navigates to the dashboardPegawaiScreen when the action is triggered.
   onTapClose(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.dashboardPegawaiScreen);
+    Navigator.pushNamed(context, AppRoutes.dashboardPegawaiScreen); // Navigation logic
   }
 }

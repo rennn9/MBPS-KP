@@ -144,7 +144,9 @@ class _MenuAbsenManualPegawai1ScreenState
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(
@@ -366,7 +368,7 @@ class _MenuAbsenManualPegawai1ScreenState
     );
   }
 
-    /// Section Widget
+  /// Section Widget
   Widget _buildSubmit(BuildContext context) {
     return CustomElevatedButton(
       height: 32.h,
@@ -375,18 +377,15 @@ class _MenuAbsenManualPegawai1ScreenState
       margin: EdgeInsets.only(right: 2.h),
       buttonStyle: CustomButtonStyles.fillTeal,
       buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-      onPressed: isFormValid() ? () => onTapSubmit(context) : null, // Disable the button if the form is invalid
+      onPressed: isFormValid()
+          ? () => onTapSubmit(context)
+          : null, // Disable the button if the form is invalid
     );
   }
 
   /// Navigates back to the previous screen.
   onTapArrowleftone(BuildContext context) {
     Navigator.pop(context);
-  }
-
-  /// Navigates to the menuAbsenManualPegawai2Screen when the action is triggered.
-  onTapWfol(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuAbsenManualPegawai2Screen);
   }
 
   /// Navigates to the submitBerhasilScreen when the action is triggered.
