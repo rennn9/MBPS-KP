@@ -35,7 +35,9 @@ class KipappPegawaiScreen extends StatelessWidget {
       leading: AppbarLeadingImage(
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
-        onTap: () {},
+        onTap: (){
+          Navigator.pop(context);
+        },
       ),
       centerTitle: true,
       title: AppbarTitle(
@@ -59,6 +61,10 @@ class KipappPegawaiScreen extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.kipappPegawaiOneScreen);
+                      },
                   child: Container(
                     width: double.maxFinite,
                     padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -83,11 +89,15 @@ class KipappPegawaiScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  ),
                 ),
                 SizedBox(width: 18.h),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, AppRoutes.kipappPegawaiTwoScreen);
+                    },
                     child: Container(
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(vertical: 10.h),
