@@ -3,9 +3,20 @@ import '../../../core/app_export.dart';
 
 // ignore_for_file: must_be_immutable
 class RiwayatOneItemWidget extends StatelessWidget {
-  RiwayatOneItemWidget({Key? key, this.onTapRow18oktober}) : super(key: key);
+  final String title;
+  final String description;
+  final String status;
+  final String date;
+  final VoidCallback? onTapRow18oktober;
 
-  VoidCallback? onTapRow18oktober;
+  RiwayatOneItemWidget({
+    Key? key,
+    required this.title,
+    required this.description,
+    required this.status,
+    required this.date,
+    this.onTapRow18oktober,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +79,7 @@ class RiwayatOneItemWidget extends StatelessWidget {
                           width: 10.h,
                         ),
                         Text(
-                          "Disetujui",
+                          "Ditolak",
                           style: CustomTextStyles.labelMediumOnError,
                         ),
                       ],

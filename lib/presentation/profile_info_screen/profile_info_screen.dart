@@ -67,16 +67,16 @@ class ProfileInfoScreen extends StatelessWidget {
                         style: CustomTextStyles.labelMediumBluegray200,
                       ),
                       SizedBox(height: 2.h),
-                      CustomTextFormField(
-                        controller: emailController,
-                        hintText: "ruth@email.com",
-                        hintStyle:
-                            CustomTextStyles.labelLargeErrorContainerBold,
-                        textInputType: TextInputType.emailAddress,
-                        contentPadding:
-                            EdgeInsets.fromLTRB(12.h, 12.h, 12.h, 4.h),
-                        borderDecoration:
-                            TextFormFieldStyleHelper.underLineBlueGray,
+                      Text(
+                        "ruth@gmail.com",
+                        style: CustomTextStyles.labelLargeErrorContainerBold,
+                      ),
+                      SizedBox(height: 2.h),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Divider(
+                          color: appTheme.blueGray100,
+                        ),
                       ),
                       SizedBox(height: 20.h),
                       Text(
@@ -84,15 +84,16 @@ class ProfileInfoScreen extends StatelessWidget {
                         style: CustomTextStyles.labelMediumBluegray200,
                       ),
                       SizedBox(height: 2.h),
-                      CustomTextFormField(
-                        controller: userNameController,
-                        hintText: "Ruthveralda Sakoikoi",
-                        hintStyle:
-                            CustomTextStyles.labelLargeErrorContainerBold,
-                        contentPadding:
-                            EdgeInsets.fromLTRB(12.h, 12.h, 12.h, 4.h),
-                        borderDecoration:
-                            TextFormFieldStyleHelper.underLineBlueGray,
+                      Text(
+                        "Ruth",
+                        style: CustomTextStyles.labelLargeErrorContainerBold,
+                      ),
+                      SizedBox(height: 2.h),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Divider(
+                          color: appTheme.blueGray100,
+                        ),
                       ),
                       SizedBox(height: 20.h),
                       Text(
@@ -100,25 +101,25 @@ class ProfileInfoScreen extends StatelessWidget {
                         style: CustomTextStyles.labelMediumBluegray200,
                       ),
                       SizedBox(height: 2.h),
-                      CustomTextFormField(
-                        controller: group1155oneController,
-                        hintText: "20244444444444444",
-                        hintStyle:
-                            CustomTextStyles.labelLargeErrorContainerBold,
-                        textInputAction: TextInputAction.done,
-                        contentPadding:
-                            EdgeInsets.fromLTRB(12.h, 12.h, 12.h, 4.h),
-                        borderDecoration:
-                            TextFormFieldStyleHelper.underLineBlueGray,
+                      Text(
+                        "20241234567890",
+                        style: CustomTextStyles.labelLargeErrorContainerBold,
+                      ),
+                      SizedBox(height: 2.h),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Divider(
+                          color: appTheme.blueGray100,
+                        ),
                       ),
                       SizedBox(height: 20.h),
                       Text(
-                        "Phone Number",
+                        "Jabatan",
                         style: CustomTextStyles.labelMediumBluegray200,
                       ),
                       SizedBox(height: 2.h),
                       Text(
-                        "08xxxxxxxxxx",
+                        "Ahli Madya",
                         style: CustomTextStyles.labelLargeErrorContainerBold,
                       ),
                       SizedBox(height: 2.h),

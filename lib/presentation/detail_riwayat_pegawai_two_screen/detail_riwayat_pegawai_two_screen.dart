@@ -86,7 +86,9 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                             style: CustomTextStyles.titleSmallMedium,
                           ),
                         ),
-                        SizedBox(height: 14.h),
+                        SizedBox(height: 6.h),
+                        const Divider(),
+                        SizedBox(height: 10.h),
                         SizedBox(
                           width: double.maxFinite,
                           child: _buildRowTanggal(
@@ -95,7 +97,7 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                             tanggalValue: "Setengah Hari",
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
@@ -106,7 +108,7 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                             tanggalValue: "7 Oktober 2024",
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
@@ -117,7 +119,7 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                             tanggalValue: "15 Oktober 2024",
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         const Divider(),
                         SizedBox(height: 10.h),
                         Align(
@@ -127,7 +129,7 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                             style: theme.textTheme.labelLarge,
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         Container(
                           width: double.maxFinite,
                           padding: EdgeInsets.all(10.h),
@@ -145,7 +147,7 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                                 fontStyle: FontStyle.normal),
                           ),
                         ),
-                        SizedBox(height: 8.h),
+                        SizedBox(height: 10.h),
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -153,14 +155,14 @@ class DetailRiwayatPegawaiTwoScreen extends StatelessWidget {
                             style: theme.textTheme.labelLarge,
                           ),
                         ),
-                        SizedBox(height: 6.h),
+                        SizedBox(height: 10.h),
                         SizedBox(
                           width: double.maxFinite,
                           child: Timeline.tileBuilder(
                             shrinkWrap: true,
                             theme: TimelineThemeData(
-                              nodePosition: 0.2,
-                              indicatorPosition: 0.5,
+                              nodePosition: 0.05,
+                              indicatorPosition: 0,
                             ),
                             builder: TimelineTileBuilder.connected(
                               connectionDirection: ConnectionDirection.before,

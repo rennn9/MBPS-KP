@@ -86,7 +86,9 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             style: CustomTextStyles.titleSmallMedium,
                           ),
                         ),
-                        SizedBox(height: 14.h),
+                        SizedBox(height: 6.h),
+                        const Divider(),
+                        SizedBox(height: 10.h),
                         SizedBox(
                           width: double.maxFinite,
                           child: _buildRowTanggal(
@@ -95,7 +97,7 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             tanggalValue: "WOFL",
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
@@ -106,7 +108,7 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             tanggalValue: "15 Oktober 2024",
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
@@ -117,7 +119,7 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             tanggalValue: "07.30",
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         const Divider(),
                         SizedBox(height: 10.h),
                         SizedBox(
@@ -128,7 +130,7 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             tanggalValue: "18.00",
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         const Divider(),
                         SizedBox(height: 10.h),
                         Align(
@@ -138,7 +140,7 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                             style: theme.textTheme.labelLarge,
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 6.h),
                         Container(
                           width: double.maxFinite,
                           padding: EdgeInsets.all(10.h),
@@ -156,7 +158,7 @@ class DetailRiwayatPegawaiFourScreen extends StatelessWidget {
                                 fontStyle: FontStyle.normal),
                           ),
                         ),
-                        SizedBox(height: 8.h),
+                        SizedBox(height: 10.h),
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
