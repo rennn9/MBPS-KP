@@ -91,7 +91,7 @@ class NotifikasiKetuaTimScreen extends StatelessWidget {
             onTapRowandilatifah: () {
               Navigator.pushNamed(
                 context,
-                AppRoutes.detailPengajuanCutiKetuaTimOneScreen,
+                AppRoutes.detailPengajuanCutiKetuaTimScreen,
               );
             },
           );
@@ -108,6 +108,6 @@ class NotifikasiKetuaTimScreen extends StatelessWidget {
   /// Navigates to the detailPengajuanCutiKetuaTimOneScreen when the action is triggered.
   onTapRowandilatifah(BuildContext context) {
     Navigator.pushNamed(
-        context, AppRoutes.detailPengajuanCutiKetuaTimOneScreen);
+        context, AppRoutes.detailPengajuanCutiKetuaTimScreen);
   }
 }

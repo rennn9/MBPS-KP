@@ -240,18 +240,6 @@ class AppNavigationScreen extends StatelessWidget {
                         ),
                         _buildScreenTitle(
                           context,
-                          screenTitle: "Detail Pengajuan Cuti (Ketua TIM One)",
-                          onTapScreenTitle: () => onTapScreenTitle(context,
-                              AppRoutes.detailPengajuanCutiKetuaTimOneScreen),
-                        ),
-                        _buildScreenTitle(
-                          context,
-                          screenTitle: "Detail Absensi Manual(Ketua TIM One)",
-                          onTapScreenTitle: () => onTapScreenTitle(context,
-                              AppRoutes.detailAbsensiManualKetuaTimOneScreen),
-                        ),
-                        _buildScreenTitle(
-                          context,
                           screenTitle: "Dashboard Pimpinan",
                           onTapScreenTitle: () => onTapScreenTitle(
                               context, AppRoutes.dashboardPimpinanScreen),

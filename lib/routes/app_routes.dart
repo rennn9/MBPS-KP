@@ -3,13 +3,9 @@ import '../presentation/app_navigation_screen/app_navigation_screen.dart';
 import '../presentation/dashboard_ketua_tim_screen/dashboard_ketua_tim_screen.dart';
 import '../presentation/dashboard_pegawai_screen/dashboard_pegawai_screen.dart';
 import '../presentation/dashboard_pimpinan_screen/dashboard_pimpinan_screen.dart';
-import '../presentation/detail_absensi_manual_ketua_tim_one_screen/detail_absensi_manual_ketua_tim_one_screen.dart';
 import '../presentation/detail_absensi_manual_ketua_tim_screen/detail_absensi_manual_ketua_tim_screen.dart';
-import '../presentation/detail_absensi_manual_pimpinan_one_screen/detail_absensi_manual_pimpinan_one_screen.dart';
 import '../presentation/detail_absensi_manual_pimpinan_screen/detail_absensi_manual_pimpinan_screen.dart';
-import '../presentation/detail_pengajuan_cuti_ketua_tim_one_screen/detail_pengajuan_cuti_ketua_tim_one_screen.dart';
 import '../presentation/detail_pengajuan_cuti_ketua_tim_screen/detail_pengajuan_cuti_ketua_tim_screen.dart';
-import '../presentation/detail_pengajuan_cuti_pimpinan_one_screen/detail_pengajuan_cuti_pimpinan_one_screen.dart';
 import '../presentation/detail_pengajuan_cuti_pimpinan_screen/detail_pengajuan_cuti_pimpinan_screen.dart';
 import '../presentation/detail_pengajuan_kipapp_ketua_tim_screen/detail_pengajuan_kipapp_ketua_tim_screen.dart';
 import '../presentation/detail_pengajuan_kipapp_pimpinan_screen/detail_pengajuan_kipapp_pimpinan_screen.dart';
@@ -87,10 +83,6 @@ class AppRoutes {
   static const String detailPengajuanKipappKetuaTimScreen =
       '/detail_pengajuan_kipapp_ketua_tim_screen';
   static const String notifikasiKetuaTimScreen = '/notifikasi_ketua_tim_screen';
-  static const String detailPengajuanCutiKetuaTimOneScreen =
-      '/detail_pengajuan_cuti_ketua_tim_one_screen';
-  static const String detailAbsensiManualKetuaTimOneScreen =
-      '/detail_absensi_manual_ketua_tim_one_screen';
   static const String dashboardPimpinanScreen = '/dashboard_pimpinan_screen';
   static const String detailPengajuanCutiPimpinanScreen =
       '/detail_pengajuan_cuti_pimpinan_screen';
@@ -103,10 +95,6 @@ class AppRoutes {
       '/profile_info_pimpinan_screen';
   static const String notifikasiTidakAdaScreen = '/notifikasi_tidak_ada_screen';
   static const String tampilanErrorScreen = '/tampilan_error_screen';
-  static const String detailPengajuanCutiPimpinanOneScreen =
-      '/detail_pengajuan_cuti_pimpinan_one_screen';
-  static const String detailAbsensiManualPimpinanOneScreen =
-      '/detail_absensi_manual_pimpinan_one_screen';
   static const String appNavigationScreen = '/app_navigation_screen';
   static const String initialRoute = '/initialRoute';
 
@@ -146,10 +134,6 @@ class AppRoutes {
     detailPengajuanKipappKetuaTimScreen: (context) =>
         DetailPengajuanKipappKetuaTimScreen(),
     notifikasiKetuaTimScreen: (context) => NotifikasiKetuaTimScreen(),
-    detailPengajuanCutiKetuaTimOneScreen: (context) =>
-        DetailPengajuanCutiKetuaTimOneScreen(),
-    detailAbsensiManualKetuaTimOneScreen: (context) =>
-        DetailAbsensiManualKetuaTimOneScreen(),
     dashboardPimpinanScreen: (context) => DashboardPimpinanScreen(),
     detailPengajuanCutiPimpinanScreen: (context) =>
         DetailPengajuanCutiPimpinanScreen(),
@@ -161,10 +145,6 @@ class AppRoutes {
     profileInfoPimpinanScreen: (context) => ProfileInfoPimpinanScreen(),
     notifikasiTidakAdaScreen: (context) => NotifikasiTidakAdaScreen(),
     tampilanErrorScreen: (context) => TampilanErrorScreen(),
-    detailPengajuanCutiPimpinanOneScreen: (context) =>
-        DetailPengajuanCutiPimpinanOneScreen(),
-    detailAbsensiManualPimpinanOneScreen: (context) =>
-        DetailAbsensiManualPimpinanOneScreen(),
     appNavigationScreen: (context) => AppNavigationScreen(),
     initialRoute: (context) => SplashscreenoneScreen()
   };

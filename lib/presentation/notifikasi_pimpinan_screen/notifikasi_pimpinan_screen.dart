@@ -90,7 +90,7 @@ class NotifikasiPimpinanScreen extends StatelessWidget {
             onTapRowandilatifah: () {
               Navigator.pushNamed(
                 context,
-                AppRoutes.detailPengajuanCutiPimpinanOneScreen,
+                AppRoutes.detailPengajuanCutiPimpinanScreen,
               );
             },
           );
@@ -107,6 +107,6 @@ class NotifikasiPimpinanScreen extends StatelessWidget {
   /// Navigates to the detailPengajuanCutiPimpinanOneScreen when the action is triggered.
   onTapRowandilatifah(BuildContext context) {
     Navigator.pushNamed(
-        context, AppRoutes.detailPengajuanCutiPimpinanOneScreen);
+        context, AppRoutes.detailPengajuanCutiPimpinanScreen);
   }
 }
