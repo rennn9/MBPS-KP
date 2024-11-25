@@ -96,5 +96,6 @@ class ImageConstant {
   static String imgEllipse59 = '$imagePath/img_ellipse_59.svg';
   static String imgEllipse60 = '$imagePath/img_ellipse_60.svg';
   static String imgEllipse61 = '$imagePath/img_ellipse_61.svg';
+  static String imgCrossCircle = '$imagePath/img_crosss_circle.svg';
   static String imageNotFound = 'assets/images/image_not_found.png';
 }

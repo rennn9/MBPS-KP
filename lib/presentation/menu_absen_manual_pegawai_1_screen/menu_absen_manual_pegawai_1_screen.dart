@@ -235,7 +235,7 @@ class _MenuAbsenManualPegawai1ScreenState
           suffix: Container(
             margin: EdgeInsets.fromLTRB(16.h, 12.h, 10.h, 12.h),
             child: CustomImageView(
-              imagePath: ImageConstant.imgStashdatadatelight,
+              imagePath: ImageConstant.imgVectorErrorcontainer,
               height: 26.h,
               width: 32.h,
               fit: BoxFit.contain,
