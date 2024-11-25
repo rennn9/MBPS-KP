@@ -25,13 +25,12 @@ class _MenuAbsenManualPegawai1ScreenState
   TextEditingController group37017oneController = TextEditingController();
   TextEditingController weuipencilfilleController = TextEditingController();
 
-  String selectedOption = 'WFO'; // Track selected option
+  String selectedOption = ''; // Track selected option
   DateTime selectedDate = DateTime.now();
 
-  // Check if all fields are filled
-  // Check if all fields (except WFO/WFOL) are filled and valid
   bool isFormValid() {
-    return stashdatadateliController.text.isNotEmpty &&
+    return selectedOption.isNotEmpty && // Ensure WFO or WFOL is selected
+        stashdatadateliController.text.isNotEmpty &&
         masukkanjamController.text.isNotEmpty &&
         group37017oneController.text.isNotEmpty &&
         weuipencilfilleController.text.isNotEmpty;
@@ -45,12 +44,13 @@ class _MenuAbsenManualPegawai1ScreenState
       firstDate: DateTime(2021),
       lastDate: DateTime(2025),
     );
-    if (picked != null && picked != selectedDate)
+    if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
         stashdatadateliController.text =
             DateFormat('dd/MM/yyyy').format(selectedDate);
       });
+    }
   }
 
   // Custom Time Picker with Spinner
@@ -79,7 +79,9 @@ class _MenuAbsenManualPegawai1ScreenState
               ),
               ElevatedButton(
                 onPressed: () {
-                  controller.text = "${DateFormat.jm().format(selectedTime)}";
+                  setState(() {
+                    controller.text = DateFormat.jm().format(selectedTime);
+                  });
                   Navigator.pop(context);
                 },
                 child: Text("OK"),
@@ -290,10 +292,10 @@ class _MenuAbsenManualPegawai1ScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Tanggal Absen",
+            "Tanggal Kehadiran",
             style: CustomTextStyles.titleLargeErrorContainer,
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 20.h),
           _buildStashdatadateli(context)
         ],
       ),
@@ -309,43 +311,15 @@ class _MenuAbsenManualPegawai1ScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Jam Absen",
+            "Jam Kehadiran",
             style: CustomTextStyles.titleLargeErrorContainer,
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: 20.h),
           _buildMasukkanjam(context),
-          SizedBox(height: 14.h),
+          SizedBox(height: 20.h),
           _buildGroup37017one(context)
         ],
       ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildWeuipencilfille(BuildContext context) {
-    return CustomTextFormField(
-      controller: weuipencilfilleController,
-      hintText: "Berikan Alasan...",
-      hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-      textInputAction: TextInputAction.done,
-      suffix: Container(
-        margin: EdgeInsets.fromLTRB(16.h, 12.h, 14.h, 12.h),
-        child: CustomImageView(
-          imagePath: ImageConstant.imgWeuipencilfilled,
-          height: 24.h,
-          width: 24.h,
-          fit: BoxFit.contain,
-        ),
-      ),
-      suffixConstraints: BoxConstraints(
-        maxHeight: 150.h,
-      ),
-      maxLines: 6,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 14.h,
-        vertical: 12.h,
-      ),
-      borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL41,
     );
   }
 
@@ -358,11 +332,18 @@ class _MenuAbsenManualPegawai1ScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Alasan",
+            "Deskripsi",
             style: CustomTextStyles.titleLargeErrorContainer,
           ),
-          SizedBox(height: 12.h),
-          _buildWeuipencilfille(context)
+          SizedBox(height: 20.h),
+          CustomTextFormField(
+            controller: weuipencilfilleController,
+            hintText: "Tulis deskripsi di sini...",
+            hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+            contentPadding: EdgeInsets.all(14.h),
+            borderDecoration:
+                TextFormFieldStyleHelper.outlineErrorContainerTL41,
+          )
         ],
       ),
     );
@@ -375,8 +356,12 @@ class _MenuAbsenManualPegawai1ScreenState
       width: 76.h,
       text: "Submit",
       margin: EdgeInsets.only(right: 2.h),
-      buttonStyle: CustomButtonStyles.fillTeal,
-      buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
+      buttonStyle: isFormValid()
+          ? CustomButtonStyles.fillTeal // Active button style
+          : CustomButtonStyles.fillGray, // Disabled button style
+      buttonTextStyle: isFormValid()
+          ? CustomTextStyles.titleSmallWhiteA700 // Active text style
+          : CustomTextStyles.bodyMediumErrorContainer_1, // Disabled text style
       onPressed: isFormValid()
           ? () => onTapSubmit(context)
           : null, // Disable the button if the form is invalid

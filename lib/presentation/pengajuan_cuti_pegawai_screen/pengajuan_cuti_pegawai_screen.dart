@@ -43,6 +43,14 @@ class _PengajuanCutiPegawaiScreenState
   DateTime? selectedMulaiDate;
   DateTime? selectedSelesaiDate;
 
+  bool isFormValid() {
+    return selectedOption.isNotEmpty &&
+        group37040oneController.text.isNotEmpty &&
+        stashdatadateliController.text.isNotEmpty &&
+        mulaiController.text.isNotEmpty &&
+        berikanController.text.isNotEmpty;
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate) async {
     final DateTime? picked = await showDatePicker(
@@ -348,11 +356,19 @@ class _PengajuanCutiPegawaiScreenState
 
   Widget _buildSubmit(BuildContext context) {
     return CustomElevatedButton(
-      height: 50.h,
+      height: 32.h,
+      width: 76.h,
       text: "Submit",
-      buttonStyle: CustomButtonStyles.fillTeal,
-      buttonTextStyle: CustomTextStyles.titleMediumWhiteA700,
-      onPressed: () => onTapSubmit(context),
+      margin: EdgeInsets.only(right: 2.h),
+      buttonStyle: isFormValid()
+          ? CustomButtonStyles.fillTeal // Active button style
+          : CustomButtonStyles.fillGray, // Disabled button style
+      buttonTextStyle: isFormValid()
+          ? CustomTextStyles.titleSmallWhiteA700 // Active text style
+          : CustomTextStyles.bodyMediumErrorContainer_1, // Disabled text style
+      onPressed: isFormValid()
+          ? () => onTapSubmit(context)
+          : null, // Disable the button if the form is invalid
     );
   }
 

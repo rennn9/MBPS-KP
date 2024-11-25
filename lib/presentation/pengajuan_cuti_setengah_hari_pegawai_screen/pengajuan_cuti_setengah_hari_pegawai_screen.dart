@@ -36,6 +36,13 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
   TextEditingController berikanController = TextEditingController();
   String radioGroup = "";
 
+  bool isFormValid() {
+    // Ensure all fields are filled
+    return selectedOption.isNotEmpty &&
+        berikanController.text.isNotEmpty &&
+        radioGroup.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -77,10 +84,16 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
                         height: 32.h,
                         width: 76.h,
                         text: "Submit",
-                        margin: EdgeInsets.only(right: 6.h),
-                        buttonStyle: CustomButtonStyles.fillTeal,
-                        buttonTextStyle: CustomTextStyles.titleSmallWhiteA700,
-                        onPressed: () => onTapSubmit(context),
+                        margin: EdgeInsets.only(bottom: 20.h),
+                        buttonStyle: isFormValid()
+                            ? CustomButtonStyles.fillTeal // Active style
+                            : CustomButtonStyles.fillGray, // Disabled style
+                        buttonTextStyle: isFormValid()
+                            ? CustomTextStyles.titleSmallWhiteA700
+                            : CustomTextStyles.bodyMediumErrorContainer_1,
+                        onPressed: isFormValid()
+                            ? () => onTapSubmit(context)
+                            : null, // Disable button if form is invalid
                         alignment: Alignment.centerRight,
                       ),
                     ],
@@ -187,13 +200,11 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
           SizedBox(height: 12.h),
           CustomTextFormField(
             controller: berikanController,
-            hintText: "Berikan Alasan...",
+            hintText: "Masukkan Alasan",
             hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-            textInputAction: TextInputAction.done,
             contentPadding: EdgeInsets.all(14.h),
-            borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL4,
-            filled: true,
-            fillColor: appTheme.whiteA700,
+            borderDecoration:
+                TextFormFieldStyleHelper.outlineErrorContainerTL41,
           ),
         ],
       ),
@@ -235,7 +246,7 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
     );
   }
 
-   /// Navigates to the submitBerhasilScreen when the action is triggered.
+  /// Navigates to the submitBerhasilScreen when the action is triggered.
   onTapSubmit(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
   }
