@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'projectbps',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.riwayatScreen,
+          initialRoute: AppRoutes.initialRoute,
           routes: AppRoutes.routes,
           builder: (context, child) {
             return MediaQuery(

@@ -79,7 +79,7 @@ class RiwayatOneItemWidget extends StatelessWidget {
                           width: 10.h,
                         ),
                         Text(
-                          "Ditolak",
+                          "Disetujui",
                           style: CustomTextStyles.labelMediumOnError,
                         ),
                       ],

@@ -68,7 +68,7 @@ class RiwayatScreen extends StatelessWidget {
     RiwayatItem(
       title: "Pengajuan Cuti",
       description: "Cuti 1 hari",
-      status: "Ditolak",
+      status: "Disetujui",
       date: "18 Oktober 2024",
       route: AppRoutes.detailRiwayatPegawaiScreen,
     ),
