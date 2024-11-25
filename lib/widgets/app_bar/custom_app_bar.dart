@@ -58,7 +58,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           decoration: BoxDecoration(
             color: appTheme.teal200,
             borderRadius: BorderRadius.vertical(
-              top: Radius.circular(10.h),
+              bottom: Radius.circular(5.h),
             ),
           ),
         );
