@@ -62,25 +62,38 @@ class RiwayatOneItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Pengajuan Cuti",
-                    style: CustomTextStyles.labelLargeErrorContainerBold_1,
+                    title,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14.h,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
-                    "Cuti 1 hari",
-                    style: theme.textTheme.labelMedium,
+                    description,
+                    style: TextStyle(
+                      fontSize: 10.h,
+                      color: Colors.black
+                    ),
                   ),
                   SizedBox(
                     width: double.maxFinite,
                     child: Row(
                       children: [
                         CustomImageView(
-                          imagePath: ImageConstant.imgCheckmark,
+                          imagePath: status == "Disetujui"
+                            ? ImageConstant.imgCheckmark
+                            : ImageConstant.imgCrossCircle,
                           height: 10.h,
                           width: 10.h,
                         ),
+                        SizedBox(width: 4.h),
                         Text(
-                          "Disetujui",
-                          style: CustomTextStyles.labelMediumOnError,
+                          status,
+                          style: TextStyle(
+                            color: status == "Disetujui" ? Colors.green : Colors.red,
+                            fontSize: 10.h
+                          )
                         ),
                       ],
                     ),
@@ -91,8 +104,9 @@ class RiwayatOneItemWidget extends StatelessWidget {
             SizedBox(width: 12.h),
             Align(
               alignment: Alignment.topCenter,
-              child: Text(
-                "18 Oktober 2024",
+              child: 
+              Text(
+                date,
                 style: theme.textTheme.labelMedium,
               ),
             ),

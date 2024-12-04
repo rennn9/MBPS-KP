@@ -24,6 +24,46 @@ class RiwayatItem {
 class RiwayatScreen extends StatelessWidget {
   RiwayatScreen({Key? key}) : super(key: key);
 
+  final List<RiwayatItem> riwayatItems = [
+    RiwayatItem(
+      title: "Pengajuan Cuti",
+      description: "Cuti 1 hari",
+      status: "Disetujui",
+      date: "18 Oktober 2024",
+      route: AppRoutes.detailRiwayatPegawaiScreen,
+    ),
+    RiwayatItem(
+      title: "Pengajuan Cuti",
+      description: "Cuti setengah hari",
+      status: "Disetujui",
+      date: "15 Oktober 2024",
+      route: AppRoutes.detailRiwayatPegawaiOneScreen,
+    ),
+    RiwayatItem(
+      title: "Pengajuan Cuti",
+      description: "Cuti setengah hari",
+      status: "Ditolak",
+      date: "15 Oktober 2024",
+      route: AppRoutes.detailRiwayatPegawaiTwoScreen,
+    ),
+    RiwayatItem(
+      title: "Pengajuan Cuti",
+      description: "Cuti 1 hari",
+      status: "Disetujui",
+      date: "15 Oktober 2024",
+      route: AppRoutes.detailRiwayatPegawaiThreeScreen,
+    ),
+    RiwayatItem(
+      title: "Presensi Manual",
+      description: "WFOL",
+      status: "Ditolak",
+      date: "15 Oktober 2024",
+      route: AppRoutes.detailRiwayatPegawaiFourScreen,
+    ),
+    // Tambahkan item lain sesuai kebutuhan
+  ];
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -64,46 +104,6 @@ class RiwayatScreen extends StatelessWidget {
     );
   }
 
-  final List<RiwayatItem> riwayatItems = [
-    RiwayatItem(
-      title: "Pengajuan Cuti",
-      description: "Cuti 1 hari",
-      status: "Disetujui",
-      date: "18 Oktober 2024",
-      route: AppRoutes.detailRiwayatPegawaiScreen,
-    ),
-    RiwayatItem(
-      title: "Pengajuan Cuti Setengah Hari",
-      description: "Cuti setengah hari",
-      status: "Ditolak",
-      date: "15 Oktober 2024",
-      route: AppRoutes.detailRiwayatPegawaiOneScreen,
-    ),
-    RiwayatItem(
-      title: "Pengajuan Cuti Setengah Hari",
-      description: "Cuti setengah hari",
-      status: "Ditolak",
-      date: "15 Oktober 2024",
-      route: AppRoutes.detailRiwayatPegawaiTwoScreen,
-    ),
-    RiwayatItem(
-      title: "Pengajuan Cuti 1 Hari",
-      description: "Cuti 1 hari",
-      status: "Disetujui",
-      date: "15 Oktober 2024",
-      route: AppRoutes.detailRiwayatPegawaiThreeScreen,
-    ),
-    RiwayatItem(
-      title: "Presensi Manual",
-      description: "WFOL",
-      status: "Ditolak",
-      date: "15 Oktober 2024",
-      route: AppRoutes.detailRiwayatPegawaiFourScreen,
-    ),
-    // Tambahkan item lain sesuai kebutuhan
-  ];
-
-
   /// Section Widget
   Widget _buildRiwayatone(BuildContext context) {
     return Expanded(
@@ -140,6 +140,6 @@ class RiwayatScreen extends StatelessWidget {
 
   /// Navigates to the detailRiwayatPegawaiThreeScreen when the action is triggered.
   onTapRow18oktober(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.detailRiwayatPegawaiThreeScreen);
+    Navigator.pushNamed(context, AppRoutes.riwayatScreen);
   }
 }
