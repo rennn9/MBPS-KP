@@ -51,6 +51,20 @@ class _PengajuanCutiPegawaiScreenState
         berikanController.text.isNotEmpty;
   }
 
+// Fungsi untuk menghitung jumlah hari kerja termasuk tanggal mulai dan tanggal selesai
+  int _calculateLeaveDays(DateTime start, DateTime end) {
+    int leaveDays = 0;
+    DateTime current = start;
+    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
+      if (current.weekday != DateTime.saturday &&
+          current.weekday != DateTime.sunday) {
+        leaveDays++;
+      }
+      current = current.add(Duration(days: 1));
+    }
+    return leaveDays;
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate) async {
     final DateTime? picked = await showDatePicker(
@@ -64,8 +78,26 @@ class _PengajuanCutiPegawaiScreenState
         controller.text = DateFormat('dd/MM/yyyy').format(picked);
         if (controller == mulaiController) {
           selectedMulaiDate = picked;
+          // Reset lama cuti jika tanggal mulai diubah
+          group37040oneController.clear();
         } else if (controller == stashdatadateliController) {
           selectedSelesaiDate = picked;
+          if (selectedMulaiDate != null) {
+            int leaveDays = _calculateLeaveDays(selectedMulaiDate!, picked);
+            if (leaveDays <= 5) {
+              // Isi lama cuti jika durasi valid
+              group37040oneController.text = leaveDays.toString();
+            } else {
+              selectedSelesaiDate = null;
+              stashdatadateliController.clear();
+              // Munculkan pesan error
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(
+                        'Durasi cuti tidak boleh lebih dari 5 hari kerja.')),
+              );
+            }
+          }
         }
       });
     }

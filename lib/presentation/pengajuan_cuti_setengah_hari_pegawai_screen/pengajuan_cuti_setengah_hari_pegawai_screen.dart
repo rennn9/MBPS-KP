@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../core/app_export.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
@@ -27,20 +28,36 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
     "Sakit",
     "Melahirkan",
     "Alasan Penting",
-    "Cuti Luar Tanggungan                                 ",
+    "Cuti Luar Tanggungan",
     "Perpanjangan CLTN",
     "Cuti Setengah Hari"
   ];
-  String selectedOption =
-      "Cuti Setengah Hari"; // Default to "Cuti Setengah Hari"
+  String selectedOption = "Cuti Setengah Hari"; // Default to "Cuti Setengah Hari"
   TextEditingController berikanController = TextEditingController();
+  TextEditingController tanggalController = TextEditingController();
+  DateTime? selectedTanggal;
   String radioGroup = "";
 
   bool isFormValid() {
-    // Ensure all fields are filled
     return selectedOption.isNotEmpty &&
         berikanController.text.isNotEmpty &&
-        radioGroup.isNotEmpty;
+        radioGroup.isNotEmpty &&
+        selectedTanggal != null;
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedTanggal ?? DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null) {
+      setState(() {
+        selectedTanggal = picked;
+        tanggalController.text = DateFormat('dd/MM/yyyy').format(picked);
+      });
+    }
   }
 
   @override
@@ -68,8 +85,11 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
                     children: [
                       _buildDropdown(context),
                       SizedBox(height: 14.h),
+                      _buildDateSelection(context),
+                      SizedBox(height: 14.h),
                       _buildColumnmdtwo(context),
                       SizedBox(height: 14.h),
+                      
                       Padding(
                         padding: EdgeInsets.only(left: 4.h),
                         child: Text(
@@ -118,8 +138,7 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  DashboardPegawaiScreen(), // Update with the correct screen class
+              builder: (context) => DashboardPegawaiScreen(),
             ),
             (route) => false, // Clears the navigation stack
           );
@@ -181,6 +200,38 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateSelection(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(right: 2.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Tanggal",
+            style: CustomTextStyles.titleLargeErrorContainer,
+          ),
+          SizedBox(height: 10.h),
+          GestureDetector(
+            onTap: () => _selectDate(context),
+            child: AbsorbPointer(
+              child: CustomTextFormField(
+                controller: tanggalController,
+                hintText: "Pilih Tanggal",
+                hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+                borderDecoration:
+                    TextFormFieldStyleHelper.outlineErrorContainerTL4,
+                filled: true,
+                fillColor: appTheme.whiteA700,
+              ),
+            ),
+          )
         ],
       ),
     );
