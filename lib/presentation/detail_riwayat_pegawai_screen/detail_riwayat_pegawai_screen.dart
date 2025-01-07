@@ -4,7 +4,6 @@ import '../../core/app_export.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
-import '../../widgets/custom_text_form_field.dart';
 
 // ignore_for_file: must_be_immutable
 class DetailRiwayatPegawaiScreen extends StatelessWidget {

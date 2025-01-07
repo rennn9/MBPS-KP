@@ -1,23 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:projectbps/presentation/dashboard_ketua_tim_screen/dashboard_ketua_tim_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../core/app_export.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
-import '../../widgets/custom_text_form_field.dart';
 
 // ignore_for_file: must_be_immutable
 
-class ProfileInfoKetuaTimScreen extends StatelessWidget {
+class ProfileInfoKetuaTimScreen extends StatefulWidget {
   ProfileInfoKetuaTimScreen({Key? key}) : super(key: key);
 
+  @override
+  State<ProfileInfoKetuaTimScreen> createState() =>
+      _ProfileInfoKetuaTimScreenState();
+}
+
+class _ProfileInfoKetuaTimScreenState extends State<ProfileInfoKetuaTimScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
-  TextEditingController group1124oneController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController nipController = TextEditingController();
+  TextEditingController jabatanController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  @override
+  File? _profileImage;
+
+  /// Fungsi untuk memilih gambar dari galeri
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+ @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -42,56 +62,131 @@ class ProfileInfoKetuaTimScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomImageView(
-                        imagePath: ImageConstant.imgAvatars3dAvatar21120x120,
-                        height: 120.h,
-                        width: 122.h,
+                      /// Foto Profil dengan Tombol Edit
+                      Align(
                         alignment: Alignment.center,
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            ClipOval(
+                              child: _profileImage != null
+                                  ? Image.file(
+                                      _profileImage!,
+                                      height: 120.h,
+                                      width: 120.h,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : CustomImageView(
+                                      imagePath: ImageConstant
+                                          .imgAvatars3dAvatar21120x120,
+                                      height: 120.h,
+                                      width: 120.h,
+                                    ),
+                            ),
+                            GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                padding: EdgeInsets.all(5),
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 18.h),
                       Align(
                         alignment: Alignment.center,
                         child: Text(
-                          "Ketua Tim",
+                          "KETUA TIM",
                           style: CustomTextStyles.titleLargeErrorContainer,
                         ),
                       ),
-                      SizedBox(height: 2.h),
                       Align(
                         alignment: Alignment.center,
                         child: Text(
-                          "IPDS",
+                          "KETUA TIM IPDS",
                           style: CustomTextStyles.labelMediumErrorContainer,
                         ),
                       ),
-                      SizedBox(height: 36.h),
+                      SizedBox(height: 20.h),
+
+                      /// E-mail
                       Text(
                         "E-mail",
                         style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
                       ),
-                      SizedBox(height: 4.h),
-                      _buildEmail(context),
+                      SizedBox(height: 2.h),
+                      Text(
+                        "ketuatim@gmail.com",
+                        style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: 2.h),
+                      Divider(color: appTheme.blueGray100),
                       SizedBox(height: 20.h),
+
+                      /// Username
                       Text(
                         "Username",
                         style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
-                      _buildUserName(context),
-                      SizedBox(height: 20.h),
                       Text(
-                        "NIP",
-                        style: CustomTextStyles.labelMediumBluegray200,
+                        "ketua tim",
+                        style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
-                      _buildGroup1124one(context),
+                      Divider(color: appTheme.blueGray100),
                       SizedBox(height: 20.h),
+
+                      /// NIP
                       Text(
-                        "Phone Number",
+                        "NIP BPS",
                         style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
-                      _buildPhoneNumber(context),
+                      Text(
+                        "20241234567890",
+                        style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: 2.h),
+                      Divider(color: appTheme.blueGray100),
+                      SizedBox(height: 20.h),
+
+                      /// Jabatan
+                      Text(
+                        "Jabatan",
+                        style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        "Ahli Madya",
+                        style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: 2.h),
+                      Divider(color: appTheme.blueGray100),
                     ],
                   ),
                 ),
@@ -103,7 +198,7 @@ class ProfileInfoKetuaTimScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
+  /// AppBar untuk halaman profil
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 43.h,
@@ -111,12 +206,7 @@ class ProfileInfoKetuaTimScreen extends StatelessWidget {
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DashboardKetuaTimScreen(),
-            ),
-          );
+          Navigator.pop(context);
         },
       ),
       centerTitle: true,
@@ -127,53 +217,7 @@ class ProfileInfoKetuaTimScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildEmail(BuildContext context) {
-    return CustomTextFormField(
-      controller: emailController,
-      hintText: "ketua@email.com",
-      hintStyle: CustomTextStyles.labelLargeErrorContainerBold,
-      textInputType: TextInputType.emailAddress,
-      contentPadding: EdgeInsets.fromLTRB(12.h, 12.h, 12.h, 4.h),
-      borderDecoration: TextFormFieldStyleHelper.underLineBlueGray,
-    );
-  }
-
-  /// Section Widget
-  Widget _buildUserName(BuildContext context) {
-    return CustomTextFormField(
-      controller: userNameController,
-      hintText: "Ketua Tim IPDS",
-      hintStyle: CustomTextStyles.labelLargeErrorContainerBold,
-      contentPadding: EdgeInsets.fromLTRB(12.h, 12.h, 12.h, 4.h),
-      borderDecoration: TextFormFieldStyleHelper.underLineBlueGray,
-    );
-  }
-
-  /// Section Widget
-  Widget _buildGroup1124one(BuildContext context) {
-    return CustomTextFormField(
-      controller: group1124oneController,
-      hintText: "202111111111111111111111111",
-      hintStyle: CustomTextStyles.labelLargeErrorContainerBold,
-      contentPadding: EdgeInsets.fromLTRB(12.h, 12.h, 12.h, 4.h),
-      borderDecoration: TextFormFieldStyleHelper.underLineBlueGray,
-    );
-  }
-
-  /// Section Widget
-  Widget _buildPhoneNumber(BuildContext context) {
-    return CustomTextFormField(
-      controller: phoneNumberController,
-      hintText: "08xxxxxxxxxx",
-      hintStyle: CustomTextStyles.labelLargeErrorContainerBold,
-      textInputAction: TextInputAction.done,
-      contentPadding: EdgeInsets.fromLTRB(12.h, 12.h, 12.h, 4.h),
-      borderDecoration: TextFormFieldStyleHelper.underLineBlueGray,
-    );
-  }
-
-  /// Navigates back to the previous screen.
+  /// Navigasi kembali ke halaman sebelumnya
   onTapArrowleftone(BuildContext context) {
     Navigator.pop(context);
   }

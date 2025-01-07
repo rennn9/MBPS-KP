@@ -1,19 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../core/app_export.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
-import '../../widgets/custom_text_form_field.dart';
 
 // ignore_for_file: must_be_immutable
 
-class ProfileInfoScreen extends StatelessWidget {
+class ProfileInfoScreen extends StatefulWidget {
   ProfileInfoScreen({Key? key}) : super(key: key);
 
+  @override
+  State<ProfileInfoScreen> createState() => _ProfileInfoScreenState();
+}
+
+class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
   TextEditingController group1155oneController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  File? _profileImage;
+
+  /// Fungsi untuk memilih gambar dari galeri
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +60,51 @@ class ProfileInfoScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomImageView(
-                        imagePath: ImageConstant.imgAvatars3dAvatar21120x120,
-                        height: 120.h,
-                        width: 122.h,
+                      /// Foto Profil dengan Tombol Edit
+                      Align(
                         alignment: Alignment.center,
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            ClipOval(
+                              child: _profileImage != null
+                                  ? Image.file(
+                                      _profileImage!,
+                                      height: 120.h,
+                                      width: 120.h,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : CustomImageView(
+                                      imagePath: ImageConstant
+                                          .imgAvatars3dAvatar21120x120,
+                                      height: 120.h,
+                                      width: 120.h,
+                                    ),
+                            ),
+                            GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                padding: EdgeInsets.all(5),
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       SizedBox(height: 18.h),
                       Align(
@@ -62,73 +122,69 @@ class ProfileInfoScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20.h),
+
+                      /// E-mail
                       Text(
                         "E-mail",
                         style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
                       Text(
                         "ruth@gmail.com",
                         style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: Divider(
-                          color: appTheme.blueGray100,
-                        ),
-                      ),
+                      Divider(color: appTheme.blueGray100),
                       SizedBox(height: 20.h),
+
+                      /// Username
                       Text(
                         "Username",
                         style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
                       Text(
                         "Ruth",
                         style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: Divider(
-                          color: appTheme.blueGray100,
-                        ),
-                      ),
+                      Divider(color: appTheme.blueGray100),
                       SizedBox(height: 20.h),
+
+                      /// NIP
                       Text(
                         "NIP",
                         style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
                       Text(
                         "20241234567890",
                         style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: Divider(
-                          color: appTheme.blueGray100,
-                        ),
-                      ),
+                      Divider(color: appTheme.blueGray100),
                       SizedBox(height: 20.h),
+
+                      /// Jabatan
                       Text(
                         "Jabatan",
                         style: CustomTextStyles.labelMediumBluegray200,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
                       Text(
                         "Ahli Madya",
                         style: CustomTextStyles.labelLargeErrorContainerBold,
+                        textAlign: TextAlign.left,
                       ),
                       SizedBox(height: 2.h),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: Divider(
-                          color: appTheme.blueGray100,
-                        ),
-                      ),
+                      Divider(color: appTheme.blueGray100),
                     ],
                   ),
                 ),
@@ -140,7 +196,7 @@ class ProfileInfoScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
+  /// AppBar untuk halaman profil
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 43.h,
@@ -159,7 +215,7 @@ class ProfileInfoScreen extends StatelessWidget {
     );
   }
 
-  /// Navigates back to the previous screen.
+  /// Navigasi kembali ke halaman sebelumnya
   onTapArrowleftone(BuildContext context) {
     Navigator.pop(context);
   }

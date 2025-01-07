@@ -5,7 +5,6 @@ import 'widgets/listpresensiman2_item_widget.dart';
 import '../notifikasi_pimpinan_screen/notifikasi_pimpinan_screen.dart';
 import '../profile_info_pimpinan_screen/profile_info_pimpinan_screen.dart';
 
-
 class DashboardPimpinanScreen extends StatefulWidget {
   DashboardPimpinanScreen({Key? key}) : super(key: key);
 
@@ -27,26 +26,40 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
 
   // Data untuk beberapa dropdown dengan tabel
   final List<Map<String, dynamic>> expandableData = [
-    {
-      "label": "IPDS",
+    {"label": "IPDS",
       "tableData": [
-        {
-          'Nama': 'Javier',
-          'Jenis Pengajuan': 'Presensi Manual',
-          'Status': 'Menunggu Persetujuan'
-        },
-        {
-          'Nama': 'Alicia',
-          'Jenis Pengajuan': 'Cuti Tahunan',
-          'Status': 'Disetujui'
-        },
+        {'Nama': 'Javier','Jenis Pengajuan': 'Presensi Manual','Status': 'Menunggu Persetujuan'},
+        {'Nama': 'Alicia','Jenis Pengajuan': 'Presensi Manual','Status': 'Disetujui'},
       ],
     },
-    {
-      "label": "UMUM",
+    { "label": "UMUM",
       "tableData": [
-        {'Nama': 'Mark', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
-        {'Nama': 'Sophia', 'Jenis Pengajuan': 'Lembur', 'Status': 'Disetujui'},
+        {'Nama': 'Mark', 'Jenis Pengajuan': 'Cuti', 'Status': 'Ditolak'},
+        {'Nama': 'Sophia', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
+      ],
+    },
+    {"label": "SOSIAL",
+      "tableData": [
+        {'Nama': 'Javier','Jenis Pengajuan': 'KipApp','Status': 'Menunggu Persetujuan'},
+        {'Nama': 'Alicia','Jenis Pengajuan': 'KipApp','Status': 'Disetujui'},
+      ],
+    },
+    {"label": "PRODUKSI",
+      "tableData": [
+        {'Nama': 'Javier','Jenis Pengajuan': 'Cuti','Status': 'Menunggu Persetujuan' },
+        {'Nama': 'Alicia','Jenis Pengajuan': 'Cuti','Status': 'Disetujui'},
+      ],
+    },
+    {"label": "DISTRIBUSI",
+      "tableData": [
+        {'Nama': 'Javier','Jenis Pengajuan': 'Presensi Manual','Status': 'Menunggu Persetujuan'},
+        {'Nama': 'Alicia','Jenis Pengajuan': 'Presensi Manual','Status': 'Disetujui'},
+      ],
+    },
+    {"label": "NERACA",
+      "tableData": [
+        {'Nama': 'Javier','Jenis Pengajuan': 'Cuti','Status': 'Disetujui'},
+        {'Nama': 'Alicia','Jenis Pengajuan': 'Cuti','Status': 'Disetujui'},
       ],
     },
   ];
@@ -74,11 +87,8 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        // Horizontal scrollable list
                         _buildListpresensiman(context),
                         SizedBox(height: 20),
-
-                        // Dropdown menu widget
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -89,7 +99,6 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
                             onSelected: (String? value) {
                               setState(() {
                                 selectedDropdownItem = value!;
-                                // Update logic for dropdown selection
                               });
                             },
                             dropdownMenuEntries:
@@ -99,22 +108,20 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
                                 label: value,
                               );
                             }).toList(),
+                            focusNode: dropdownFocusNode
+                              ..canRequestFocus = false,
                           ),
                         ),
                         SizedBox(height: 20),
-
-                        // Expandable lists with dynamic data
                         ...expandableData.map((data) {
                           return Column(
                             children: [
                               ExpandablelistsItemWidget(
                                 tableData: data["tableData"],
                                 label: data["label"],
-                                onTapRowone: () {
-                                  // Handle tap events if needed
-                                },
+                                onTapRowone: () {},
                               ),
-                              SizedBox(height: 16), // Space between dropdowns
+                              SizedBox(height: 16),
                             ],
                           );
                         }).toList(),
@@ -136,48 +143,16 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
     );
   }
 
-  // void _updateTableData(String selectedItem) {
-  //   // Update table data based on the selected dropdown item
-  //   switch (selectedItem) {
-  //     case "Hari Ini":
-  //       tableData = [
-  //         {'Nama': 'Rina', 'Jenis Pengajuan': 'Liburan', 'Status': 'Menunggu Persetujuan'},
-  //       ];
-  //       break;
-  //     case "Minggu Ini":
-  //       tableData = [
-  //         {'Nama': 'Andi', 'Jenis Pengajuan': 'Pengunduran Diri', 'Status': 'Disetujui'},
-  //       ];
-  //       break;
-  //     case "Bulan Ini":
-  //       tableData = [
-  //         {'Nama': 'Budi', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
-  //       ];
-  //       break;
-  //     default:
-  //       tableData = [
-  //         {'Nama': 'Javier', 'Jenis Pengajuan': 'Presensi Manual', 'Status': 'Menunggu Persetujuan'},
-  //         {'Nama': 'Alicia', 'Jenis Pengajuan': 'Cuti Tahunan', 'Status': 'Disetujui'},
-  //         {'Nama': 'Mark', 'Jenis Pengajuan': 'Izin Sakit', 'Status': 'Ditolak'},
-  //       ];
-  //       break;
-  //   }
-  // }
-
-Widget _buildColumnprice(BuildContext context) {
-  return Align(
-    alignment: Alignment.topCenter,
-    child: Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(top: 24, right: 18),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            width: double.maxFinite,
-            margin: EdgeInsets.symmetric(horizontal: 2),
-            child: Row(
+  Widget _buildColumnprice(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Container(
+        width: double.maxFinite,
+        margin: EdgeInsets.only(top: 24, right: 18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 CustomImageView(
@@ -186,14 +161,11 @@ Widget _buildColumnprice(BuildContext context) {
                   width: 40,
                   margin: EdgeInsets.only(left: 26),
                 ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10, top: 4),
-                    child: Text(
-                      "BADAN PUSAT STATISTIK",
-                      style: theme.textTheme.titleSmall,
-                    ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10, top: 4),
+                  child: Text(
+                    "BADAN PUSAT STATISTIK",
+                    style: theme.textTheme.titleSmall,
                   ),
                 ),
                 Spacer(),
@@ -212,11 +184,8 @@ Widget _buildColumnprice(BuildContext context) {
                 ),
               ],
             ),
-          ),
-          SizedBox(height: 16),
-          SizedBox(
-            width: double.maxFinite,
-            child: GestureDetector(
+            SizedBox(height: 16),
+            GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
@@ -241,64 +210,45 @@ Widget _buildColumnprice(BuildContext context) {
                       width: 40,
                     ),
                     SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Hi, Pimpinan",
-                            style: theme.textTheme.titleSmall,
-                          ),
-                          Text(
-                            "IPDS",
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
+                    Text("Hi, Pimpinan", style: theme.textTheme.titleSmall),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildListpresensiman(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          direction: Axis.horizontal,
-          spacing: 10,
-          children: List.generate(
-            3,
-            (index) {
-              final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
-              final imagePaths = [
-                ImageConstant.imgEdit,
-                ImageConstant.imgCalendar,
-                ImageConstant.imgDownload
-              ];
-              return Listpresensiman2ItemWidget(
-                text: texts[index],
-                imagePath: imagePaths[index],
-                isSelected: selectedIndex == index,
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                selectedTextColor: Color(0xFF3E9B97),
-              );
-            },
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(3, (index) {
+          final texts = ["Presensi Manual", "Pengajuan Cuti", "KiP APP"];
+          final imagePaths = [
+            ImageConstant.imgEdit,
+            ImageConstant.imgCalendar,
+            ImageConstant.imgDownload
+          ];
+          return Padding(
+          padding: EdgeInsets.only(right: 10.0), // Menambahkan jarak antar item
+          child: Expanded(
+            child: Listpresensiman2ItemWidget(
+              text: texts[index],
+              imagePath: imagePaths[index],
+              isSelected: selectedIndex == index,
+              onTap: () {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+              selectedTextColor: Color(0xFF3E9B97),
+            ),
           ),
-        ),
+          );
+        }),
       ),
     );
   }

@@ -4,6 +4,9 @@ import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import 'widgets/riwayat_one_item_widget.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'dart:typed_data';
 
 class RiwayatItem {
   final String title;
@@ -60,86 +63,110 @@ class RiwayatScreen extends StatelessWidget {
       date: "15 Oktober 2024",
       route: AppRoutes.detailRiwayatPegawaiFourScreen,
     ),
-    // Tambahkan item lain sesuai kebutuhan
   ];
 
+  /// Membuat file PDF berdasarkan riwayatItems
+  Future<Uint8List> _generatePdf() async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                "Rekapan Riwayat",
+                style: pw.TextStyle(
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.SizedBox(height: 20),
+              ...riwayatItems.map((item) {
+                return pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text("Judul: ${item.title}"),
+                    pw.Text("Deskripsi: ${item.description}"),
+                    pw.Text("Status: ${item.status}"),
+                    pw.Text("Tanggal: ${item.date}"),
+                    pw.Divider(),
+                  ],
+                );
+              }).toList(),
+            ],
+          );
+        },
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  /// Menampilkan dialog unduhan PDF
+  void _downloadPdf(BuildContext context) async {
+    final pdfData = await _generatePdf();
+
+    await Printing.sharePdf(bytes: pdfData, filename: 'rekapan_riwayat.pdf');
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: _buildAppbar(context),
-        body: Container(
-          width: double.maxFinite,
-          padding: EdgeInsets.only(
-            left: 18.h,
-            top: 22.h,
-            right: 18.h,
+        appBar: CustomAppBar(
+          leadingWidth: 43.h,
+          leading: AppbarLeadingImage(
+            imagePath: ImageConstant.imgArrowLeftWhiteA700,
+            margin: EdgeInsets.only(left: 33.h),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [_buildRiwayatone(context)],
+          centerTitle: true,
+          title: AppbarTitle(
+            text: "Riwayat",
           ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.download, color: Colors.white),
+              onPressed: () => _downloadPdf(context),
+              tooltip: "Download Rekapan",
+            ),
+          ],
+          styleType: Style.bgFillTeal200,
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Container(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(horizontal: 18.h, vertical: 22.h),
+                child: ListView.separated(
+                  padding: EdgeInsets.zero,
+                  physics: BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  separatorBuilder: (context, index) => SizedBox(height: 20.h),
+                  itemCount: riwayatItems.length,
+                  itemBuilder: (context, index) {
+                    final item = riwayatItems[index];
+                    return RiwayatOneItemWidget(
+                      title: item.title,
+                      description: item.description,
+                      status: item.status,
+                      date: item.date,
+                      onTapRow18oktober: () {
+                        Navigator.pushNamed(context, item.route);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  /// Section Widget
-  PreferredSizeWidget _buildAppbar(BuildContext context) {
-    return CustomAppBar(
-      leadingWidth: 43.h,
-      leading: AppbarLeadingImage(
-        imagePath: ImageConstant.imgArrowLeftWhiteA700,
-        margin: EdgeInsets.only(left: 33.h),
-        onTap: () {
-          Navigator.pop(context);
-        },
-      ),
-      centerTitle: true,
-      title: AppbarTitle(
-        text: "Riwayat",
-      ),
-      styleType: Style.bgFillTeal200,
-    );
-  }
-
-  /// Section Widget
-  Widget _buildRiwayatone(BuildContext context) {
-    return Expanded(
-      child: ListView.separated(
-        padding: EdgeInsets.zero,
-        physics: BouncingScrollPhysics(),
-        shrinkWrap: true,
-        separatorBuilder: (context, index) {
-          return SizedBox(
-            height: 20.h,
-          );
-        },
-        itemCount: riwayatItems.length,
-        itemBuilder: (context, index) {
-          final item = riwayatItems[index];
-          return RiwayatOneItemWidget(
-            title: item.title,
-            description: item.description,
-            status: item.status,
-            date: item.date,
-            onTapRow18oktober: () {
-              Navigator.pushNamed(context, item.route);
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  /// Navigates back to the previous screen.
-  onTapArrowleftone(BuildContext context) {
-    Navigator.pop(context);
-  }
-
-  /// Navigates to the detailRiwayatPegawaiThreeScreen when the action is triggered.
-  onTapRow18oktober(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.riwayatScreen);
   }
 }

@@ -1,47 +1,9 @@
 import 'package:flutter/material.dart';
-
-class ExpandableListsExample extends StatelessWidget {
-  final List<Map<String, String>> dataIPDS = [
-    {'Nama': 'Alice', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
-    {'Nama': 'Bob', 'Jenis Pengajuan': 'Izin', 'Status': 'Ditolak'},
-  ];
-
-  final List<Map<String, String>> dataAnother = [
-    {'Nama': 'Charlie', 'Jenis Pengajuan': 'Lembur', 'Status': 'Menunggu Persetujuan'},
-    {'Nama': 'David', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Expandable Dropdown Example")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              ExpandablelistsItemWidget(
-                tableData: dataIPDS,
-                onTapRowone: () {
-                  print("Dropdown IPDS clicked");
-                },
-                label: "IPDS",
-              ),
-              SizedBox(height: 16), // Jarak antar dropdown
-              ExpandablelistsItemWidget(
-                tableData: dataAnother,
-                onTapRowone: () {
-                  print("Dropdown Another clicked");
-                },
-                label: "UMUM",
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:excel/excel.dart';
 
 class ExpandablelistsItemWidget extends StatelessWidget {
   final VoidCallback? onTapRowone;
@@ -58,17 +20,10 @@ class ExpandablelistsItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(top : 1),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 2,
-            offset: Offset(0, 0),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -80,6 +35,8 @@ class ExpandablelistsItemWidget extends StatelessWidget {
           ),
           children: [
             _buildDataTable(),
+            SizedBox(height: 8),
+            _buildDownloadButton(context),
           ],
         ),
       ),
@@ -91,7 +48,7 @@ class ExpandablelistsItemWidget extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(8),
       child: SingleChildScrollView(
-        scrollDirection: Axis.vertical, // Hanya memungkinkan scroll vertikal
+        scrollDirection: Axis.vertical,
         child: Table(
           columnWidths: const <int, TableColumnWidth>{
             0: IntrinsicColumnWidth(),
@@ -147,7 +104,7 @@ class ExpandablelistsItemWidget extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         overflow: TextOverflow.visible,
-        maxLines: null, // Mengizinkan teks sambung ke bawah
+        maxLines: null,
         style: TextStyle(color: Colors.black),
       ),
     );
@@ -178,13 +135,60 @@ class ExpandablelistsItemWidget extends StatelessWidget {
       child: Text(
         status,
         textAlign: TextAlign.center,
-        overflow: TextOverflow.visible,
-        maxLines: null,
         style: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.bold,
         ),
       ),
     );
+  }
+
+  Widget _buildDownloadButton(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 3.0),
+      child: ElevatedButton.icon(
+        onPressed: () => _downloadTableData(context),
+        icon: Icon(Icons.download),
+        label: Text('Unduh Rekapan'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 155, 155, 155),
+          foregroundColor: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _downloadTableData(BuildContext context) async {
+    var status = await Permission.storage.request();
+    if (status.isGranted) {
+      var excel = Excel.createExcel();
+      Sheet sheetObject = excel['Sheet1'];
+
+      // Header
+      sheetObject.appendRow(['Nama', 'Jenis Pengajuan', 'Status']);
+
+      // Data
+      for (var row in tableData) {
+        sheetObject.appendRow([
+          row['Nama'] ?? '',
+          row['Jenis Pengajuan'] ?? '',
+          row['Status'] ?? '',
+        ]);
+      }
+
+      // Save file
+      var directory = await getApplicationDocumentsDirectory();
+      String path = '${directory.path}/rekapan_${label}.xlsx';
+      File file = File(path);
+      await file.writeAsBytes(excel.encode()!);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('File berhasil diunduh: $path')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Izin penyimpanan ditolak')),
+      );
+    }
   }
 }
