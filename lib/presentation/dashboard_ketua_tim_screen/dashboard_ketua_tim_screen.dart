@@ -3,6 +3,9 @@ import '../../core/app_export.dart';
 import 'widgets/listpresensiman1_item_widget.dart';
 import '../profile_info_ketua_tim_screen/profile_info_ketua_tim_screen.dart';
 import '../notifikasi_ketua_tim_screen/notifikasi_ketua_tim_screen.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:csv/csv.dart';
 
 class DashboardKetuaTimScreen extends StatefulWidget {
   DashboardKetuaTimScreen({Key? key}) : super(key: key);
@@ -29,6 +32,38 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
     {'Nama': 'Jane Smith', 'Jenis Pengajuan': 'Presensi Manual', 'Status': 'Ditolak'},
     {'Nama': 'Alex Johnson', 'Jenis Pengajuan': 'KiP APP', 'Status': 'Menunggu'},
   ];
+
+    Future<void> _downloadRekapan() async {
+    // Membuat data CSV dari tableData
+    List<List<String>> csvData = [
+      ['Nama', 'Jenis Pengajuan', 'Status'], // Header tabel
+      ...tableData
+          .map((row) => [row['Nama']!, row['Jenis Pengajuan']!, row['Status']!])
+    ];
+
+    // Konversi ke string CSV
+    String csv = const ListToCsvConverter().convert(csvData);
+
+    try {
+      // Mendapatkan direktori unduhan
+      final directory = await getApplicationDocumentsDirectory();
+      final path = '${directory.path}/rekapan_pengajuan.csv';
+
+      // Menyimpan file CSV
+      final file = File(path);
+      await file.writeAsString(csv);
+
+      // Menampilkan pesan sukses
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('File berhasil diunduh ke $path')),
+      );
+    } catch (e) {
+      // Menampilkan pesan error jika gagal
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal mengunduh file: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +109,17 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
                               );
                             }).toList(),
                             focusNode: dropdownFocusNode..canRequestFocus = false,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        // Tombol Download Rekapan
+                        ElevatedButton.icon(
+                          onPressed: _downloadRekapan,
+                          icon: Icon(Icons.download),
+                          label: Text('Download Rekapan'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Color.fromARGB(255, 62, 155, 151),
                           ),
                         ),
                         SizedBox(height: 20),
@@ -286,6 +332,7 @@ Widget _buildColumnprice(BuildContext context) {
       ),
     );
   }
+
 
   DataCell _buildCenteredCell(String text) {
     return DataCell(
