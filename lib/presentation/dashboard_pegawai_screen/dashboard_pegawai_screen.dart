@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import untuk memanipulasi tanggal dan waktu
+
 import '../../core/app_export.dart';
 import 'widgets/listpresensiman_item_widget.dart';
 import '../../theme/custom_button_style.dart';
@@ -8,7 +10,6 @@ import '../menu_absen_manual_pegawai_1_screen/menu_absen_manual_pegawai_1_screen
 import '../pengajuan_cuti_pegawai_screen/pengajuan_cuti_pegawai_screen.dart';
 import '../kipapp_pegawai_one_screen/kipapp_pegawai_one_screen.dart';
 import '../riwayat_screen/riwayat_screen.dart';
-
 
 class DashboardPegawaiScreen extends StatefulWidget {
   DashboardPegawaiScreen({Key? key}) : super(key: key);
@@ -46,22 +47,21 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
                         _buildListpresensiman(context),
                         SizedBox(height: 14),
                         // Tombol Riwayat
-CustomElevatedButton(
-  height: 50.h,
-  text: "Riwayat",
-  margin: EdgeInsets.symmetric(horizontal: 10.h),
-  buttonStyle: CustomButtonStyles.fillWhiteA,
-  buttonTextStyle: CustomTextStyles.titleSmallPrimary,
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RiwayatScreen(),
-      ),
-    );
-  },
-),
-
+                        CustomElevatedButton(
+                          height: 50.h,
+                          text: "Riwayat",
+                          margin: EdgeInsets.symmetric(horizontal: 10.h),
+                          buttonStyle: CustomButtonStyles.fillWhiteA,
+                          buttonTextStyle: CustomTextStyles.titleSmallPrimary,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RiwayatScreen(),
+                              ),
+                            );
+                          },
+                        ),
                         SizedBox(height: 20),
                       ],
                     ),
@@ -82,67 +82,88 @@ CustomElevatedButton(
   }
 
   Widget _buildListpresensiman(BuildContext context) {
-  return Container(
-    width: double.maxFinite,
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Wrap(
-        direction: Axis.horizontal,
-        spacing: 10,
-        children: List.generate(
-          3,
-          (index) {
-            final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
-            final imagePaths = [
-              ImageConstant.imgEdit,
-              ImageConstant.imgCalendar,
-              ImageConstant.imgDownload
-            ];
-            return ListpresensimanItemWidget(
-              text: texts[index],
-              imagePath: imagePaths[index],
-              isSelected: selectedIndex == index,
-              onTap: () {
-                setState(() {
-                  selectedIndex = index;
-                });
-                // Navigasi berdasarkan indeks
-                if (index == 0) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          MenuAbsenManualPegawai1Screen(),
-                    ),
-                  );
-                } else if (index == 1) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PengajuanCutiPegawaiScreen(),
-                    ),
-                  );
-                } else if (index == 2) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => KipappPegawaiOneScreen(),
-                    ),
-                  );
-                }
-              },
-              selectedTextColor: Color(0xFF3E9B97),
-            );
-          },
+    return Container(
+      width: double.maxFinite,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Wrap(
+          direction: Axis.horizontal,
+          spacing: 10,
+          children: List.generate(
+            3,
+            (index) {
+              final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
+              final imagePaths = [
+                ImageConstant.imgEdit,
+                ImageConstant.imgCalendar,
+                ImageConstant.imgDownload
+              ];
+              return ListpresensimanItemWidget(
+                text: texts[index],
+                imagePath: imagePaths[index],
+                isSelected: selectedIndex == index,
+                onTap: () {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                  // Navigasi berdasarkan indeks
+                  if (index == 0) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MenuAbsenManualPegawai1Screen(),
+                      ),
+                    );
+                  } else if (index == 1) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PengajuanCutiPegawaiScreen(),
+                      ),
+                    );
+                  } else if (index == 2) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => KipappPegawaiOneScreen(),
+                      ),
+                    );
+                  }
+                },
+                selectedTextColor: Color(0xFF3E9B97),
+              );
+            },
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildColumnprice(BuildContext context) {
+    // Ambil hari saat ini (1 = Senin, 7 = Minggu)
+    DateTime currentTime = DateTime.now();
+    print("Waktu saat ini: $currentTime");
+    print("Waktu UTC: ${currentTime.toUtc()}");
+    int today = currentTime.weekday; // Hari dalam minggu (1 = Senin, 7 = Minggu)
+
+    // Tentukan jam mulai dan selesai berdasarkan hari
+    String startTime = "";
+    String endTime = "";
+
+    if (today >= 1 && today <= 4) {
+      // Senin - Kamis
+      startTime = "08:00";
+      endTime = "16:00";
+    } else if (today == 5) {
+      // Jumat
+      startTime = "08:30";
+      endTime = "16:30";
+    } else {
+      // Sabtu - Minggu (bisa sesuaikan jika ada jadwal lain)
+      startTime = "Libur";
+      endTime = "Libur";
+    }
+
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
@@ -152,6 +173,7 @@ CustomElevatedButton(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Header bagian atas
             Container(
               width: double.maxFinite,
               margin: EdgeInsets.symmetric(horizontal: 12.h),
@@ -160,17 +182,17 @@ CustomElevatedButton(
                 children: [
                   CustomImageView(
                     imagePath: ImageConstant.imgLogoBps,
-                    height: 28.h,
-                    width: 38.h,
+                    height: 40.h,
+                    width: 50.h,
                     alignment: Alignment.center,
                   ),
                   Padding(
                     padding: EdgeInsets.only(
                       left: 10.h,
-                      top: 4.h,
+                      top: 6.h,
                     ),
                     child: Text(
-                      "BADAN PUSAT STATISTIK",
+                      "Government Approval",
                       style: theme.textTheme.titleSmall,
                     ),
                   )
@@ -272,7 +294,7 @@ CustomElevatedButton(
                             Padding(
                               padding: EdgeInsets.only(left: 6.h),
                               child: Text(
-                                "07:30",
+                                startTime,
                                 style:
                                     CustomTextStyles.titleLargeErrorContainer,
                               ),
@@ -296,7 +318,7 @@ CustomElevatedButton(
                             Padding(
                               padding: EdgeInsets.only(left: 6.h),
                               child: Text(
-                                "16:00",
+                                endTime,
                                 style:
                                     CustomTextStyles.titleLargeErrorContainer,
                               ),

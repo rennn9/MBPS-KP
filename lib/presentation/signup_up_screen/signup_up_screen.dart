@@ -41,14 +41,16 @@ class _SignupUpScreenState extends State<SignupUpScreen> {
                     child: Column(
                       children: [
                         Text(
-                          "Welcome",
+                          "WELCOME",
                           style: theme.textTheme.headlineLarge,
                         ),
+                        SizedBox(height: 16.h),
                         Text(
-                          "Login SSO",
+                          "Login SSO BPS\nProvinsi Sulawesi Selatan",
                           style: CustomTextStyles.headlineSmallExtraBold,
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 32.h),
+                        SizedBox(height: 10.h),
                         CustomImageView(
                           imagePath: ImageConstant.imgLogoBps,
                           height: 162.h,

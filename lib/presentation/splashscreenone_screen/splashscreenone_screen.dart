@@ -27,19 +27,8 @@ class SplashscreenoneScreen extends StatelessWidget {
                   children: [
                     CustomImageView(
                       imagePath: ImageConstant.imgLogoBps,
-                      height: 180.h,
+                      height: 200.h,
                       width: double.maxFinite,
-                      margin: EdgeInsets.symmetric(horizontal: 36.h),
-                    ),
-                    SizedBox(height: 20.h),
-                    Text(
-                      "BADAN PUSAT STATISTIK\nSULAWESI SELATAN",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: CustomTextStyles.headlineSmall_1.copyWith(
-                        height: 1.20,
-                      ),
                     ),
                     SizedBox(height: 174.h),
                     SizedBox(

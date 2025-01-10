@@ -204,9 +204,9 @@ Widget _buildColumnprice(BuildContext context) {
                 Align(
                   alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: EdgeInsets.only(left: 10, top: 4),
+                    padding: EdgeInsets.only(left: 10, top: 1),
                     child: Text(
-                      "BADAN PUSAT STATISTIK",
+                      "Government Approval",
                       style: theme.textTheme.titleSmall,
                     ),
                   ),

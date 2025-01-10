@@ -157,14 +157,14 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
               children: [
                 CustomImageView(
                   imagePath: ImageConstant.imgLogoBps,
-                  height: 28,
-                  width: 40,
+                  height: 40,
+                  width: 50,
                   margin: EdgeInsets.only(left: 26),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 10, top: 4),
+                  padding: EdgeInsets.only(left: 10, top: 1),
                   child: Text(
-                    "BADAN PUSAT STATISTIK",
+                    "Government Approval",
                     style: theme.textTheme.titleSmall,
                   ),
                 ),
