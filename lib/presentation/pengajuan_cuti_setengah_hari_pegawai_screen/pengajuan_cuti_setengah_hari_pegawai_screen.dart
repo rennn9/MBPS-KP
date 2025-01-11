@@ -32,7 +32,8 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
     "Perpanjangan CLTN",
     "Cuti Setengah Hari"
   ];
-  String selectedOption = "Cuti Setengah Hari"; // Default to "Cuti Setengah Hari"
+  String selectedOption =
+      "Cuti Setengah Hari"; // Default to "Cuti Setengah Hari"
   TextEditingController berikanController = TextEditingController();
   TextEditingController tanggalController = TextEditingController();
   DateTime? selectedTanggal;
@@ -52,10 +53,38 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
       firstDate: DateTime(2024),
       lastDate: DateTime(2030),
     );
+
     if (picked != null) {
       setState(() {
-        selectedTanggal = picked;
         tanggalController.text = DateFormat('dd/MM/yyyy').format(picked);
+
+        // Hitung jumlah hari kerja dari hari ini ke tanggal yang dipilih
+        DateTime now = DateTime.now();
+        int workingDays = 0;
+        DateTime current = now.isBefore(picked) ? now : picked;
+        DateTime endDate = now.isBefore(picked) ? picked : now;
+
+        while (current.isBefore(endDate) || current.isAtSameMomentAs(endDate)) {
+          if (current.weekday != DateTime.saturday &&
+              current.weekday != DateTime.sunday) {
+            workingDays++;
+          }
+          current = current.add(Duration(days: 1));
+        }
+
+        // Validasi: Tanggal harus dalam 3 hari kerja dari hari ini
+        if (workingDays > 4) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text('Tanggal cuti harus dalam 3 hari kerja dari hari ini.'),
+            ),
+          );
+          selectedTanggal = null;
+          tanggalController.clear();
+        } else {
+          selectedTanggal = picked;
+        }
       });
     }
   }
@@ -89,7 +118,6 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
                       SizedBox(height: 14.h),
                       _buildColumnmdtwo(context),
                       SizedBox(height: 14.h),
-                      
                       Padding(
                         padding: EdgeInsets.only(left: 4.h),
                         child: Text(

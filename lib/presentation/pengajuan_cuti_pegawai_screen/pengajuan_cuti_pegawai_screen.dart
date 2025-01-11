@@ -51,18 +51,19 @@ class _PengajuanCutiPegawaiScreenState
         berikanController.text.isNotEmpty;
   }
 
-// Fungsi untuk menghitung jumlah hari kerja termasuk tanggal mulai dan tanggal selesai
-  int _calculateLeaveDays(DateTime start, DateTime end) {
-    int leaveDays = 0;
+  // Fungsi untuk menghitung jumlah hari kerja
+  int _workingDaysBetween(DateTime start, DateTime end) {
+    int days = 0;
     DateTime current = start;
+
     while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
       if (current.weekday != DateTime.saturday &&
           current.weekday != DateTime.sunday) {
-        leaveDays++;
+        days++;
       }
       current = current.add(Duration(days: 1));
     }
-    return leaveDays;
+    return days;
   }
 
   Future<void> _selectDate(BuildContext context,
@@ -78,24 +79,33 @@ class _PengajuanCutiPegawaiScreenState
         controller.text = DateFormat('dd/MM/yyyy').format(picked);
         if (controller == mulaiController) {
           selectedMulaiDate = picked;
-          // Reset lama cuti jika tanggal mulai diubah
           group37040oneController.clear();
         } else if (controller == stashdatadateliController) {
           selectedSelesaiDate = picked;
           if (selectedMulaiDate != null) {
-            int leaveDays = _calculateLeaveDays(selectedMulaiDate!, picked);
-            if (leaveDays <= 5) {
-              // Isi lama cuti jika durasi valid
-              group37040oneController.text = leaveDays.toString();
-            } else {
+            if (selectedSelesaiDate!.isBefore(selectedMulaiDate!)) {
               selectedSelesaiDate = null;
               stashdatadateliController.clear();
-              // Munculkan pesan error
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text(
-                        'Durasi cuti tidak boleh lebih dari 5 hari kerja.')),
+                  content: Text(
+                      'Tanggal selesai tidak boleh sebelum tanggal mulai.'),
+                ),
               );
+            } else {
+              int daysBetween =
+                  _workingDaysBetween(selectedMulaiDate!, DateTime.now());
+              if (daysBetween <= 4) {
+                group37040oneController.text = daysBetween.toString();
+              } else {
+                selectedSelesaiDate = null;
+                stashdatadateliController.clear();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          'Pengajuan cuti harus dalam 3 hari kerja dari tanggal mulai.')),
+                );
+              }
             }
           }
         }
