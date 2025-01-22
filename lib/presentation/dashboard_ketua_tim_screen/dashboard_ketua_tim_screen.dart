@@ -206,7 +206,7 @@ Widget _buildColumnprice(BuildContext context) {
                   child: Padding(
                     padding: EdgeInsets.only(left: 10, top: 1),
                     child: Text(
-                      "Government Approval",
+                      "GOVERNMENT APPROVAL",
                       style: theme.textTheme.titleSmall,
                     ),
                   ),

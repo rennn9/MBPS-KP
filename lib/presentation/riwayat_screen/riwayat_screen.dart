@@ -4,9 +4,9 @@ import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import 'widgets/riwayat_one_item_widget.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
-import 'dart:typed_data';
+import 'package:excel/excel.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class RiwayatItem {
   final String title;
@@ -65,50 +65,50 @@ class RiwayatScreen extends StatelessWidget {
     ),
   ];
 
-  /// Membuat file PDF berdasarkan riwayatItems
-  Future<Uint8List> _generatePdf() async {
-    final pdf = pw.Document();
+  /// Membuat file Excel berdasarkan riwayatItems
+  Future<File> _generateExcel() async {
+    var excel = Excel.createExcel(); // Membuat file Excel baru
+    Sheet sheet = excel['Riwayat']; // Membuat sheet bernama "Riwayat"
 
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                "Rekapan Riwayat",
-                style: pw.TextStyle(
-                  fontSize: 24,
-                  fontWeight: pw.FontWeight.bold,
-                ),
-              ),
-              pw.SizedBox(height: 20),
-              ...riwayatItems.map((item) {
-                return pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text("Judul: ${item.title}"),
-                    pw.Text("Deskripsi: ${item.description}"),
-                    pw.Text("Status: ${item.status}"),
-                    pw.Text("Tanggal: ${item.date}"),
-                    pw.Divider(),
-                  ],
-                );
-              }).toList(),
-            ],
-          );
-        },
-      ),
-    );
+    // Menambahkan header
+    sheet.appendRow(['Judul', 'Deskripsi', 'Status', 'Tanggal']);
 
-    return pdf.save();
+    // Menambahkan data
+    for (var item in riwayatItems) {
+      sheet.appendRow([item.title, item.description, item.status, item.date]);
+    }
+
+    // Menyimpan file Excel ke dalam direktori sementara
+    final directory =
+        await getApplicationDocumentsDirectory(); // Direktori aplikasi
+    final path = "${directory.path}/rekapan_riwayat.xlsx";
+    final file = File(path);
+    await file.writeAsBytes(excel.encode()!);
+
+    return file;
   }
 
-  /// Menampilkan dialog unduhan PDF
-  void _downloadPdf(BuildContext context) async {
-    final pdfData = await _generatePdf();
-
-    await Printing.sharePdf(bytes: pdfData, filename: 'rekapan_riwayat.pdf');
+  /// Menampilkan notifikasi lokasi file disimpan
+  void _saveExcelLocally(BuildContext context) async {
+    try {
+      final file = await _generateExcel();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("File berhasil disimpan di: ${file.path}"),
+          action: SnackBarAction(
+            label: "Buka",
+            onPressed: () async {
+              // Gunakan aplikasi file manager untuk membuka lokasi file
+              await Process.run('xdg-open', [file.path]);
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Gagal menyimpan file: $e")),
+      );
+    }
   }
 
   @override
@@ -131,7 +131,7 @@ class RiwayatScreen extends StatelessWidget {
           actions: [
             IconButton(
               icon: Icon(Icons.download, color: Colors.white),
-              onPressed: () => _downloadPdf(context),
+              onPressed: () => _saveExcelLocally(context),
               tooltip: "Download Rekapan",
             ),
           ],

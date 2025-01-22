@@ -151,7 +151,7 @@ class _MenuAbsenManualPegawai1ScreenState
       ),
       centerTitle: true,
       title: AppbarTitle(
-        text: "Absensi Manual",
+        text: "Presensi Manual",
       ),
       styleType: Style.bgFillTeal200,
     );

@@ -26,40 +26,70 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
 
   // Data untuk beberapa dropdown dengan tabel
   final List<Map<String, dynamic>> expandableData = [
-    {"label": "IPDS",
+    {
+      "label": "IPDS",
       "tableData": [
-        {'Nama': 'Javier','Jenis Pengajuan': 'Presensi Manual','Status': 'Menunggu Persetujuan'},
-        {'Nama': 'Alicia','Jenis Pengajuan': 'Presensi Manual','Status': 'Disetujui'},
+        {
+          'Nama': 'Javier',
+          'Jenis Pengajuan': 'Presensi Manual',
+          'Status': 'Menunggu Persetujuan'
+        },
+        {
+          'Nama': 'Alicia',
+          'Jenis Pengajuan': 'Presensi Manual',
+          'Status': 'Disetujui'
+        },
       ],
     },
-    { "label": "UMUM",
+    {
+      "label": "UMUM",
       "tableData": [
         {'Nama': 'Mark', 'Jenis Pengajuan': 'Cuti', 'Status': 'Ditolak'},
         {'Nama': 'Sophia', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
       ],
     },
-    {"label": "SOSIAL",
+    {
+      "label": "SOSIAL",
       "tableData": [
-        {'Nama': 'Javier','Jenis Pengajuan': 'KipApp','Status': 'Menunggu Persetujuan'},
-        {'Nama': 'Alicia','Jenis Pengajuan': 'KipApp','Status': 'Disetujui'},
+        {
+          'Nama': 'Javier',
+          'Jenis Pengajuan': 'KipApp',
+          'Status': 'Menunggu Persetujuan'
+        },
+        {'Nama': 'Alicia', 'Jenis Pengajuan': 'KipApp', 'Status': 'Disetujui'},
       ],
     },
-    {"label": "PRODUKSI",
+    {
+      "label": "PRODUKSI",
       "tableData": [
-        {'Nama': 'Javier','Jenis Pengajuan': 'Cuti','Status': 'Menunggu Persetujuan' },
-        {'Nama': 'Alicia','Jenis Pengajuan': 'Cuti','Status': 'Disetujui'},
+        {
+          'Nama': 'Javier',
+          'Jenis Pengajuan': 'Cuti',
+          'Status': 'Menunggu Persetujuan'
+        },
+        {'Nama': 'Alicia', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
       ],
     },
-    {"label": "DISTRIBUSI",
+    {
+      "label": "DISTRIBUSI",
       "tableData": [
-        {'Nama': 'Javier','Jenis Pengajuan': 'Presensi Manual','Status': 'Menunggu Persetujuan'},
-        {'Nama': 'Alicia','Jenis Pengajuan': 'Presensi Manual','Status': 'Disetujui'},
+        {
+          'Nama': 'Javier',
+          'Jenis Pengajuan': 'Presensi Manual',
+          'Status': 'Menunggu Persetujuan'
+        },
+        {
+          'Nama': 'Alicia',
+          'Jenis Pengajuan': 'Presensi Manual',
+          'Status': 'Disetujui'
+        },
       ],
     },
-    {"label": "NERACA",
+    {
+      "label": "NERACA",
       "tableData": [
-        {'Nama': 'Javier','Jenis Pengajuan': 'Cuti','Status': 'Disetujui'},
-        {'Nama': 'Alicia','Jenis Pengajuan': 'Cuti','Status': 'Disetujui'},
+        {'Nama': 'Javier', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
+        {'Nama': 'Alicia', 'Jenis Pengajuan': 'Cuti', 'Status': 'Disetujui'},
       ],
     },
   ];
@@ -164,7 +194,7 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 10, top: 1),
                   child: Text(
-                    "Government Approval",
+                    "GOVERNMENT APPROVAL",
                     style: theme.textTheme.titleSmall,
                   ),
                 ),
@@ -233,20 +263,21 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
             ImageConstant.imgDownload
           ];
           return Padding(
-          padding: EdgeInsets.only(right: 10.0), // Menambahkan jarak antar item
-          child: Expanded(
-            child: Listpresensiman2ItemWidget(
-              text: texts[index],
-              imagePath: imagePaths[index],
-              isSelected: selectedIndex == index,
-              onTap: () {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-              selectedTextColor: Color(0xFF3E9B97),
+            padding:
+                EdgeInsets.only(right: 10.0), // Menambahkan jarak antar item
+            child: Expanded(
+              child: Listpresensiman2ItemWidget(
+                text: texts[index],
+                imagePath: imagePaths[index],
+                isSelected: selectedIndex == index,
+                onTap: () {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                selectedTextColor: Color(0xFF3E9B97),
+              ),
             ),
-          ),
           );
         }),
       ),

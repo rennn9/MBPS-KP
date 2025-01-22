@@ -180,7 +180,7 @@ class _PengajuanCutiPegawaiScreenState
       ),
       centerTitle: true,
       title: AppbarTitle(
-        text: "Cuti",
+        text: "Pengajuan Cuti",
       ),
       styleType: Style.bgFillTeal200,
     );

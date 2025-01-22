@@ -192,7 +192,7 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
                       top: 6.h,
                     ),
                     child: Text(
-                      "Government Approval",
+                      "GOVERNMENT APPROVAL",
                       style: theme.textTheme.titleSmall,
                     ),
                   )
