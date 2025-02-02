@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/app_export.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
@@ -453,8 +454,8 @@ class DetailPengajuanKipappPimpinanScreen extends StatelessWidget {
     );
   }
 
-/// Navigates back to the previous screen.
-onTapArrowleftone(BuildContext context) {
-  Navigator.pop(context);
-}
+  /// Navigates back to the previous screen.
+  onTapArrowleftone(BuildContext context) {
+    Navigator.pop(context);
+  }
 }

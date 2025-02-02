@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'package:excel/excel.dart';
+
+import '../../detail_absensi_manual_pimpinan_screen/detail_absensi_manual_pimpinan_screen.dart';
+import '../../detail_pengajuan_cuti_pimpinan_screen/detail_pengajuan_cuti_pimpinan_screen.dart';
+import '../../detail_pengajuan_kipapp_ketua_tim_screen/detail_pengajuan_kipapp_ketua_tim_screen.dart';
+import '../../detail_pengajuan_kipapp_ketua_tim_screen_tahun/detail_pengajuan_kipapp_ketua_tim_screen_tahun.dart';
+import '../../../services/excel_service.dart';
 
 class ExpandablelistsItemWidget extends StatelessWidget {
   final VoidCallback? onTapRowone;
-  final List<Map<String, String>> tableData;
+  final List<Map<String, dynamic>> tableData;
   final String label;
 
   ExpandablelistsItemWidget({
@@ -19,8 +20,13 @@ class ExpandablelistsItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Hitung jumlah pengajuan dengan status TEAM_APPROVED
+    final int teamApprovedCount = tableData
+        .where((row) => row['Status'] == 'Menunggu Persetujuan')
+        .length;
+
     return Container(
-      margin: EdgeInsets.only(top : 1),
+      margin: EdgeInsets.only(top: 1),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -33,8 +39,32 @@ class ExpandablelistsItemWidget extends StatelessWidget {
             label,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (teamApprovedCount >
+                  0) // Tampilkan notifikasi hanya jika ada data
+                Container(
+                  margin: EdgeInsets.only(right: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$teamApprovedCount',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              Icon(Icons.keyboard_arrow_down), // Icon dropdown default
+            ],
+          ),
           children: [
-            _buildDataTable(),
+            _buildDataTable(context),
             SizedBox(height: 8),
             _buildDownloadButton(context),
           ],
@@ -43,7 +73,7 @@ class ExpandablelistsItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDataTable() {
+  Widget _buildDataTable(context) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(8),
@@ -71,8 +101,9 @@ class ExpandablelistsItemWidget extends StatelessWidget {
             ...tableData.map((row) {
               return TableRow(
                 children: [
-                  _buildMultiLineCell(row['Nama'] ?? ''),
-                  _buildMultiLineCell(row['Jenis Pengajuan'] ?? ''),
+                  _buildMultiLineCell(context, row['Nama'] ?? '', row),
+                  _buildMultiLineCell(
+                      context, row['Jenis Pengajuan'] ?? '', row),
                   _buildStatusCell(row['Status'] ?? ''),
                 ],
               );
@@ -97,20 +128,72 @@ class ExpandablelistsItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMultiLineCell(String text) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        overflow: TextOverflow.visible,
-        maxLines: null,
-        style: TextStyle(color: Colors.black),
+  Widget _buildMultiLineCell(context, String text, Map<String, dynamic> row) {
+    return GestureDetector(
+      onTap: () => _navigateToDetail(context, row),
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible,
+          maxLines: null,
+          style: TextStyle(color: Colors.black),
+        ),
       ),
     );
   }
 
+  void _navigateToDetail(context, Map<String, dynamic> row) {
+    final submissionType = row['Jenis Pengajuan'];
+    if (submissionType == "Presensi Manual") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailAbsensiManualPimpinanScreen(
+            data: row, // Kirim data ke halaman detail
+          ),
+        ),
+      );
+    } else if (submissionType == "Pengajuan Cuti") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailPengajuanCutiPimpinanScreen(
+            data: row, // Kirim data ke halaman detail
+          ),
+        ),
+      );
+    } else if (submissionType == "KiP APP") {
+      final kipAppType = row['Submission Data']['submission_data']
+          ['kipapp_type']; // Tambahkan `kipAppType` ke data jika diperlukan
+      if (kipAppType == "Bulanan") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPengajuanKipappKetuaTimScreen(
+              data: row, // Kirim data ke halaman detail
+            ),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPengajuanKipappKetuaTimScreenTahun(
+              data: row, // Kirim data ke halaman detail
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   Widget _buildStatusCell(String status) {
+    if (status.isEmpty) {
+      return SizedBox.shrink();
+    }
+
     Color statusColor;
     switch (status) {
       case 'Disetujui':
@@ -159,36 +242,6 @@ class ExpandablelistsItemWidget extends StatelessWidget {
   }
 
   Future<void> _downloadTableData(BuildContext context) async {
-    var status = await Permission.storage.request();
-    if (status.isGranted) {
-      var excel = Excel.createExcel();
-      Sheet sheetObject = excel['Sheet1'];
-
-      // Header
-      sheetObject.appendRow(['Nama', 'Jenis Pengajuan', 'Status']);
-
-      // Data
-      for (var row in tableData) {
-        sheetObject.appendRow([
-          row['Nama'] ?? '',
-          row['Jenis Pengajuan'] ?? '',
-          row['Status'] ?? '',
-        ]);
-      }
-
-      // Save file
-      var directory = await getApplicationDocumentsDirectory();
-      String path = '${directory.path}/rekapan_${label}.xlsx';
-      File file = File(path);
-      await file.writeAsBytes(excel.encode()!);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('File berhasil diunduh: $path')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Izin penyimpanan ditolak')),
-      );
-    }
+    await ExcelService.downloadRekapan(context, tableData, label);
   }
 }

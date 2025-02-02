@@ -7,7 +7,7 @@ class RiwayatOneItemWidget extends StatelessWidget {
   final String description;
   final String status;
   final String date;
-  final VoidCallback? onTapRow18oktober;
+  final VoidCallback? onTapRow;
 
   RiwayatOneItemWidget({
     Key? key,
@@ -15,14 +15,14 @@ class RiwayatOneItemWidget extends StatelessWidget {
     required this.description,
     required this.status,
     required this.date,
-    this.onTapRow18oktober,
+    this.onTapRow,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        onTapRow18oktober?.call();
+        onTapRow?.call();
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -73,39 +73,34 @@ class RiwayatOneItemWidget extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: 10.h,
-                      color: Colors.black
+                      color: Colors.black,
                     ),
                   ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: Row(
-                      children: [
-                        CustomImageView(
-                          imagePath: status == "Disetujui"
-                            ? ImageConstant.imgCheckmark
-                            : ImageConstant.imgCrossCircle,
-                          height: 10.h,
-                          width: 10.h,
-                        ),
-                        SizedBox(width: 4.h),
-                        Text(
-                          status,
-                          style: TextStyle(
-                            color: status == "Disetujui" ? Colors.green : Colors.red,
-                            fontSize: 10.h
-                          )
-                        ),
-                      ],
+                  if (status.isNotEmpty) // Only show status if it's not empty
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: Row(
+                        children: [
+                          // Icon for status
+                          _buildStatusIcon(status),
+                          SizedBox(width: 4.h),
+                          Text(
+                            status,
+                            style: TextStyle(
+                              color: _getStatusColor(status),
+                              fontSize: 10.h,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
             SizedBox(width: 12.h),
             Align(
               alignment: Alignment.topCenter,
-              child: 
-              Text(
+              child: Text(
                 date,
                 style: theme.textTheme.labelMedium,
               ),
@@ -114,5 +109,44 @@ class RiwayatOneItemWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Builds the status icon based on the status text
+  Widget _buildStatusIcon(String status) {
+    if (status.contains("Sedang diproses") || status.contains("Menunggu")) {
+      return Container(
+        height: 10.h,
+        width: 10.h,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.green,
+        ),
+      );
+    } else if (status.contains("Disetujui")) {
+      return CustomImageView(
+        imagePath: ImageConstant.imgCheckmark,
+        height: 10.h,
+        width: 10.h,
+      );
+    } else if (status.contains("Ditolak") || status.contains("Dibatalkan")) {
+      return CustomImageView(
+        imagePath: ImageConstant.imgCrossCircle,
+        height: 10.h,
+        width: 10.h,
+      );
+    }
+    return SizedBox.shrink(); // Default empty widget
+  }
+
+  /// Returns the color for the status text based on the status
+  Color _getStatusColor(String status) {
+    if (status.contains("Sedang diproses") || status.contains("Menunggu")) {
+      return Colors.green;
+    } else if (status.contains("Disetujui")) {
+      return Colors.green;
+    } else if (status.contains("Ditolak") || status.contains("Dibatalkan")) {
+      return Colors.red;
+    }
+    return Colors.black; // Default color
   }
 }

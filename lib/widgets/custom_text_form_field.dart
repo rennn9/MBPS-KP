@@ -74,6 +74,9 @@ class CustomTextFormField extends StatelessWidget {
     this.fillColor,
     this.filled = false,
     this.validator,
+
+    /// **Tambahkan parameter onChanged**
+    this.onChanged,
   }) : super(key: key);
 
   final Alignment? alignment;
@@ -101,6 +104,9 @@ class CustomTextFormField extends StatelessWidget {
   final Color? fillColor;
   final bool? filled;
   final FormFieldValidator<String>? validator;
+
+  /// **Deklarasi onChanged**
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +145,9 @@ class CustomTextFormField extends StatelessWidget {
           maxLines: maxLines ?? 1,
           decoration: decoration,
           validator: validator,
+
+          /// **Pemetaan ke TextFormField**
+          onChanged: onChanged,
         ),
       );
 

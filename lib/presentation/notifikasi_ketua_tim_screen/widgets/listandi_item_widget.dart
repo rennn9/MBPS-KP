@@ -3,14 +3,27 @@ import '../../../core/app_export.dart';
 
 // ignore_for_file: must_be_immutable
 class ListandiItemWidget extends StatelessWidget {
-  ListandiItemWidget({Key? key, this.onTapRowandilatifah}) : super(key: key);
+  final String userName;
+  final String description;
+  final String status;
+  final String type;
+  final Color backgroundColor;
+  final VoidCallback? onTapRow;
 
-  final VoidCallback? onTapRowandilatifah;
+  ListandiItemWidget({
+    Key? key,
+    required this.userName,
+    required this.description,
+    required this.status,
+    required this.type,
+    required this.backgroundColor,
+    this.onTapRow,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTapRowandilatifah,
+      onTap: onTapRow,
       child: Container(
         padding: EdgeInsets.all(6.h),
         decoration: BoxDecoration(
@@ -34,13 +47,21 @@ class ListandiItemWidget extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     CustomImageView(
-                      imagePath: ImageConstant.imgEllipse59,
+                      imagePath: type == "Pengajuan Cuti"
+                          ? ImageConstant.imgEllipse59
+                          : type == "Presensi Manual"
+                              ? ImageConstant.imgEllipse60
+                              : ImageConstant.imgEllipse61,
                       height: 48.h,
                       width: double.maxFinite,
                       radius: BorderRadius.circular(24.0.h),
                     ),
                     CustomImageView(
-                      imagePath: ImageConstant.imgCalendarErrorcontainer,
+                      imagePath: type == "Pengajuan Cuti"
+                          ? ImageConstant.imgCalendarErrorcontainer
+                          : type == "Presensi Manual"
+                              ? ImageConstant.imgEditErrorcontainer
+                              : ImageConstant.imgDownloadErrorcontainer,
                       height: 30.h,
                       width: 32.h,
                     ),
@@ -56,11 +77,11 @@ class ListandiItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Andi Latifah",
+                      userName,
                       style: theme.textTheme.titleSmall,
                     ),
                     Text(
-                      "Alasan : Acara keluarga",
+                      description,
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
@@ -68,21 +89,22 @@ class ListandiItemWidget extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12.h),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4.h,
-                vertical: 2.h,
+            if (status.isNotEmpty) // Tampilkan hanya jika status tidak kosong
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 4.h,
+                  vertical: 2.h,
+                ),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadiusStyle.roundedBorder4,
+                ),
+                child: Text(
+                  status,
+                  textAlign: TextAlign.left,
+                  style: theme.textTheme.labelSmall,
+                ),
               ),
-              decoration: BoxDecoration(
-                color: appTheme.yellowA700,
-                borderRadius: BorderRadiusStyle.roundedBorder4,
-              ),
-              child: Text(
-                "Menunggu Persetujuan",
-                textAlign: TextAlign.left,
-                style: theme.textTheme.labelSmall,
-              ),
-            ),
           ],
         ),
       ),

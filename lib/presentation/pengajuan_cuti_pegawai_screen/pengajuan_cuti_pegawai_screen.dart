@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+
 import '../../core/app_export.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
-import '../../widgets/custom_drop_down.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_text_form_field.dart';
+
 import '../pengajuan_cuti_setengah_hari_pegawai_screen/pengajuan_cuti_setengah_hari_pegawai_screen.dart';
 import '../dashboard_pegawai_screen/dashboard_pegawai_screen.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 
-// ignore_for_file: must_be_immutable
 class PengajuanCutiPegawaiScreen extends StatefulWidget {
-  PengajuanCutiPegawaiScreen({Key? key}) : super(key: key);
+  const PengajuanCutiPegawaiScreen({Key? key}) : super(key: key);
 
   @override
   _PengajuanCutiPegawaiScreenState createState() =>
@@ -23,7 +24,8 @@ class PengajuanCutiPegawaiScreen extends StatefulWidget {
 
 class _PengajuanCutiPegawaiScreenState
     extends State<PengajuanCutiPegawaiScreen> {
-  List<String> dropdownItemList = [
+  /// List opsi jenis cuti (dropdown)
+  final List<String> dropdownItemList = [
     "Tahunan",
     "Besar",
     "Sakit",
@@ -33,79 +35,118 @@ class _PengajuanCutiPegawaiScreenState
     "Perpanjangan CLTN",
     "Cuti Setengah Hari"
   ];
-  String selectedOption = "Tahunan"; // Track selected dropdown option
 
-  TextEditingController group37040oneController = TextEditingController();
-  TextEditingController stashdatadateliController = TextEditingController();
-  TextEditingController berikanController = TextEditingController();
-  TextEditingController mulaiController = TextEditingController();
+  /// Nilai default dropdown
+  String selectedOption = "Tahunan";
 
+  /// Controller untuk form
+  final TextEditingController lamaCutiController = TextEditingController();
+  final TextEditingController tanggalSelesaiController =
+      TextEditingController();
+  final TextEditingController alasanController = TextEditingController();
+  final TextEditingController tanggalMulaiController = TextEditingController();
+
+  /// Variabel untuk menyimpan tanggal aslinya
   DateTime? selectedMulaiDate;
   DateTime? selectedSelesaiDate;
 
+  /// Status loading saat submit
+  bool _isSubmitting = false;
+
+  /// Cek apakah seluruh form terisi
   bool isFormValid() {
-    return selectedOption.isNotEmpty &&
-        group37040oneController.text.isNotEmpty &&
-        stashdatadateliController.text.isNotEmpty &&
-        mulaiController.text.isNotEmpty &&
-        berikanController.text.isNotEmpty;
+    return lamaCutiController.text.isNotEmpty &&
+        tanggalSelesaiController.text.isNotEmpty &&
+        tanggalMulaiController.text.isNotEmpty &&
+        alasanController.text.isNotEmpty;
   }
 
-  // Fungsi untuk menghitung jumlah hari kerja
-  int _workingDaysBetween(DateTime start, DateTime end) {
-    int days = 0;
+  /// Menghitung hari kerja di antara rentang tanggal (tidak termasuk Sabtu/Minggu)
+  int _calculateLeaveDays(DateTime start, DateTime end) {
+    int leaveDays = 0;
     DateTime current = start;
-
     while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
       if (current.weekday != DateTime.saturday &&
           current.weekday != DateTime.sunday) {
-        days++;
+        leaveDays++;
       }
-      current = current.add(Duration(days: 1));
+      current = current.add(const Duration(days: 1));
     }
-    return days;
+    return leaveDays;
   }
 
-  Future<void> _selectDate(BuildContext context,
-      TextEditingController controller, DateTime? initialDate) async {
+  /// ShowDatePicker + set State
+  Future<void> _selectDate(
+    BuildContext context,
+    TextEditingController controller,
+    DateTime? initialDate,
+  ) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate ?? DateTime.now(),
-      firstDate: DateTime(2024),
+      firstDate: DateTime(2023),
       lastDate: DateTime(2030),
     );
+
     if (picked != null) {
       setState(() {
+        // Format dd/MM/yyyy
         controller.text = DateFormat('dd/MM/yyyy').format(picked);
-        if (controller == mulaiController) {
-          selectedMulaiDate = picked;
-          group37040oneController.clear();
-        } else if (controller == stashdatadateliController) {
-          selectedSelesaiDate = picked;
-          if (selectedMulaiDate != null) {
-            if (selectedSelesaiDate!.isBefore(selectedMulaiDate!)) {
-              selectedSelesaiDate = null;
-              stashdatadateliController.clear();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                      'Tanggal selesai tidak boleh sebelum tanggal mulai.'),
-                ),
-              );
-            } else {
-              int daysBetween =
-                  _workingDaysBetween(selectedMulaiDate!, DateTime.now());
-              if (daysBetween <= 4) {
-                group37040oneController.text = daysBetween.toString();
-              } else {
-                selectedSelesaiDate = null;
-                stashdatadateliController.clear();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(
-                          'Pengajuan cuti harus dalam 3 hari kerja dari tanggal mulai.')),
-                );
-              }
+
+        // Jika user memilih tanggal mulai
+        if (controller == tanggalMulaiController) {
+          if (!_isWithinThreeWorkdays(picked)) {
+            // Jika tanggal melebihi 3 hari kerja, tampilkan error
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Pengajuan cuti harus dalam 3 hari kerja dari tanggal mulai.'),
+              ),
+            );
+            selectedMulaiDate = null;
+            controller.clear();
+          } else if (selectedSelesaiDate != null &&
+              picked.isAfter(selectedSelesaiDate!)) {
+            // Jika tanggal mulai lebih besar dari tanggal selesai
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Tanggal mulai tidak boleh lebih besar dari tanggal selesai.'),
+              ),
+            );
+            selectedMulaiDate = null;
+            controller.clear();
+          } else {
+            selectedMulaiDate = picked;
+
+            // Hitung durasi cuti jika tanggal selesai valid
+            if (selectedSelesaiDate != null) {
+              int leaveDays = _calculateLeaveDays(picked, selectedSelesaiDate!);
+              _validateLeaveDuration(context, leaveDays);
+            }
+          }
+        }
+
+        // Jika user memilih tanggal selesai
+        else if (controller == tanggalSelesaiController) {
+          if (selectedMulaiDate != null &&
+              picked.isBefore(selectedMulaiDate!)) {
+            // Jika tanggal selesai lebih kecil dari tanggal mulai
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Tanggal selesai tidak boleh lebih kecil dari tanggal mulai.'),
+              ),
+            );
+            selectedSelesaiDate = null;
+            controller.clear();
+          } else {
+            selectedSelesaiDate = picked;
+
+            // Hitung durasi cuti jika tanggal mulai valid
+            if (selectedMulaiDate != null) {
+              int leaveDays = _calculateLeaveDays(selectedMulaiDate!, picked);
+              _validateLeaveDuration(context, leaveDays);
             }
           }
         }
@@ -113,50 +154,161 @@ class _PengajuanCutiPegawaiScreenState
     }
   }
 
+  bool _isWithinThreeWorkdays(DateTime selectedDate) {
+    DateTime now = DateTime.now();
+    int workdays = 0;
+    DateTime current = now;
+
+    while (workdays < 3) {
+      current = current.add(const Duration(days: 1));
+
+      if (current.weekday != DateTime.saturday &&
+          current.weekday != DateTime.sunday) {
+        workdays++;
+      }
+    }
+
+    return selectedDate.isBefore(current) ||
+        selectedDate.isAtSameMomentAs(current);
+  }
+
+  /// Fungsi untuk validasi durasi cuti
+  void _validateLeaveDuration(BuildContext context, int leaveDays) {
+    if (leaveDays > 5) {
+      // Durasi cuti tidak boleh lebih dari 5 hari kerja
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Durasi cuti tidak boleh lebih dari 5 hari kerja.'),
+        ),
+      );
+
+      // Reset tanggal selesai dan lama cuti
+      setState(() {
+        selectedSelesaiDate = null;
+        tanggalSelesaiController.clear();
+        lamaCutiController.clear();
+      });
+    } else {
+      // Update lama cuti jika valid
+      setState(() {
+        lamaCutiController.text = leaveDays.toString();
+      });
+    }
+  }
+
+  /// Menyimpan data cuti ke Firestore
+  Future<void> _submitToFirestore() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User belum login!')),
+      );
+      return;
+    }
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    final userData = userDoc.data();
+    final role_id = userData?['role_id'];
+    String status = '';
+
+    if (role_id == 4) {
+      status = 'TEAM_APPROVED';
+    } else {
+      status = 'PROCESSING';
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      await FirebaseFirestore.instance.collection('submissions').add({
+        'user_id': user.uid,
+        'status': status,
+        'submission_type': "Pengajuan Cuti",
+        'submission_data': {
+          'duration_leave': int.tryParse(lamaCutiController.text) ?? 0,
+          'end_time': selectedSelesaiDate ?? DateTime.now(),
+          'leave_type': selectedOption,
+          'reason': alasanController.text,
+          'start_time': selectedMulaiDate ?? DateTime.now(),
+        },
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      });
+
+      Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan data: $e')),
+      );
+    } finally {
+      setState(() {
+        _isSubmitting = false; // Selesai loading
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppbar(context),
-        body: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Container(
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: _buildAppbar(context),
+            body: SizedBox(
               width: double.maxFinite,
-              padding: EdgeInsets.only(
-                left: 14.h,
-                top: 20.h,
-                right: 14.h,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: double.maxFinite,
-                    margin: EdgeInsets.only(left: 2.h),
-                    padding: EdgeInsets.symmetric(horizontal: 14.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        _buildOpsijeniscuti(context),
-                        SizedBox(height: 24.h),
-                        _buildColumnmdone(context),
-                        SizedBox(height: 14.h),
-                        _buildMulai(context),
-                        SizedBox(height: 16.h),
-                        _buildSelesai(context),
-                        SizedBox(height: 16.h),
-                        _buildColumnmdfour(context),
-                        SizedBox(height: 122.h),
-                        _buildSubmit(context),
-                      ],
-                    ),
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.only(
+                    left: 14.h,
+                    top: 20.h,
+                    right: 14.h,
                   ),
-                  SizedBox(height: 6.h)
-                ],
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.maxFinite,
+                        margin: EdgeInsets.only(left: 2.h),
+                        padding: EdgeInsets.symmetric(horizontal: 14.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            _buildJenisCutiDropdown(context),
+                            SizedBox(height: 24.h),
+                            _buildMulai(context),
+                            SizedBox(height: 16.h),
+                            _buildSelesai(context),
+                            SizedBox(height: 16.h),
+                            _buildLamaCuti(context),
+                            SizedBox(height: 16.h),
+                            _buildAlasan(context),
+                            SizedBox(height: 122.h),
+                            _buildSubmitButton(context),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 6.h),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          // Overlay untuk loading
+          if (_isSubmitting)
+            Container(
+              color: Colors.black.withOpacity(0.5), // Transparansi overlay
+              child: const Center(
+                child: CircularProgressIndicator(), // Loading indikator
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -168,25 +320,24 @@ class _PengajuanCutiPegawaiScreenState
         imagePath: ImageConstant.imgArrowLeftWhiteA700,
         margin: EdgeInsets.only(left: 33.h),
         onTap: () {
+          // Kembali ke Dashboard Pegawai (atau pop)
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  DashboardPegawaiScreen(), // Update with the correct screen class
+              builder: (context) => const DashboardPegawaiScreen(),
             ),
-            (route) => false, // Clears the navigation stack
+            (route) => false,
           );
         },
       ),
       centerTitle: true,
-      title: AppbarTitle(
-        text: "Pengajuan Cuti",
-      ),
+      title: AppbarTitle(text: "Pengajuan Cuti"),
       styleType: Style.bgFillTeal200,
     );
   }
 
-  Widget _buildOpsijeniscuti(BuildContext context) {
+  /// Dropdown Pilihan Jenis Cuti
+  Widget _buildJenisCutiDropdown(BuildContext context) {
     return Container(
       width: double.maxFinite,
       margin: EdgeInsets.only(right: 2.h),
@@ -218,19 +369,20 @@ class _PengajuanCutiPegawaiScreenState
                 onChanged: (String? value) {
                   setState(() {
                     selectedOption = value!;
+                    // Jika user pilih "Cuti Setengah Hari", pindah screen lain
                     if (value == "Cuti Setengah Hari") {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              PengajuanCutiSetengahHariPegawaiScreen(),
+                              const PengajuanCutiSetengahHariPegawaiScreen(),
                         ),
                       );
                     }
                   });
                 },
-                isExpanded: true, // Ensures the dropdown expands fully
-                icon: Icon(Icons.arrow_drop_down), // Ensures arrow is visible
+                isExpanded: true,
+                icon: const Icon(Icons.arrow_drop_down),
               ),
             ),
           ),
@@ -239,49 +391,7 @@ class _PengajuanCutiPegawaiScreenState
     );
   }
 
-  Widget _buildGroup37040one(BuildContext context) {
-    return TextFormField(
-      controller: group37040oneController,
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      style: theme.textTheme.bodySmall,
-      decoration: InputDecoration(
-        hintText: "Masukkan Lama Cuti (Hari)",
-        hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-        contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
-        filled: true,
-        fillColor: appTheme.whiteA700,
-        border: TextFormFieldStyleHelper.outlineErrorContainerTL4,
-        enabledBorder: TextFormFieldStyleHelper.outlineErrorContainerTL4,
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4.h),
-          borderSide: BorderSide(
-            color: theme.colorScheme.primary,
-            width: 1.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildColumnmdone(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      margin: EdgeInsets.only(right: 2.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Lama Cuti",
-            style: CustomTextStyles.titleLargeErrorContainer,
-          ),
-          SizedBox(height: 12.h),
-          _buildGroup37040one(context),
-        ],
-      ),
-    );
-  }
-
+  /// Field "Mulai"
   Widget _buildMulai(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -296,12 +406,15 @@ class _PengajuanCutiPegawaiScreenState
           SizedBox(height: 10.h),
           GestureDetector(
             onTap: () =>
-                _selectDate(context, mulaiController, selectedMulaiDate),
+                _selectDate(context, tanggalMulaiController, selectedMulaiDate),
             child: AbsorbPointer(
               child: CustomTextFormField(
-                controller: mulaiController,
+                controller: tanggalMulaiController,
                 hintText: "Pilih Tanggal Mulai",
                 hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                onChanged: (val) {
+                  setState(() {});
+                },
                 contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
                 borderDecoration:
                     TextFormFieldStyleHelper.outlineErrorContainerTL4,
@@ -315,28 +428,7 @@ class _PengajuanCutiPegawaiScreenState
     );
   }
 
-  Widget _buildStashdatadateli(BuildContext context) {
-    return CustomTextFormField(
-      controller: stashdatadateliController,
-      hintText: "Pilih Tanggal Selesai",
-      hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-      suffix: Container(
-        margin: EdgeInsets.fromLTRB(16.h, 12.h, 10.h, 12.h),
-        child: CustomImageView(
-          imagePath: ImageConstant.imgStashdatadatelight,
-          height: 26.h,
-          width: 32.h,
-          fit: BoxFit.contain,
-        ),
-      ),
-      suffixConstraints: BoxConstraints(
-        maxHeight: 50.h,
-      ),
-      contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
-      borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL41,
-    );
-  }
-
+  /// Field "Selesai"
   Widget _buildSelesai(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -351,12 +443,15 @@ class _PengajuanCutiPegawaiScreenState
           SizedBox(height: 10.h),
           GestureDetector(
             onTap: () => _selectDate(
-                context, stashdatadateliController, selectedSelesaiDate),
+                context, tanggalSelesaiController, selectedSelesaiDate),
             child: AbsorbPointer(
               child: CustomTextFormField(
-                controller: stashdatadateliController,
+                controller: tanggalSelesaiController,
                 hintText: "Pilih Tanggal Selesai",
                 hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                onChanged: (val) {
+                  setState(() {});
+                },
                 contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
                 borderDecoration:
                     TextFormFieldStyleHelper.outlineErrorContainerTL4,
@@ -370,7 +465,48 @@ class _PengajuanCutiPegawaiScreenState
     );
   }
 
-  Widget _buildColumnmdfour(BuildContext context) {
+  /// Field "Lama Cuti" (READONLY)
+  Widget _buildLamaCuti(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: EdgeInsets.only(right: 2.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Lama Cuti",
+            style: CustomTextStyles.titleLargeErrorContainer,
+          ),
+          SizedBox(height: 12.h),
+          TextFormField(
+            controller: lamaCutiController,
+            // Hilangkan onChanged, readOnly agar user tidak mengetik
+            readOnly: true,
+            style: theme.textTheme.bodySmall,
+            decoration: InputDecoration(
+              hintText: "Lama Cuti (Hari)",
+              hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+              contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+              filled: true,
+              fillColor: appTheme.whiteA700,
+              border: TextFormFieldStyleHelper.outlineErrorContainerTL4,
+              enabledBorder: TextFormFieldStyleHelper.outlineErrorContainerTL4,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.h),
+                borderSide: BorderSide(
+                  color: theme.colorScheme.primary,
+                  width: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Field "Alasan"
+  Widget _buildAlasan(BuildContext context) {
     return Container(
       width: double.maxFinite,
       margin: EdgeInsets.only(right: 2.h),
@@ -383,9 +519,12 @@ class _PengajuanCutiPegawaiScreenState
           ),
           SizedBox(height: 12.h),
           CustomTextFormField(
-            controller: berikanController,
+            controller: alasanController,
             hintText: "Berikan Alasan...",
             hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+            onChanged: (val) {
+              setState(() {});
+            },
             contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
             borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL4,
             filled: true,
@@ -396,31 +535,25 @@ class _PengajuanCutiPegawaiScreenState
     );
   }
 
-  Widget _buildSubmit(BuildContext context) {
+  /// Tombol "Submit"
+  Widget _buildSubmitButton(BuildContext context) {
     return CustomElevatedButton(
       height: 32.h,
       width: 76.h,
       text: "Submit",
       margin: EdgeInsets.only(right: 2.h),
-      buttonStyle: isFormValid()
-          ? CustomButtonStyles.fillTeal // Active button style
-          : CustomButtonStyles.fillGray, // Disabled button style
-      buttonTextStyle: isFormValid()
-          ? CustomTextStyles.titleSmallWhiteA700 // Active text style
-          : CustomTextStyles.bodyMediumErrorContainer_1, // Disabled text style
-      onPressed: isFormValid()
-          ? () => onTapSubmit(context)
-          : null, // Disable the button if the form is invalid
+      buttonStyle: isFormValid() && !_isSubmitting
+          ? CustomButtonStyles.fillTeal
+          : CustomButtonStyles.fillGray,
+      buttonTextStyle: isFormValid() && !_isSubmitting
+          ? CustomTextStyles.titleSmallWhiteA700
+          : CustomTextStyles.bodyMediumErrorContainer_1,
+      onPressed:
+          isFormValid() && !_isSubmitting ? () => _onTapSubmit(context) : null,
     );
   }
 
-  /// Navigates back to the previous screen.
-  onTapArrowleftone(BuildContext context) {
-    Navigator.pop(context);
-  }
-
-  /// Navigates to the submitBerhasilScreen when the action is triggered.
-  onTapSubmit(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
+  void _onTapSubmit(BuildContext context) {
+    _submitToFirestore();
   }
 }

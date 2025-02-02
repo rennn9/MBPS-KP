@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:timelines_plus/timelines_plus.dart';
+
 import '../../core/app_export.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_title.dart';
@@ -7,25 +10,64 @@ import '../../widgets/app_bar/custom_app_bar.dart';
 
 // ignore_for_file: must_be_immutable
 class DetailRiwayatPegawaiScreen extends StatelessWidget {
-  DetailRiwayatPegawaiScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic>? data;
+  final String? submissionId;
 
-  TextEditingController loremipsumoneController = TextEditingController();
+  DetailRiwayatPegawaiScreen({
+    Key? key,
+    this.data,
+    this.submissionId,
+  }) : super(key: key);
 
-  final String alasanCuti =
-      "Data alasan cuti yang diambil dari folder pengajuan"; // Contoh data statis
+  /// Fungsi untuk membatalkan pengajuan
+  Future<void> _cancelSubmission(BuildContext context) async {
+    try {
+      if (submissionId != null) {
+        // Update status di Firebase
+        await FirebaseFirestore.instance
+            .collection('submissions')
+            .doc(submissionId)
+            .update({
+          'status': 'CANCELED',
+        });
 
-  final String teamLeaderDecision =
-      "Ditolak oleh Ketua Tim"; // Bisa diganti menjadi "Diterima oleh Ketua Tim"
+        // Tampilkan pesan sukses
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Pengajuan berhasil dibatalkan')),
+        );
 
-  final List<String> statusList = [
-    "Diajukan",
-    "Sedang Diproses",
-    "Disetujui oleh Ketua Tim", // Sesuaikan dengan status Anda
-    "Disetujui oleh Pimpinan",
-  ];
+        // Kembali ke halaman sebelumnya setelah status diperbarui
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      // Tampilkan pesan error jika gagal
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal membatalkan pengajuan: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final leaveType = data?['submission_data']['leave_type'] ?? '';
+    final leaveStartDate = (leaveType == "Cuti Setengah Hari")
+        ? (data?['submission_data']['date']?.toDate())
+        : (data?['submission_data']['start_time']?.toDate());
+    final formattedStartDate = leaveStartDate != null
+        ? DateFormat("d MMMM yyyy", "id_ID").format(leaveStartDate)
+        : 'Tidak tersedia';
+
+    final createdAt = data?['created_at']?.toDate();
+    final formattedCreatedAt = createdAt != null
+        ? DateFormat("d MMMM yyyy", "id_ID").format(createdAt)
+        : 'Tidak tersedia';
+
+    final description = data?['submission_data']['reason'] ?? '';
+
+    final rawStatus = data?['status'] ?? '';
+
+    final statusList = _generateStatusList(rawStatus);
+
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppbar(context),
@@ -75,7 +117,7 @@ class DetailRiwayatPegawaiScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 2.h),
                         Text(
-                          "18 Oktober 2024",
+                          formattedStartDate,
                           style: theme.textTheme.labelMedium,
                         ),
                         SizedBox(height: 30.h),
@@ -94,7 +136,7 @@ class DetailRiwayatPegawaiScreen extends StatelessWidget {
                           child: _buildRowTanggal(
                             context,
                             tanggalOne: "Tipe",
-                            tanggalValue: "1 Hari",
+                            tanggalValue: leaveType,
                           ),
                         ),
                         SizedBox(height: 6.h),
@@ -105,7 +147,7 @@ class DetailRiwayatPegawaiScreen extends StatelessWidget {
                           child: _buildRowTanggal(
                             context,
                             tanggalOne: "Tanggal Pengajuan",
-                            tanggalValue: "10 Oktober 2024",
+                            tanggalValue: formattedCreatedAt,
                           ),
                         ),
                         SizedBox(height: 6.h),
@@ -116,7 +158,7 @@ class DetailRiwayatPegawaiScreen extends StatelessWidget {
                           child: _buildRowTanggal(
                             context,
                             tanggalOne: "Tanggal Cuti",
-                            tanggalValue: "18 Oktober 2024",
+                            tanggalValue: formattedStartDate,
                           ),
                         ),
                         SizedBox(height: 6.h),
@@ -136,14 +178,15 @@ class DetailRiwayatPegawaiScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: theme.colorScheme.surfaceVariant,
                             borderRadius: BorderRadius.circular(8.h),
-                            border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.12)),
+                            border: Border.all(
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.12)),
                           ),
                           child: Text(
-                            alasanCuti,
+                            description,
                             style: TextStyle(
-                              color: Colors.black,
-                              fontStyle: FontStyle.normal
-                            ), 
+                                color: Colors.black,
+                                fontStyle: FontStyle.normal),
                           ),
                         ),
                         SizedBox(height: 10.h),
@@ -155,74 +198,23 @@ class DetailRiwayatPegawaiScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 10.h),
-                        SizedBox(
-                          width: double.maxFinite,
-                          child: Timeline.tileBuilder(
-                            shrinkWrap: true,
-                            theme: TimelineThemeData(
-                              nodePosition: 0.05,
-                              indicatorPosition: 0,
+                        _buildTimeline(statusList),
+                        SizedBox(height: 18.h),
+                        if (rawStatus ==
+                            'PROCESSING') // Hanya tampil jika status adalah PROCESSING
+                          ElevatedButton(
+                            onPressed: () => _cancelSubmission(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red, // Warna tombol merah
                             ),
-                            builder: TimelineTileBuilder.connected(
-                              connectionDirection: ConnectionDirection.before,
-                              itemCount: statusList.length,
-                              indicatorBuilder: (context, index) {
-                                Color indicatorColor;
-                                if (index == 0 ||
-                                    index == 1 ||
-                                    statusList[index] ==
-                                        "Disetujui oleh Ketua Tim") {
-                                  indicatorColor = Colors.green;
-                                } else {
-                                  indicatorColor = teamLeaderDecision ==
-                                          "Ditolak oleh Ketua Tim"
-                                      ? Colors.red
-                                      : Colors.green;
-                                }
-                                return DotIndicator(
-                                  size: 20.h,
-                                  color: indicatorColor,
-                                  child: Icon(
-                                    index == statusList.length - 1 &&
-                                            teamLeaderDecision ==
-                                                "Ditolak oleh Ketua Tim"
-                                        ? Icons.close
-                                        : Icons.check,
-                                    color: Colors.white,
-                                    size: 12.h,
-                                  ),
-                                );
-                              },
-                              contentsBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 8.0, bottom: 24.0),
-                                  child: Text(
-                                    statusList[index],
-                                    style: TextStyle(
-                                      fontSize: 14.h,
-                                      fontWeight: FontWeight.w500,
-                                      color: (index == statusList.length - 1 &&
-                                              teamLeaderDecision ==
-                                                  "Ditolak oleh Ketua Tim")
-                                          ? Colors.red
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                );
-                              },
-                              connectorBuilder: (context, index, type) {
-                                return SolidLineConnector(
-                                  thickness: 1.h,
-                                  color: index < statusList.length - 1
-                                      ? Colors.grey
-                                      : Colors.transparent,
-                                );
-                              },
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                "Batalkan Pengajuan",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 18.h),
                       ],
                     ),
                   ),
@@ -230,6 +222,99 @@ class DetailRiwayatPegawaiScreen extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Membuat daftar status berdasarkan status dari Firebase
+  List<String> _generateStatusList(String rawStatus) {
+    switch (rawStatus) {
+      case 'PROCESSING':
+        return ["Diajukan", "Sedang Diproses"];
+      case 'TEAM_REJECTED':
+        return ["Diajukan", "Sedang Diproses", "Ditolak oleh Ketua Tim"];
+      case 'TEAM_APPROVED':
+        return [
+          "Diajukan",
+          "Sedang Diproses",
+          "Disetujui oleh Ketua Tim",
+          "Menunggu persetujuan Pimpinan"
+        ];
+      case 'HEAD_REJECTED':
+        return [
+          "Diajukan",
+          "Sedang Diproses",
+          "Disetujui oleh Ketua Tim",
+          "Ditolak oleh Pimpinan"
+        ];
+      case 'HEAD_APPROVED':
+        return [
+          "Diajukan",
+          "Sedang Diproses",
+          "Disetujui oleh Ketua Tim",
+          "Disetujui oleh Pimpinan"
+        ];
+      case 'CANCELED':
+        return ["Diajukan", "Sedang Diproses", "Dibatalkan"];
+      default:
+        return ["Status tidak diketahui"];
+    }
+  }
+
+  /// Membuat timeline
+  Widget _buildTimeline(List<String> statusList) {
+    return Timeline.tileBuilder(
+      shrinkWrap: true,
+      theme: TimelineThemeData(
+        nodePosition: 0.05,
+        indicatorPosition: 0,
+      ),
+      builder: TimelineTileBuilder.connected(
+        connectionDirection: ConnectionDirection.before,
+        itemCount: statusList.length,
+        indicatorBuilder: (context, index) {
+          final isProcessing = index == statusList.length - 1 &&
+              (statusList.last == "Sedang Diproses" ||
+                  statusList.last.contains("Menunggu"));
+          final isRejected = index == statusList.length - 1 &&
+              (statusList.last.contains("Ditolak") ||
+                  statusList.last.contains("Dibatalkan"));
+
+          return DotIndicator(
+            size: 20.h,
+            color: isRejected
+                ? Colors.red
+                : isProcessing
+                    ? Colors.grey
+                    : Colors.green,
+            child: isProcessing
+                ? null // Lingkaran kosong untuk status "Sedang Diproses"
+                : Icon(
+                    isRejected ? Icons.close : Icons.check,
+                    color: Colors.white,
+                    size: 12.h,
+                  ),
+          );
+        },
+        contentsBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 8.0, bottom: 24.0),
+            child: Text(
+              statusList[index],
+              style: TextStyle(
+                fontSize: 14.h,
+                fontWeight: FontWeight.w500,
+                color: statusList[index].contains("Ditolak")
+                    ? Colors.red
+                    : Colors.black,
+              ),
+            ),
+          );
+        },
+        connectorBuilder: (_, __, ___) => SolidLineConnector(
+          thickness: 1.h,
+          color: Colors.grey,
         ),
       ),
     );

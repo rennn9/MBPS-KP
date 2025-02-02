@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../core/app_export.dart';
-import 'widgets/listpresensiman1_item_widget.dart';
-import '../profile_info_ketua_tim_screen/profile_info_ketua_tim_screen.dart';
+
+import './widgets/listpresensiman1_item_widget.dart';
+import '../detail_absensi_manual_ketua_tim_screen/detail_absensi_manual_ketua_tim_screen.dart';
+import '../detail_pengajuan_cuti_ketua_tim_screen/detail_pengajuan_cuti_ketua_tim_screen.dart';
+import '../detail_pengajuan_kipapp_ketua_tim_screen/detail_pengajuan_kipapp_ketua_tim_screen.dart';
+import '../detail_pengajuan_kipapp_ketua_tim_screen_tahun/detail_pengajuan_kipapp_ketua_tim_screen_tahun.dart';
+import '../profile_info_screen/profile_info_screen.dart';
 import '../notifikasi_ketua_tim_screen/notifikasi_ketua_tim_screen.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:csv/csv.dart';
+import '../../core/app_export.dart';
+import '../../services/firebase_service.dart';
+import '../../services/excel_service.dart';
 
 class DashboardKetuaTimScreen extends StatefulWidget {
-  DashboardKetuaTimScreen({Key? key}) : super(key: key);
+  const DashboardKetuaTimScreen({Key? key}) : super(key: key);
 
   @override
   _DashboardKetuaTimScreenState createState() =>
@@ -16,202 +20,256 @@ class DashboardKetuaTimScreen extends StatefulWidget {
 }
 
 class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
+  String? userName; // Nama pengguna
+  String? teamName; // Nama tim
+  String? teamId; // ID tim pengguna
+  int? roleId;
+
+  List<Map<String, dynamic>> tableData = []; // Data tabel
+  bool isLoading = true;
+  String activeFilter =
+      ''; // Filter permohonan (Presensi Manual, Pengajuan Cuti, KiP APP, atau kosong)
+
+  // Untuk filter waktu (Dropdown)
   List<String> dropdownItemList = [
     "Semua Permohonan",
     "Hari Ini",
     "Minggu Ini",
     "Bulan Ini"
   ];
-  int selectedIndex = 0;
+  int selectedIndex = -1;
   String selectedDropdownItem = "Semua Permohonan";
   final FocusNode dropdownFocusNode = FocusNode();
 
-  // Data tabel (contoh, bisa diganti dengan data dari database atau API)
-  List<Map<String, String>> tableData = [
-    {'Nama': 'John Doe', 'Jenis Pengajuan': 'Cuti', 'Status': 'Diterima'},
-    {'Nama': 'Jane Smith', 'Jenis Pengajuan': 'Presensi Manual', 'Status': 'Ditolak'},
-    {'Nama': 'Alex Johnson', 'Jenis Pengajuan': 'KiP APP', 'Status': 'Menunggu'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _initDashboard();
+  }
 
-    Future<void> _downloadRekapan() async {
-    // Membuat data CSV dari tableData
-    List<List<String>> csvData = [
-      ['Nama', 'Jenis Pengajuan', 'Status'], // Header tabel
-      ...tableData
-          .map((row) => [row['Nama']!, row['Jenis Pengajuan']!, row['Status']!])
-    ];
+  /// Fungsi inisialisasi data di dalam layar
+  Future<void> _initDashboard() async {
+    setState(() => isLoading = true);
 
-    // Konversi ke string CSV
-    String csv = const ListToCsvConverter().convert(csvData);
-
-    try {
-      // Mendapatkan direktori unduhan
-      final directory = await getApplicationDocumentsDirectory();
-      final path = '${directory.path}/rekapan_pengajuan.csv';
-
-      // Menyimpan file CSV
-      final file = File(path);
-      await file.writeAsString(csv);
-
-      // Menampilkan pesan sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('File berhasil diunduh ke $path')),
-      );
-    } catch (e) {
-      // Menampilkan pesan error jika gagal
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal mengunduh file: $e')),
-      );
+    // 1) Ambil data user dari service
+    final userData = await FirebaseService.getUserData();
+    if (userData != null) {
+      userName = userData['userName'];
+      teamName = userData['teamName'];
+      teamId = userData['teamId'];
+      roleId = userData['roleId'];
     }
+
+    // 2) Ambil data submissions
+    if (teamId != null && teamId!.isNotEmpty) {
+      await _fetchTableData(teamId!);
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  /// Fungsi ambil data submissions (dari service) berdasarkan filter
+  Future<void> _fetchTableData(String currentTeamId) async {
+    setState(() => isLoading = true);
+
+    final submissions = await FirebaseService.getSubmissionsByTeam(
+      teamId: currentTeamId,
+      activeFilter: activeFilter,
+      selectedDropdownItem: selectedDropdownItem,
+    );
+
+    setState(() {
+      tableData = submissions;
+      isLoading = false;
+    });
+  }
+
+  /// Handler saat user memilih item dropdown (filter waktu)
+  void _onSelectedDropdownItem(String? value) {
+    if (value == null) return;
+    setState(() {
+      selectedDropdownItem = value;
+    });
+    // Panggil ulang data
+    if (teamId != null && teamId!.isNotEmpty) {
+      _fetchTableData(teamId!);
+    }
+  }
+
+  /// Handler saat user klik salah satu filter: Presensi, Cuti, KiP APP
+  void _onTapFilter(int index, String filter) {
+    setState(() {
+      if (selectedIndex == index) {
+        // Jika filter yang sama dipilih, batalkan
+        selectedIndex = -1;
+        activeFilter = '';
+      } else {
+        // Aktifkan filter baru
+        selectedIndex = index;
+        activeFilter = filter;
+      }
+    });
+    if (teamId != null && teamId!.isNotEmpty) {
+      _fetchTableData(teamId!);
+    }
+  }
+
+  Future<void> _downloadRekapan() async {
+    await ExcelService.downloadRekapan(context, tableData, '');
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Padding(
-                padding: EdgeInsets.only(top: 100),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 18, vertical: 48),
-                  decoration: BoxDecoration(
-                    color: appTheme.cyan100,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(70),
-                      topRight: Radius.circular(70),
+    return PopScope(
+      canPop: false,
+      child: SafeArea(
+        child: Scaffold(
+          body: Stack(
+            children: [
+              // Latar belakang
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 48),
+                    decoration: BoxDecoration(
+                      color: appTheme.cyan100,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(70),
+                        topRight: Radius.circular(70),
+                      ),
                     ),
-                  ),
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        _buildListpresensiman(context),
-                        SizedBox(height: 14),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // Pilihan filter "Presensi Manual", "Pengajuan Cuti", "KiP APP"
+                          _buildListpresensiman(context),
+                          const SizedBox(height: 14),
+
+                          // Dropdown filter waktu
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: DropdownMenu<String>(
+                              initialSelection: dropdownItemList.first,
+                              onSelected: _onSelectedDropdownItem,
+                              dropdownMenuEntries:
+                                  dropdownItemList.map((String value) {
+                                return DropdownMenuEntry<String>(
+                                    value: value, label: value);
+                              }).toList(),
+                              focusNode: dropdownFocusNode
+                                ..canRequestFocus = false,
+                            ),
                           ),
-                          child: DropdownMenu<String>(
-                            initialSelection: dropdownItemList.first,
-                            onSelected: (String? value) {
-                              setState(() {
-                                selectedDropdownItem = value!;
-                              });
-                            },
-                            dropdownMenuEntries: dropdownItemList.map((String value) {
-                              return DropdownMenuEntry<String>(
-                                value: value,
-                                label: value,
-                              );
-                            }).toList(),
-                            focusNode: dropdownFocusNode..canRequestFocus = false,
+
+                          const SizedBox(height: 20),
+
+                          // Tombol Download Rekapan
+                          ElevatedButton.icon(
+                            onPressed: _downloadRekapan,
+                            icon: const Icon(Icons.download),
+                            label: const Text('Download Rekapan'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor:
+                                  const Color.fromARGB(255, 62, 155, 151),
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        // Tombol Download Rekapan
-                        ElevatedButton.icon(
-                          onPressed: _downloadRekapan,
-                          icon: Icon(Icons.download),
-                          label: Text('Download Rekapan'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Color.fromARGB(255, 62, 155, 151),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        // Tabel Data Pengajuan
-                        _buildDataTable(),
-                        SizedBox(height: 210),
-                      ],
+
+                          const SizedBox(height: 20),
+
+                          // Tabel Data Pengajuan
+                          _buildDataTable(),
+
+                          const SizedBox(height: 210),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _buildColumnprice(context),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildListpresensiman(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          direction: Axis.horizontal,
-          spacing: 10,
-          children: List.generate(
-            3,
-            (index) {
-              final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
-              final imagePaths = [
-                ImageConstant.imgEdit,
-                ImageConstant.imgCalendar,
-                ImageConstant.imgDownload
-              ];
-              return Listpresensiman1ItemWidget(
-                text: texts[index],
-                imagePath: imagePaths[index],
-                isSelected: selectedIndex == index,
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                selectedTextColor: Color(0xFF3E9B97),
-              );
-            },
+              // Bagian header (logo, user info, tombol notifikasi, dsb.)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: _buildColumnprice(context),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-Widget _buildColumnprice(BuildContext context) {
-  return Align(
-    alignment: Alignment.topCenter,
-    child: Container(
+  /// Widget baris filter: Presensi Manual, Pengajuan Cuti, KiP APP
+  Widget _buildListpresensiman(BuildContext context) {
+    return SizedBox(
       width: double.maxFinite,
-      margin: EdgeInsets.only(top: 24, right: 18),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            width: double.maxFinite,
-            margin: EdgeInsets.symmetric(horizontal: 2),
-            child: Row(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Wrap(
+          spacing: 10,
+          children: List.generate(3, (index) {
+            final texts = ["Presensi\nManual", "Pengajuan\nCuti", "KiP APP"];
+            final filters = ["Presensi Manual", "Pengajuan Cuti", "KiP APP"];
+            final imagePaths = [
+              ImageConstant.imgEdit,
+              ImageConstant.imgCalendar,
+              ImageConstant.imgDownload,
+            ];
+
+            return Listpresensiman1ItemWidget(
+              text: texts[index],
+              imagePath: imagePaths[index],
+              isSelected: selectedIndex == index,
+              onTap: () => _onTapFilter(index, filters[index]),
+              selectedTextColor: const Color(0xFF3E9B97),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  /// Header atas: logo BPS, notifikasi, dan info user
+  Widget _buildColumnprice(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Container(
+        width: double.maxFinite,
+        margin: const EdgeInsets.only(top: 24, right: 18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // Logo & notifikasi
+            Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 CustomImageView(
                   imagePath: ImageConstant.imgLogoBps,
                   height: 28,
                   width: 40,
-                  margin: EdgeInsets.only(left: 26),
+                  margin: const EdgeInsets.only(left: 26),
                 ),
                 Align(
                   alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: EdgeInsets.only(left: 10, top: 1),
+                    padding: const EdgeInsets.only(left: 10, top: 4),
                     child: Text(
                       "GOVERNMENT APPROVAL",
                       style: theme.textTheme.titleSmall,
                     ),
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 CustomImageView(
                   imagePath: ImageConstant.imgMdnotificationsnone,
                   height: 24,
@@ -220,29 +278,27 @@ Widget _buildColumnprice(BuildContext context) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NotifikasiKetuaTimScreen(),
-                      ),
+                          builder: (_) => NotifikasiKetuaTimScreen()),
                     );
                   },
                 ),
               ],
             ),
-          ),
-          SizedBox(height: 16),
-          SizedBox(
-            width: double.maxFinite,
-            child: GestureDetector(
+            const SizedBox(height: 16),
+
+            // Card info user
+            GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileInfoKetuaTimScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => ProfileInfoScreen()),
                 );
               },
               child: Container(
-                margin: EdgeInsets.only(left: 18),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                width: double.maxFinite,
+                margin: const EdgeInsets.only(left: 18),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 decoration: BoxDecoration(
                   color: appTheme.whiteA700,
                   borderRadius: BorderRadiusStyle.roundedBorder14,
@@ -255,44 +311,122 @@ Widget _buildColumnprice(BuildContext context) {
                       height: 40,
                       width: 40,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Hi, Ketua Tim",
-                              style: theme.textTheme.titleSmall),
-                          Text("IPDS", style: theme.textTheme.bodySmall),
+                          Text(
+                            "Hi, ${userName ?? 'Loading...'}",
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          Text(
+                            teamName ?? 'Loading...',
+                            style: theme.textTheme.bodySmall,
+                          ),
                         ],
                       ),
                     ),
+                    if (roleId == 4)
+                      FloatingActionButton.small(
+                        onPressed: () {
+                          // Pindah ke dashboard pegawai (opsional)
+                          Navigator.pushNamed(
+                              context, AppRoutes.dashboardPegawaiScreen);
+                        },
+                        tooltip: "Dashboard Pegawai",
+                        child: const Icon(Icons.swap_horiz),
+                        backgroundColor: Colors.teal,
+                      ),
+                    if (roleId == 1 || roleId == 2)
+                      FloatingActionButton.small(
+                        onPressed: _showDashboardSelectionSheet,
+                        tooltip: "Ganti Dashboard",
+                        child: const Icon(Icons.swap_horiz),
+                        backgroundColor: Colors.teal,
+                      ),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
+  void _showDashboardSelectionSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: false, // bisa diatur true jika item banyak
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Wrap(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // tutup bottom sheet
+                      Navigator.pushReplacementNamed(
+                          context, AppRoutes.dashboardPegawaiScreen);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.teal,
+                    ),
+                    child: const Text("Dashboard Pegawai"),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(
+                          context, AppRoutes.dashboardPimpinanScreen);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.teal,
+                    ),
+                    child: const Text("Dashboard Pimpinan"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
+  /// Tabel data submission
   Widget _buildDataTable() {
-    return Container(
-      width: double.infinity, // Memastikan tabel memenuhi lebar layar
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return SizedBox(
+      width: double.infinity,
       child: DataTable(
         headingRowColor: MaterialStateProperty.all(Colors.white),
         dataRowColor: MaterialStateProperty.all(Colors.white),
-        columnSpacing: 16, // Jarak antar kolom
-        columns: [
+        columnSpacing: 16,
+        columns: const [
           DataColumn(
             label: Expanded(
               child: Center(
                 child: Text(
                   'Nama',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ),
@@ -303,7 +437,7 @@ Widget _buildColumnprice(BuildContext context) {
                 child: Text(
                   'Jenis Pengajuan',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ),
@@ -314,7 +448,7 @@ Widget _buildColumnprice(BuildContext context) {
                 child: Text(
                   'Status',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black), // Warna teks hitam
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ),
@@ -323,9 +457,9 @@ Widget _buildColumnprice(BuildContext context) {
         rows: tableData.map((row) {
           return DataRow(
             cells: [
-              _buildCenteredCell(row['Nama']!),
-              _buildCenteredCell(row['Jenis Pengajuan']!),
-              _buildStatusCell(row['Status']!), // Memanggil fungsi khusus untuk status
+              _buildCenteredCell(row['Nama'] ?? '', row),
+              _buildCenteredCell(row['Jenis Pengajuan'] ?? '', row),
+              _buildStatusCell(row['Status'] ?? ''),
             ],
           );
         }).toList(),
@@ -333,52 +467,114 @@ Widget _buildColumnprice(BuildContext context) {
     );
   }
 
-
-  DataCell _buildCenteredCell(String text) {
+  /// Cell dengan teks di tengah + navigasi ke halaman detail
+  DataCell _buildCenteredCell(String text, Map<String, dynamic> row) {
     return DataCell(
       Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2, // Memungkinkan teks dibungkus
-          style: TextStyle(color: Colors.black), // Warna teks hitam
+        child: GestureDetector(
+          onTap: () => _navigateToDetail(row),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: const TextStyle(color: Colors.black),
+          ),
         ),
       ),
     );
   }
 
+  /// Cell khusus untuk Status (warna background)
   DataCell _buildStatusCell(String status) {
+    if (status.isEmpty) {
+      return const DataCell(SizedBox.shrink());
+    }
+
     // Tentukan warna latar belakang berdasarkan status
     Color statusColor;
     switch (status) {
-      case 'Diterima':
-        statusColor = Colors.green;
+      case 'Menunggu Persetujuan':
+        statusColor = Colors.yellow.shade700;
         break;
-      case 'Ditolak':
-        statusColor = Colors.red;
+      case 'Ditolak oleh Ketua Tim':
+      case 'Ditolak oleh Pimpinan':
+        statusColor = Colors.red.shade400;
         break;
-      case 'Menunggu':
-        statusColor = Colors.yellow;
+      case 'Menunggu Persetujuan Pimpinan':
+        statusColor = Colors.blue.shade400;
+        break;
+      case 'Disetujui oleh Pimpinan':
+        statusColor = Colors.green.shade400;
         break;
       default:
-        statusColor = Colors.grey; // Warna default jika status tidak dikenali
+        statusColor = Colors.grey;
     }
 
     return DataCell(
-      Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: statusColor,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            status,
-            style: TextStyle(color: Colors.black), // Tetap warna teks hitam
+      Tooltip(
+        message: status,
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 100),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: statusColor,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                status,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
+  }
+
+  /// Navigasi ke halaman detail (absensi manual, pengajuan cuti, KiP APP)
+  void _navigateToDetail(Map<String, dynamic> row) {
+    final submissionType = row['Jenis Pengajuan'];
+    if (submissionType == "Presensi Manual") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailAbsensiManualKetuaTimScreen(data: row),
+        ),
+      );
+    } else if (submissionType == "Pengajuan Cuti") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailPengajuanCutiKetuaTimScreen(data: row),
+        ),
+      );
+    } else if (submissionType == "KiP APP") {
+      final kipAppType =
+          row['Submission Data']['submission_data']['kipapp_type'];
+      if (kipAppType == "Bulanan") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetailPengajuanKipappKetuaTimScreen(data: row),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetailPengajuanKipappKetuaTimScreenTahun(data: row),
+          ),
+        );
+      }
+    }
   }
 }

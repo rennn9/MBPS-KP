@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/app_export.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
@@ -6,18 +7,40 @@ import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_checkbox_button.dart';
 import '../../widgets/custom_outlined_button.dart';
-import '../detail_pengajuan_kipapp_ketua_tim_screen/detail_pengajuan_kipapp_ketua_tim_screen.dart';
 
-class TahunScreen extends StatelessWidget {
-  TahunScreen({Key? key}) : super(key: key);
-
-  bool januarione = true;
-  bool februarione = false;
-  bool maretone = false;
-  bool aprilone = false;
+// ignore: must_be_immutable
+class DetailPengajuanKipappKetuaTimScreenTahun extends StatelessWidget {
+  final Map<String, dynamic>? data;
+  DetailPengajuanKipappKetuaTimScreenTahun({
+    Key? key,
+    this.data,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String username = data?['Nama'];
+    String teamName = data?['Tim'];
+    Map submissionData = data?['Submission Data'];
+
+    // Inisialisasi status bulan berdasarkan data Firestore
+    final Map<String, bool> yearsStatus = {
+      "2024": false,
+      "2025": false,
+      "2026": false,
+      "2027": false,
+    };
+
+    // Update status bulan yang telah diajukan
+    if (data != null) {
+      List<String>? submittedYears =
+          List<String>.from(submissionData['submission_data']['years'] ?? []);
+      for (String year in submittedYears) {
+        if (yearsStatus.containsKey(year)) {
+          yearsStatus[year] = true;
+        }
+      }
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppbar(context),
@@ -66,12 +89,12 @@ class TahunScreen extends StatelessWidget {
                                   children: [
                                     SizedBox(height: 52.h),
                                     Text(
-                                      "Ruthveralda",
+                                      username,
                                       style: CustomTextStyles
                                           .titleLargeErrorContainer,
                                     ),
                                     Text(
-                                      "Sosial",
+                                      teamName,
                                       style: CustomTextStyles
                                           .titleSmallErrorContainer,
                                     ),
@@ -128,32 +151,43 @@ class TahunScreen extends StatelessWidget {
                                                         buttonTextStyle:
                                                             CustomTextStyles
                                                                 .titleMediumPrimary,
-                                                        onPressed: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  DetailPengajuanKipappKetuaTimScreen(),
-                                                            ),
-                                                          );
-                                                        },
+                                                        // onPressed: () {
+                                                        //   Navigator.push(
+                                                        //     context,
+                                                        //     MaterialPageRoute(
+                                                        //       builder: (context) =>
+                                                        //           DetailPengajuanKipappKetuaTimScreen(),
+                                                        //     ),
+                                                        //   );
+                                                        // },
                                                       ),
                                                       CustomOutlinedButton(
                                                         width: 110.h,
                                                         text: "Tahun",
-                                                        
                                                       ),
                                                     ],
                                                   ),
                                                 ),
                                                 SizedBox(height: 32.h),
-                                                _buildJanuarione(context),
-                                                SizedBox(height: 14.h),
-                                                _buildFebruarione(context),
-                                                SizedBox(height: 14.h),
-                                                _buildMaretone(context),
-                                                SizedBox(height: 14.h),
-                                                _buildAprilone(context),
+                                                _buildYearCheckbox(
+                                                    context,
+                                                    "Tahun 2024",
+                                                    yearsStatus['2024']!),
+                                                SizedBox(height: 12.5.h),
+                                                _buildYearCheckbox(
+                                                    context,
+                                                    "Tahun 2025",
+                                                    yearsStatus['2025']!),
+                                                SizedBox(height: 12.5.h),
+                                                _buildYearCheckbox(
+                                                    context,
+                                                    "Tahun 2026",
+                                                    yearsStatus['2026']!),
+                                                SizedBox(height: 12.5.h),
+                                                _buildYearCheckbox(
+                                                    context,
+                                                    "Tahun 2027",
+                                                    yearsStatus['2027']!),
                                               ],
                                             ),
                                           ),
@@ -192,7 +226,7 @@ class TahunScreen extends StatelessWidget {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              "R",
+                                              username[0].toUpperCase(),
                                               style:
                                                   theme.textTheme.displaySmall,
                                             ),
@@ -237,70 +271,21 @@ class TahunScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildJanuarione(BuildContext coontext) {
+  /// Checkbox Widget
+  Widget _buildYearCheckbox(BuildContext context, String year, bool isChecked) {
     return SizedBox(
       width: double.maxFinite,
       child: CustomCheckboxButton(
-        text: "Tahun 2024",
-        value: januarione,
+        text: year,
+        value: isChecked,
         padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
         decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
         onChange: (value) {
-          januarione = value;
+          isChecked = value;
         },
       ),
     );
   }
-
-  /// Section Widget
-  Widget _buildFebruarione(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Tahun 2025",
-        value: februarione,
-        padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          februarione = value;
-        },
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildMaretone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Tahun 2026",
-        value: maretone,
-        padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          maretone = value;
-        },
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildAprilone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Tahun 2027",
-        value: aprilone,
-        padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          aprilone = value;
-        },
-      ),
-    );
-  }
-
 
   /// Navigates back to the previous screen.
   onTapArrowleftone(BuildContext context) {

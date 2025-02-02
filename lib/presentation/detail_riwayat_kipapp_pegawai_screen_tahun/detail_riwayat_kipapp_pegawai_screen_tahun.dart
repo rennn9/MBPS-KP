@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import '../../core/app_export.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
@@ -6,20 +8,38 @@ import '../../widgets/app_bar/appbar_title.dart';
 import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_checkbox_button.dart';
 import '../../widgets/custom_outlined_button.dart';
-import '../detail_riwayat_kipapp_pegawai_screen/detail_riwayat_kipapp_pegawai_screen.dart';
 
 // ignore_for_file: must_be_immutable
 class DetailRiwayatKipappPegawaiScreenTahun extends StatelessWidget {
-  DetailRiwayatKipappPegawaiScreenTahun({Key? key}) : super(key: key);
+  final Map<String, dynamic>? data;
 
-  bool januarione = true;
-  bool februarione = false;
-  bool maretone = false;
-  bool aprilone = false;
-
+  DetailRiwayatKipappPegawaiScreenTahun({Key? key, this.data})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final dateFormat = DateFormat("d MMMM yyyy", "id_ID");
+    final date = dateFormat.format(data!['created_at']?.toDate());
+
+    // Inisialisasi status bulan berdasarkan data Firestore
+    final Map<String, bool> yearsStatus = {
+      "2024": false,
+      "2025": false,
+      "2026": false,
+      "2027": false,
+    };
+
+    // Update status bulan yang telah diajukan
+    if (data != null) {
+      List<String>? submittedYears =
+          List<String>.from(data?['submission_data']['years'] ?? []);
+      for (String year in submittedYears) {
+        if (yearsStatus.containsKey(year)) {
+          yearsStatus[year] = true;
+        }
+      }
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppbar(context),
@@ -66,7 +86,7 @@ class DetailRiwayatKipappPegawaiScreenTahun extends StatelessWidget {
                           style: theme.textTheme.titleSmall,
                         ),
                         Text(
-                          "14 Oktober 2024",
+                          date,
                           style: theme.textTheme.labelMedium,
                         ),
                         SizedBox(height: 30.h),
@@ -101,33 +121,35 @@ class DetailRiwayatKipappPegawaiScreenTahun extends StatelessWidget {
                                           CustomButtonStyles.outlinePrimaryTL6,
                                       buttonTextStyle:
                                           CustomTextStyles.titleMediumPrimary,
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DetailRiwayatKipappPegawaiScreen(),
-                                          ),
-                                        );
-                                      },
+                                      // onPressed: () {
+                                      //   Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           DetailRiwayatKipappPegawaiScreen(),
+                                      //     ),
+                                      //   );
+                                      // },
                                     ),
                                     CustomOutlinedButton(
                                       width: 110.h,
                                       text: "Tahun",
-                                      
                                     ),
                                   ],
                                 ),
                               ),
                               SizedBox(height: 32.h),
-                              _buildJanuarione(context),
+                              _buildYearCheckbox(
+                                  context, "Tahun 2024", yearsStatus['2024']!),
                               SizedBox(height: 12.5.h),
-                              _buildFebruarione(context),
+                              _buildYearCheckbox(
+                                  context, "Tahun 2025", yearsStatus['2025']!),
                               SizedBox(height: 12.5.h),
-                              _buildMaretone(context),
+                              _buildYearCheckbox(
+                                  context, "Tahun 2026", yearsStatus['2026']!),
                               SizedBox(height: 12.5.h),
-                              _buildAprilone(context),
-                              
+                              _buildYearCheckbox(
+                                  context, "Tahun 2027", yearsStatus['2027']!),
                             ],
                           ),
                         ),
@@ -163,70 +185,21 @@ class DetailRiwayatKipappPegawaiScreenTahun extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildJanuarione(BuildContext context) {
+  /// Checkbox Widget
+  Widget _buildYearCheckbox(BuildContext context, String year, bool isChecked) {
     return SizedBox(
       width: double.maxFinite,
       child: CustomCheckboxButton(
-        text: "Tahun 2024",
-        value: januarione,
+        text: year,
+        value: isChecked,
         padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
         decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
         onChange: (value) {
-          januarione = value;
+          isChecked = value;
         },
       ),
     );
   }
-
-  /// Section Widget
-  Widget _buildFebruarione(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Tahun 2025",
-        value: februarione,
-        padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          februarione = value;
-        },
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildMaretone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Tahun 2026",
-        value: maretone,
-        padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          maretone = value;
-        },
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildAprilone(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      child: CustomCheckboxButton(
-        text: "Tahun 2027",
-        value: aprilone,
-        padding: EdgeInsets.fromLTRB(24.h, 14.h, 30.h, 14.h),
-        decoration: CustomCheckBoxStyleHelper.outlineErrorContainer,
-        onChange: (value) {
-          aprilone = value;
-        },
-      ),
-    );
-  }
-
 
   /// Navigates back to the previous screen.
   onTapArrowleftone(BuildContext context) {

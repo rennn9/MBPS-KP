@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart'; // Import for time picker spinner
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+
 import '../../core/app_export.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/app_bar/appbar_leading_image.dart';
@@ -9,9 +12,8 @@ import '../../widgets/app_bar/custom_app_bar.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_text_form_field.dart';
 
-// ignore_for_file: must_be_immutable
 class MenuAbsenManualPegawai1Screen extends StatefulWidget {
-  MenuAbsenManualPegawai1Screen({Key? key}) : super(key: key);
+  const MenuAbsenManualPegawai1Screen({Key? key}) : super(key: key);
 
   @override
   _MenuAbsenManualPegawai1ScreenState createState() =>
@@ -20,55 +22,69 @@ class MenuAbsenManualPegawai1Screen extends StatefulWidget {
 
 class _MenuAbsenManualPegawai1ScreenState
     extends State<MenuAbsenManualPegawai1Screen> {
-  TextEditingController stashdatadateliController = TextEditingController();
-  TextEditingController masukkanjamController = TextEditingController();
-  TextEditingController group37017oneController = TextEditingController();
-  TextEditingController weuipencilfilleController = TextEditingController();
+  /// Controller
+  TextEditingController tanggalController =
+      TextEditingController(); // Tanggal Kehadiran
+  TextEditingController jamMulaiController =
+      TextEditingController(); // Jam Mulai
+  TextEditingController jamSelesaiController =
+      TextEditingController(); // Jam Selesai
+  TextEditingController deskripsiController =
+      TextEditingController(); // Deskripsi
 
-  String selectedOption = ''; // Track selected option
-  DateTime selectedDate = DateTime.now();
+  /// Variabel memilih WFO/WFOL
+  String selectedOption = ''; // 'WFO' / 'WFOL'
 
+  /// Variabel untuk Tanggal
+  DateTime? selectedDate = DateTime.now();
+
+  /// Status loading saat submit
+  bool _isSubmitting = false;
+
+  /// Cek Form Valid
   bool isFormValid() {
-    return selectedOption.isNotEmpty && // Ensure WFO or WFOL is selected
-        stashdatadateliController.text.isNotEmpty &&
-        masukkanjamController.text.isNotEmpty &&
-        group37017oneController.text.isNotEmpty &&
-        weuipencilfilleController.text.isNotEmpty;
+    return selectedOption.isNotEmpty &&
+        tanggalController.text.isNotEmpty &&
+        jamMulaiController.text.isNotEmpty &&
+        jamSelesaiController.text.isNotEmpty &&
+        deskripsiController.text.isNotEmpty;
   }
 
+  /// Fungsi menampilkan DatePicker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2021),
-      lastDate: DateTime(2025),
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       setState(() {
         selectedDate = picked;
-        stashdatadateliController.text =
-            DateFormat('dd/MM/yyyy').format(selectedDate);
+        // Format ke dd/MM/yyyy
+        tanggalController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
 
-  // Custom Time Picker with Spinner
+  /// Time Picker Spinner (Jam Mulai / Jam Selesai)
   Future<void> _selectTime(
       BuildContext context, TextEditingController controller) async {
     DateTime selectedTime = DateTime.now();
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
+        return SizedBox(
           height: 300,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TimePickerSpinner(
                 is24HourMode: false,
-                normalTextStyle: TextStyle(fontSize: 24, color: Colors.black54),
+                normalTextStyle:
+                    const TextStyle(fontSize: 24, color: Colors.black54),
                 highlightedTextStyle:
-                    TextStyle(fontSize: 24, color: Colors.black),
+                    const TextStyle(fontSize: 24, color: Colors.black),
                 spacing: 50,
                 itemHeight: 60,
                 isForce2Digits: true,
@@ -83,7 +99,7 @@ class _MenuAbsenManualPegawai1ScreenState
                   });
                   Navigator.pop(context);
                 },
-                child: Text("OK"),
+                child: const Text("OK"),
               ),
             ],
           ),
@@ -92,53 +108,158 @@ class _MenuAbsenManualPegawai1ScreenState
     );
   }
 
+  /// Convert Tanggal + Waktu ke Timestamp
+  Timestamp? _combineDateAndTime(String date, String time) {
+    try {
+      final parsedDate = DateFormat('dd/MM/yyyy').parse(date);
+      final parsedTime = DateFormat.jm().parse(time);
+
+      final combinedDateTime = DateTime(
+        parsedDate.year,
+        parsedDate.month,
+        parsedDate.day,
+        parsedTime.hour,
+        parsedTime.minute,
+      );
+
+      return Timestamp.fromDate(combinedDateTime);
+    } catch (e) {
+      debugPrint("Error combining date and time: $e");
+      return null;
+    }
+  }
+
+  /// Submit data ke Firestore
+  Future<void> _submitToFirestore() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User belum login!")),
+        );
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = true; // Mulai loading
+      });
+
+      final attendanceDate =
+          _combineDateAndTime(tanggalController.text, jamMulaiController.text);
+      final startTime =
+          _combineDateAndTime(tanggalController.text, jamMulaiController.text);
+      final endTime = _combineDateAndTime(
+          tanggalController.text, jamSelesaiController.text);
+
+      if (attendanceDate == null || startTime == null || endTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Format tanggal atau waktu tidak valid.")),
+        );
+        return;
+      }
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final userData = userDoc.data();
+      final role_id = userData?['role_id'];
+      String status = '';
+
+      if (role_id == 4) {
+        status = 'TEAM_APPROVED';
+      } else {
+        status = 'PROCESSING';
+      }
+
+      await FirebaseFirestore.instance.collection('submissions').add({
+        'user_id': user.uid,
+        'status': status,
+        'submission_type': "Presensi Manual",
+        'submission_data': {
+          'attendance_type': selectedOption,
+          'attendance_date': attendanceDate,
+          'start_time': startTime,
+          'end_time': endTime,
+          'description': deskripsiController.text,
+        },
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      });
+
+      // Pindah ke halaman "submitBerhasilScreen"
+      Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
+    } catch (e) {
+      debugPrint("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Gagal submit data: $e")),
+      );
+    } finally {
+      setState(() {
+        _isSubmitting = false; // Selesai loading
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppbar(context),
-        body: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Container(
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: _buildAppbar(context),
+            body: SizedBox(
               width: double.maxFinite,
-              padding: EdgeInsets.only(
-                left: 14.h,
-                top: 20.h,
-                right: 14.h,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: double.maxFinite,
-                    margin: EdgeInsets.only(left: 2.h),
-                    padding: EdgeInsets.symmetric(horizontal: 14.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        _buildTip(context),
-                        SizedBox(height: 18.h),
-                        _buildColumnmdtwo(context),
-                        SizedBox(height: 16.h),
-                        _buildColumnmdthree(context),
-                        SizedBox(height: 16.h),
-                        _buildColumnmdfour(context),
-                        SizedBox(height: 50.h),
-                        _buildSubmit(context)
-                      ],
-                    ),
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.only(
+                    left: 14.h,
+                    top: 20.h,
+                    right: 14.h,
                   ),
-                  SizedBox(height: 6.h)
-                ],
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.maxFinite,
+                        margin: EdgeInsets.only(left: 2.h),
+                        padding: EdgeInsets.symmetric(horizontal: 14.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            _buildTip(context),
+                            SizedBox(height: 18.h),
+                            _buildColumnTanggal(context),
+                            SizedBox(height: 16.h),
+                            _buildColumnJam(context),
+                            SizedBox(height: 16.h),
+                            _buildColumnDeskripsi(context),
+                            SizedBox(height: 50.h),
+                            _buildSubmit(context),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 6.h),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          if (_isSubmitting)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }
 
-  /// Section Widget
+  /// AppBar
   PreferredSizeWidget _buildAppbar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 43.h,
@@ -151,13 +272,13 @@ class _MenuAbsenManualPegawai1ScreenState
       ),
       centerTitle: true,
       title: AppbarTitle(
-        text: "Presensi Manual",
+        text: "Presensi Manuall",
       ),
       styleType: Style.bgFillTeal200,
     );
   }
 
-  /// Section Widget for WFO Button
+  /// Bagian Pilihan WFO / WFOL
   Widget _buildWfo(BuildContext context) {
     return Expanded(
       child: CustomElevatedButton(
@@ -176,7 +297,6 @@ class _MenuAbsenManualPegawai1ScreenState
     );
   }
 
-  /// Section Widget for WFOL Button
   Widget _buildWfol(BuildContext context) {
     return Expanded(
       child: CustomElevatedButton(
@@ -195,7 +315,7 @@ class _MenuAbsenManualPegawai1ScreenState
     );
   }
 
-  /// Section Widget for selecting option
+  /// Bagian "Kehadiran"
   Widget _buildTip(BuildContext context) {
     return Container(
       width: double.maxFinite,
@@ -223,70 +343,11 @@ class _MenuAbsenManualPegawai1ScreenState
     );
   }
 
-  Widget _buildStashdatadateli(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _selectDate(context), // Trigger the date picker on tap
-      child: AbsorbPointer(
-        child: CustomTextFormField(
-          controller: stashdatadateliController,
-          hintText: "Masukkan Tanggal",
-          hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-          suffix: Container(
-            margin: EdgeInsets.fromLTRB(16.h, 12.h, 10.h, 12.h),
-            child: CustomImageView(
-              imagePath: ImageConstant.imgVectorErrorcontainer,
-              height: 26.h,
-              width: 32.h,
-              fit: BoxFit.contain,
-            ),
-          ),
-          suffixConstraints: BoxConstraints(
-            maxHeight: 50.h,
-          ),
-          contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
-          borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL41,
-        ),
-      ),
-    );
-  }
-
-  /// Section Widget for Masukkan Jam Mulai
-  Widget _buildMasukkanjam(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _selectTime(context, masukkanjamController),
-      child: AbsorbPointer(
-        child: CustomTextFormField(
-          controller: masukkanjamController,
-          hintText: "Masukkan Jam Mulai",
-          hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-          contentPadding: EdgeInsets.all(14.h),
-          borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL41,
-        ),
-      ),
-    );
-  }
-
-  // Section Widget for Masukkan Jam Selesai
-  Widget _buildGroup37017one(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _selectTime(context, group37017oneController),
-      child: AbsorbPointer(
-        child: CustomTextFormField(
-          controller: group37017oneController,
-          hintText: "Masukkan Jam Selesai",
-          hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
-          contentPadding: EdgeInsets.all(14.h),
-          borderDecoration: TextFormFieldStyleHelper.outlineErrorContainerTL41,
-        ),
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildColumnmdtwo(BuildContext context) {
+  /// Bagian Tanggal
+  Widget _buildColumnTanggal(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      margin: EdgeInsets.only(right: 4.h),
+      margin: EdgeInsets.only(right: 2.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -294,18 +355,44 @@ class _MenuAbsenManualPegawai1ScreenState
             "Tanggal Kehadiran",
             style: CustomTextStyles.titleLargeErrorContainer,
           ),
-          SizedBox(height: 20.h),
-          _buildStashdatadateli(context)
+          SizedBox(height: 10.h),
+
+          // GestureDetector => showDatePicker
+          GestureDetector(
+            onTap: () => _selectDate(context),
+            child: AbsorbPointer(
+              child: CustomTextFormField(
+                controller: tanggalController,
+                hintText: "Masukkan Tanggal",
+                hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                suffix: Container(
+                  margin: EdgeInsets.fromLTRB(16.h, 12.h, 10.h, 12.h),
+                  child: CustomImageView(
+                    imagePath: ImageConstant.imgVectorErrorcontainer,
+                    height: 26.h,
+                    width: 32.h,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                suffixConstraints: BoxConstraints(
+                  maxHeight: 50.h,
+                ),
+                contentPadding: EdgeInsets.fromLTRB(14.h, 12.h, 10.h, 12.h),
+                borderDecoration:
+                    TextFormFieldStyleHelper.outlineErrorContainerTL41,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  /// Section Widget
-  Widget _buildColumnmdthree(BuildContext context) {
+  /// Bagian Jam (Mulai & Selesai)
+  Widget _buildColumnJam(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      margin: EdgeInsets.only(right: 4.h),
+      margin: EdgeInsets.only(right: 2.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -314,16 +401,50 @@ class _MenuAbsenManualPegawai1ScreenState
             style: CustomTextStyles.titleLargeErrorContainer,
           ),
           SizedBox(height: 20.h),
-          _buildMasukkanjam(context),
+
+          // Jam Mulai
+          GestureDetector(
+            onTap: () => _selectTime(context, jamMulaiController),
+            child: AbsorbPointer(
+              child: CustomTextFormField(
+                controller: jamMulaiController,
+                hintText: "Masukkan Jam Mulai",
+                hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                contentPadding: EdgeInsets.all(14.h),
+                borderDecoration:
+                    TextFormFieldStyleHelper.outlineErrorContainerTL41,
+                onChanged: (val) {
+                  setState(() {});
+                },
+              ),
+            ),
+          ),
           SizedBox(height: 20.h),
-          _buildGroup37017one(context)
+
+          // Jam Selesai
+          GestureDetector(
+            onTap: () => _selectTime(context, jamSelesaiController),
+            child: AbsorbPointer(
+              child: CustomTextFormField(
+                controller: jamSelesaiController,
+                hintText: "Masukkan Jam Selesai",
+                hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+                contentPadding: EdgeInsets.all(14.h),
+                borderDecoration:
+                    TextFormFieldStyleHelper.outlineErrorContainerTL41,
+                onChanged: (val) {
+                  setState(() {});
+                },
+              ),
+            ),
+          )
         ],
       ),
     );
   }
 
-  /// Section Widget
-  Widget _buildColumnmdfour(BuildContext context) {
+  /// Bagian Deskripsi
+  Widget _buildColumnDeskripsi(BuildContext context) {
     return Container(
       width: double.maxFinite,
       margin: EdgeInsets.only(right: 4.h),
@@ -336,19 +457,22 @@ class _MenuAbsenManualPegawai1ScreenState
           ),
           SizedBox(height: 20.h),
           CustomTextFormField(
-            controller: weuipencilfilleController,
+            controller: deskripsiController,
             hintText: "Tulis deskripsi di sini...",
             hintStyle: CustomTextStyles.bodyMediumErrorContainer_1,
+            onChanged: (val) {
+              setState(() {});
+            },
             contentPadding: EdgeInsets.all(14.h),
             borderDecoration:
                 TextFormFieldStyleHelper.outlineErrorContainerTL41,
-          )
+          ),
         ],
       ),
     );
   }
 
-  /// Section Widget
+  /// Tombol Submit
   Widget _buildSubmit(BuildContext context) {
     return CustomElevatedButton(
       height: 32.h,
@@ -356,24 +480,12 @@ class _MenuAbsenManualPegawai1ScreenState
       text: "Submit",
       margin: EdgeInsets.only(right: 2.h),
       buttonStyle: isFormValid()
-          ? CustomButtonStyles.fillTeal // Active button style
-          : CustomButtonStyles.fillGray, // Disabled button style
+          ? CustomButtonStyles.fillTeal
+          : CustomButtonStyles.fillGray,
       buttonTextStyle: isFormValid()
-          ? CustomTextStyles.titleSmallWhiteA700 // Active text style
-          : CustomTextStyles.bodyMediumErrorContainer_1, // Disabled text style
-      onPressed: isFormValid()
-          ? () => onTapSubmit(context)
-          : null, // Disable the button if the form is invalid
+          ? CustomTextStyles.titleSmallWhiteA700
+          : CustomTextStyles.bodyMediumErrorContainer_1,
+      onPressed: isFormValid() ? () => _submitToFirestore() : null,
     );
-  }
-
-  /// Navigates back to the previous screen.
-  onTapArrowleftone(BuildContext context) {
-    Navigator.pop(context);
-  }
-
-  /// Navigates to the submitBerhasilScreen when the action is triggered.
-  onTapSubmit(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.submitBerhasilScreen);
   }
 }

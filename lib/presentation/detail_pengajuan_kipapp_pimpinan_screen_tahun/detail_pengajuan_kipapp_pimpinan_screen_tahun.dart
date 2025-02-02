@@ -8,6 +8,7 @@ import '../../widgets/custom_checkbox_button.dart';
 import '../../widgets/custom_outlined_button.dart';
 import '../detail_pengajuan_kipapp_pimpinan_screen/detail_pengajuan_kipapp_pimpinan_screen.dart';
 
+// ignore: must_be_immutable
 class DetaiPengajuaKipapPimpinanScreeTahun extends StatelessWidget {
   DetaiPengajuaKipapPimpinanScreeTahun({Key? key}) : super(key: key);
 
