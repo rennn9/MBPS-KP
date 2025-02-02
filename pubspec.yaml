@@ -3,7 +3,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.4 <4.0.0'
+  sdk: ">=3.4.4 <4.0.0"
 
 dependencies:
   flutter:
@@ -17,15 +17,20 @@ dependencies:
   connectivity_plus: ^6.0.4
   intl: ^0.19.0
   flutter_time_picker_spinner: ^2.0.0
-  open_file : ^3.2.1
-  path_provider : ^2.0.11
-  path : ^1.9.0
-  csv : ^5.0.2
+  open_file: ^3.2.1
+  path_provider: ^2.0.11
+  path: ^1.9.0
+  csv: ^5.0.2
   image_picker: ^0.8.7+4
   pdf: ^3.11.0
   excel: ^2.0.0
   printing: ^5.10.0
   permission_handler: ^10.2.0
+  device_info_plus: ^11.2.1
+  firebase_core: ^3.10.0
+  firebase_auth: ^5.4.0
+  fluttertoast: ^8.2.10
+  cloud_firestore: ^5.6.1
 
 dev_dependencies:
   flutter_test:
