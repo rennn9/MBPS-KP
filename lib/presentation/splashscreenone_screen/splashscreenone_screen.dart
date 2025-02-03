@@ -39,9 +39,11 @@ class _SplashscreenoneScreenState extends State<SplashscreenoneScreen> {
 
           // Navigate to the appropriate dashboard based on role_id
           if (roleId == 1) {
-            // Navigator.pushReplacementNamed(context, AppRoutes.dashboardRootScreen);
+            Navigator.pushReplacementNamed(
+                context, AppRoutes.dashboardAdminScreen);
           } else if (roleId == 2) {
-            // Navigator.pushReplacementNamed(context, AppRoutes.dashboardAdminScreen);
+            Navigator.pushReplacementNamed(
+                context, AppRoutes.dashboardAdminScreen);
           } else if (roleId == 3) {
             Navigator.pushReplacementNamed(
                 context, AppRoutes.dashboardPegawaiScreen);

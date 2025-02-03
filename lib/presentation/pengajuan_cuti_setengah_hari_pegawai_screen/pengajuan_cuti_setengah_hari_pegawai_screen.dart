@@ -86,22 +86,28 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
     }
   }
 
-  bool _isWithinThreeWorkdays(DateTime selectedDate) {
-    DateTime now = DateTime.now();
-    int workdays = 0;
-    DateTime current = now;
+  // Fungsi untuk validasi pengajuan cuti 3 hari kerja
+  bool _isWithinThreeWorkdays(DateTime startDate) {
+    final DateTime lastAllowedDate = _addWorkingDays(startDate, 3);
+    final DateTime today = DateTime.now();
 
-    while (workdays < 3) {
+    return !today.isAfter(lastAllowedDate);
+  }
+
+  DateTime _addWorkingDays(DateTime start, int daysToAdd) {
+    int added = 0;
+    DateTime current = start;
+
+    while (added < daysToAdd) {
       current = current.add(const Duration(days: 1));
 
       if (current.weekday != DateTime.saturday &&
           current.weekday != DateTime.sunday) {
-        workdays++;
+        added++;
       }
     }
 
-    return selectedDate.isBefore(current) ||
-        selectedDate.isAtSameMomentAs(current);
+    return current;
   }
 
   // Fungsi untuk menyesuaikan radioGroup ("Sesi pagi: 07.30-12.00") -> "pagi" / "siang"

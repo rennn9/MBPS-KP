@@ -154,31 +154,37 @@ class _PengajuanCutiPegawaiScreenState
     }
   }
 
-  bool _isWithinThreeWorkdays(DateTime selectedDate) {
-    DateTime now = DateTime.now();
-    int workdays = 0;
-    DateTime current = now;
+  // Fungsi untuk validasi pengajuan cuti 3 hari kerja
+  bool _isWithinThreeWorkdays(DateTime startDate) {
+    final DateTime lastAllowedDate = _addWorkingDays(startDate, 3);
+    final DateTime today = DateTime.now();
 
-    while (workdays < 3) {
+    return !today.isAfter(lastAllowedDate);
+  }
+
+  DateTime _addWorkingDays(DateTime start, int daysToAdd) {
+    int added = 0;
+    DateTime current = start;
+
+    while (added < daysToAdd) {
       current = current.add(const Duration(days: 1));
 
       if (current.weekday != DateTime.saturday &&
           current.weekday != DateTime.sunday) {
-        workdays++;
+        added++;
       }
     }
 
-    return selectedDate.isBefore(current) ||
-        selectedDate.isAtSameMomentAs(current);
+    return current;
   }
 
   /// Fungsi untuk validasi durasi cuti
   void _validateLeaveDuration(BuildContext context, int leaveDays) {
-    if (leaveDays > 5) {
+    if (leaveDays > 3) {
       // Durasi cuti tidak boleh lebih dari 5 hari kerja
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Durasi cuti tidak boleh lebih dari 5 hari kerja.'),
+          content: Text('Durasi cuti tidak boleh lebih dari 3 hari kerja.'),
         ),
       );
 
