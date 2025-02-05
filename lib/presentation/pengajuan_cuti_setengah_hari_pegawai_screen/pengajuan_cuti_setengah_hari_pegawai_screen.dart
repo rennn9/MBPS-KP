@@ -417,8 +417,8 @@ class _PengajuanCutiSetengahHariPegawaiScreenState
           SizedBox(height: 10.h),
           // Sesi siang
           CustomRadioButton(
-            text: "Sesi siang\n13:00-16:00",
-            value: "Sesi siang\n13:00-16:00",
+            text: "Sesi siang\n12:30-16:00",
+            value: "Sesi siang\n12:30-16:00",
             groupValue: radioGroup,
             isExpandedText: true,
             onChange: (value) {
