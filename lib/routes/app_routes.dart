@@ -30,6 +30,7 @@ import '../presentation/profile_info_pimpinan_screen/profile_info_pimpinan_scree
 import '../presentation/profile_info_screen/profile_info_screen.dart';
 import '../presentation/riwayat_screen/riwayat_screen.dart';
 import '../presentation/signup_up_screen/signup_up_screen.dart';
+import '../presentation/forgot_password_screen/forgot_password_screen.dart';
 import '../presentation/splashscreenfive_screen/splashscreenfive_screen.dart';
 import '../presentation/splashscreenfour_screen/splashscreenfour_screen.dart';
 import '../presentation/splashscreenone_screen/splashscreenone_screen.dart';
@@ -47,6 +48,7 @@ class AppRoutes {
   static const String splashscreenfourScreen = '/splashscreenfour_screen';
   static const String splashscreenfiveScreen = '/splashscreenfive_screen';
   static const String signupUpScreen = '/signup_up_screen';
+  static const String forgotPasswordScreen = '/forgot_password_screen';
   static const String dashboardAdminScreen = '/dashboard_admin';
   static const String dashboardPegawaiScreen = '/dashboard_pegawai_screen';
   static const String profileInfoScreen = '/profile_info_screen';
@@ -107,6 +109,7 @@ class AppRoutes {
     splashscreenfourScreen: (context) => SplashscreenfourScreen(),
     splashscreenfiveScreen: (context) => SplashscreenfiveScreen(),
     signupUpScreen: (context) => SignupUpScreen(),
+    forgotPasswordScreen: (context) => ForgotPasswordScreen(),
     dashboardPegawaiScreen: (context) => DashboardPegawaiScreen(),
     dashboardAdminScreen: (context) => DashboardAdminScreen(),
     profileInfoScreen: (context) => ProfileInfoScreen(),

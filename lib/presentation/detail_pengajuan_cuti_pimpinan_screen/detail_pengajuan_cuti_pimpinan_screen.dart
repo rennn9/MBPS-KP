@@ -38,6 +38,12 @@ class _DetailPengajuanCutiPimpinanScreenState
     Map submissionData = widget.data?['Submission Data'];
 
     String leaveType = submissionData['submission_data']['leave_type'] ?? '';
+    String leaveSession =
+        submissionData['submission_data']['leave_session'] == 'pagi'
+            ? 'Cuti pagi (07:30-12:00)'
+            : submissionData['submission_data']['leave_session'] == 'siang'
+                ? 'Cuti siang (12:30-16:00)'
+                : '';
     String reason = submissionData['submission_data']['reason'] ?? '-';
     String date = leaveType == "Cuti Setengah Hari"
         ? dateFormat.format(submissionData['submission_data']['date']?.toDate())
@@ -137,7 +143,30 @@ class _DetailPengajuanCutiPimpinanScreenState
                                           p10oktober2024: leaveType,
                                         ),
                                       ),
-                                      SizedBox(height: 4.h),
+                                      SizedBox(height: 8.h),
+                                      if (leaveType == 'Cuti Setengah Hari')
+                                        Column(
+                                          children: [
+                                            SizedBox(
+                                              width: double.maxFinite,
+                                              child: Divider(
+                                                indent: 4.h,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8.h),
+                                            Container(
+                                              width: double.maxFinite,
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 4.h),
+                                              child: _buildRowtanggal(
+                                                context,
+                                                tanggalOne: "Jenis Cuti",
+                                                p10oktober2024: leaveSession,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8.h),
+                                          ],
+                                        ),
                                       SizedBox(
                                         width: double.maxFinite,
                                         child: Divider(indent: 4.h),
@@ -153,12 +182,12 @@ class _DetailPengajuanCutiPimpinanScreenState
                                           p10oktober2024: createdAt,
                                         ),
                                       ),
-                                      SizedBox(height: 4.h),
+                                      SizedBox(height: 8.h),
                                       SizedBox(
                                         width: double.maxFinite,
                                         child: Divider(indent: 4.h),
                                       ),
-                                      SizedBox(height: 10.h),
+                                      SizedBox(height: 8.h),
                                       Container(
                                         width: double.maxFinite,
                                         margin: EdgeInsets.symmetric(
@@ -169,12 +198,12 @@ class _DetailPengajuanCutiPimpinanScreenState
                                           p10oktober2024: date,
                                         ),
                                       ),
-                                      SizedBox(height: 4.h),
+                                      SizedBox(height: 8.h),
                                       SizedBox(
                                         width: double.maxFinite,
                                         child: Divider(indent: 4.h),
                                       ),
-                                      SizedBox(height: 10.h),
+                                      SizedBox(height: 8.h),
                                       Align(
                                         alignment: Alignment.centerLeft,
                                         child: Padding(

@@ -149,13 +149,20 @@ class _SignupUpScreenState extends State<SignupUpScreen> {
                               },
                             ),
                             SizedBox(height: 6.h),
-                            Text(
-                              "Forgot Password?",
-                              style: CustomTextStyles.bodySmallPoppinsTeal200
-                                  .copyWith(
-                                decoration: TextDecoration.underline,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.forgotPasswordScreen);
+                              },
+                              child: Text(
+                                "Forgot Password?",
+                                style: CustomTextStyles.bodySmallPoppinsTeal200
+                                    .copyWith(
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                             ),
+                            SizedBox(height: 2.h),
                             Text(
                               "Contact Tim IPDS",
                               style: CustomTextStyles.bodySmallPoppins,

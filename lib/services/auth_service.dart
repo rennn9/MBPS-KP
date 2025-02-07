@@ -103,4 +103,22 @@ class AuthService {
       fontSize: 14.0,
     );
   }
+
+  /// Reset password
+  Future<void> resetPassword({
+    required String email,
+    required BuildContext context,
+  }) async {
+    try {
+      // Kirim email reset password menggunakan FirebaseAuth
+      await _auth.sendPasswordResetEmail(email: email);
+      _showToast("Email reset password telah dikirim ke $email");
+    } on FirebaseAuthException catch (e) {
+      // Tangani error spesifik Firebase
+      _showToast("Terjadi kesalahan: ${e.message}");
+    } catch (e) {
+      // Tangani error lainnya
+      _showToast("Terjadi kesalahan: $e");
+    }
+  }
 }
