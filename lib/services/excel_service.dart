@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:open_file/open_file.dart';
 
 class ExcelService {
   /// --------------------------------------------------------------------------
@@ -223,7 +224,26 @@ class ExcelService {
 
       // 9) Tampilkan pesan sukses
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('File berhasil diunduh: $filePath')),
+        SnackBar(
+          content: Text('File berhasil diunduh: $filePath'),
+          action: SnackBarAction(
+            textColor: Colors.white,
+            label: 'Buka',
+            onPressed: () async {
+              // Membuka file menggunakan open_file
+              final result = await OpenFile.open(filePath);
+
+              // Jika ingin menampilkan hasil / handle error
+              if (result.type != ResultType.done) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Gagal membuka file: ${result.message}'),
+                  ),
+                );
+              }
+            },
+          ),
+        ),
       );
     } catch (e) {
       // Tampilkan pesan error jika ada masalah

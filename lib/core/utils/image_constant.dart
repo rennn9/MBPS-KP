@@ -72,6 +72,8 @@ class ImageConstant {
       '$imagePath/img_arrow_left_white_a700.svg';
   static String imgAvatars3dAvatar21120x120 =
       '$imagePath/img_avatars_3d_avatar_21_120x120.png';
+  static String imgAvatarsMale = '$imagePath/img_avatar_male.png';
+  static String imgAvatarsFemale = '$imagePath/img_avatar_female.png';
   static String imgCalendarErrorcontainer =
       '$imagePath/img_calendar_errorcontainer.svg';
   static String imgDownloadErrorcontainer =

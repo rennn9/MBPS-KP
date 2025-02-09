@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
 import 'package:excel/excel.dart';
+import 'package:open_file/open_file.dart';
 
 import './widgets/riwayat_one_item_widget.dart';
 import '../detail_riwayat_kipapp_pegawai_screen/detail_riwayat_kipapp_pegawai_screen.dart';
@@ -133,7 +134,26 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
 
       // Tampilkan pesan sukses
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('File Excel berhasil diunduh ke $filePath')),
+        SnackBar(
+          content: Text('File berhasil diunduh: $filePath'),
+          action: SnackBarAction(
+            textColor: Colors.white,
+            label: 'Buka',
+            onPressed: () async {
+              // Membuka file menggunakan open_file
+              final result = await OpenFile.open(filePath);
+
+              // Jika ingin menampilkan hasil / handle error
+              if (result.type != ResultType.done) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Gagal membuka file: ${result.message}'),
+                  ),
+                );
+              }
+            },
+          ),
+        ),
       );
     } catch (e) {
       debugPrint("Error generating or saving Excel: $e");

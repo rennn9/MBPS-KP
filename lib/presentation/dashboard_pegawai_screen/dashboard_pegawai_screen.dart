@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../services/auth_service.dart';
 import '../profile_info_screen/profile_info_screen.dart';
 import '../menu_absen_manual_pegawai_1_screen/menu_absen_manual_pegawai_1_screen.dart';
 import '../pengajuan_cuti_pegawai_screen/pengajuan_cuti_pegawai_screen.dart';
@@ -27,6 +28,7 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
   String? _userName;
   String? _teamName;
   int? _roleId;
+  String? _profileImage;
   bool _isLoadingUser = true; // status loading data user
 
   @override
@@ -38,8 +40,8 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
   /// Ambil data user (name, team, role) dari FirebaseService
   Future<void> _loadUserData() async {
     try {
-      final userAndTeam = await FirebaseService.getUserData();
-      if (userAndTeam == null) {
+      final userData = await FirebaseService.getUserData();
+      if (userData == null) {
         setState(() {
           _userName = "User";
           _teamName = " ";
@@ -51,9 +53,10 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
 
       // Jika ada data, set ke state
       setState(() {
-        _userName = userAndTeam['userName'] ?? "User";
-        _teamName = userAndTeam['teamName'] ?? "No Team";
-        _roleId = userAndTeam['roleId'] ?? 0;
+        _userName = userData['userName'] ?? "User";
+        _teamName = userData['teamName'] ?? "No Team";
+        _roleId = userData['roleId'] ?? 0;
+        _profileImage = AuthService.getProfilePicturePath(userData['gender']);
         _isLoadingUser = false;
       });
     } catch (e) {
@@ -190,7 +193,7 @@ class _DashboardPegawaiScreenState extends State<DashboardPegawaiScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomImageView(
-              imagePath: ImageConstant.imgAvatars3dAvatar21,
+              imagePath: _profileImage,
               height: 40.h,
               width: 40.h,
               alignment: Alignment.center,

@@ -11,7 +11,10 @@ class FirebaseService {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return null;
 
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
 
       if (!userDoc.exists) return null;
 
@@ -19,10 +22,14 @@ class FirebaseService {
       final String userName = userData['name'] ?? '';
       final String teamId = userData['team_id']?.toString() ?? '';
       final int roleId = userData['role_id'] ?? 0;
+      final String gender = userData['gender'] ?? '';
 
       String teamName = '';
       if (teamId.isNotEmpty) {
-        final teamDoc = await FirebaseFirestore.instance.collection('teams').doc(teamId).get();
+        final teamDoc = await FirebaseFirestore.instance
+            .collection('teams')
+            .doc(teamId)
+            .get();
         if (teamDoc.exists) {
           final teamData = teamDoc.data() as Map<String, dynamic>;
           teamName = teamData['name'] ?? '';
@@ -34,6 +41,7 @@ class FirebaseService {
         'teamId': teamId,
         'teamName': teamName,
         'roleId': roleId,
+        'gender': gender
       };
     } catch (e) {
       print("Error getUserData: $e");
@@ -51,7 +59,8 @@ class FirebaseService {
     required String selectedDropdownItem, // "Semua Permohonan", "Hari Ini", dsb
   }) async {
     try {
-      final snapshot = await FirebaseFirestore.instance.collection('submissions').get();
+      final snapshot =
+          await FirebaseFirestore.instance.collection('submissions').get();
 
       List<Map<String, dynamic>> submissions = [];
 
@@ -71,7 +80,10 @@ class FirebaseService {
         }
 
         // Ambil user doc
-        final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
         if (!userDoc.exists) continue;
 
         final userData = userDoc.data() as Map<String, dynamic>;
@@ -107,7 +119,8 @@ class FirebaseService {
   /// Ambil submissions dikelompokkan per tim (untuk Pimpinan).
   ///  - Status conversion khusus pimpinan.
   /// ============================================================
-  static Future<Map<String, List<Map<String, dynamic>>>> getSubmissionsGroupedByTeam({
+  static Future<Map<String, List<Map<String, dynamic>>>>
+      getSubmissionsGroupedByTeam({
     required String activeFilter,
     required String selectedDropdownItem,
   }) async {
@@ -131,7 +144,8 @@ class FirebaseService {
         'NERACA': [],
       };
 
-      final snapshot = await FirebaseFirestore.instance.collection('submissions').get();
+      final snapshot =
+          await FirebaseFirestore.instance.collection('submissions').get();
 
       for (var doc in snapshot.docs) {
         final data = doc.data();
@@ -153,21 +167,31 @@ class FirebaseService {
         // Jika bukan KiP APP, hanya ambil submission dengan status
         // TEAM_APPROVED, HEAD_APPROVED, HEAD_REJECTED
         if (submissionType != 'KiP APP') {
-          final validStatuses = ['TEAM_APPROVED', 'HEAD_APPROVED', 'HEAD_REJECTED'];
+          final validStatuses = [
+            'TEAM_APPROVED',
+            'HEAD_APPROVED',
+            'HEAD_REJECTED'
+          ];
           if (!validStatuses.contains(rawStatus)) {
             continue;
           }
         }
 
         // Ambil user -> tim
-        final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
         if (!userDoc.exists) continue;
 
         final userTeamId = userDoc['team_id']?.toString() ?? '';
         final userName = userDoc['name'] ?? 'Tidak Diketahui';
 
         // Ambil nama tim
-        final teamDoc = await FirebaseFirestore.instance.collection('teams').doc(userTeamId).get();
+        final teamDoc = await FirebaseFirestore.instance
+            .collection('teams')
+            .doc(userTeamId)
+            .get();
         if (!teamDoc.exists) continue;
 
         final originalTeamName = teamDoc['name'] ?? '';
@@ -243,11 +267,14 @@ class FirebaseService {
 
     switch (selectedDropdownItem) {
       case "Hari Ini":
-        return now.year == createdDate.year && now.month == createdDate.month && now.day == createdDate.day;
+        return now.year == createdDate.year &&
+            now.month == createdDate.month &&
+            now.day == createdDate.day;
       case "Minggu Ini":
         final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
         final endOfWeek = startOfWeek.add(const Duration(days: 6));
-        return createdDate.isAfter(startOfWeek) && createdDate.isBefore(endOfWeek);
+        return createdDate.isAfter(startOfWeek) &&
+            createdDate.isBefore(endOfWeek);
       case "Bulan Ini":
         return now.year == createdDate.year && now.month == createdDate.month;
       default:

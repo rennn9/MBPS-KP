@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../services/auth_service.dart';
 import './widgets/listpresensiman1_item_widget.dart';
 import '../detail_absensi_manual_ketua_tim_screen/detail_absensi_manual_ketua_tim_screen.dart';
 import '../detail_pengajuan_cuti_ketua_tim_screen/detail_pengajuan_cuti_ketua_tim_screen.dart';
@@ -23,6 +24,7 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
   String? userName; // Nama pengguna
   String? teamName; // Nama tim
   String? teamId; // ID tim pengguna
+  String? profileImage;
   int? roleId;
 
   List<Map<String, dynamic>> tableData = []; // Data tabel
@@ -58,6 +60,7 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
       teamName = userData['teamName'];
       teamId = userData['teamId'];
       roleId = userData['roleId'];
+      profileImage = AuthService.getProfilePicturePath(userData['gender']);
     }
 
     // 2) Ambil data submissions
@@ -307,7 +310,7 @@ class _DashboardKetuaTimScreenState extends State<DashboardKetuaTimScreen> {
                 child: Row(
                   children: [
                     CustomImageView(
-                      imagePath: ImageConstant.imgAvatars3dAvatar21,
+                      imagePath: profileImage,
                       height: 40,
                       width: 40,
                     ),

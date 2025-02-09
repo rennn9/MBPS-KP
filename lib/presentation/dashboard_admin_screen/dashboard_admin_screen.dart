@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:projectbps/services/auth_service.dart';
 
 import '../profile_info_screen/profile_info_screen.dart';
-import '../notifikasi_ketua_tim_screen/notifikasi_ketua_tim_screen.dart';
 import '../../core/app_export.dart';
 import '../../services/firebase_service.dart';
 
@@ -14,6 +14,7 @@ class DashboardAdminScreen extends StatefulWidget {
 
 class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
   String? userName;
+  String? profileImage;
   bool isLoading = true;
 
   @override
@@ -22,14 +23,15 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
     _initDashboard();
   }
 
-  /// Ambil data admin (opsional) jika perlu menampilkan nama admin
+  /// Ambil data admin
   Future<void> _initDashboard() async {
     setState(() => isLoading = true);
 
-    // Contoh: Ambil data user admin dari FirebaseService
+    // Ambil data user admin dari FirebaseService
     final userData = await FirebaseService.getUserData();
     if (userData != null) {
       userName = userData['userName'];
+      profileImage = AuthService.getProfilePicturePath(userData['gender']);
     }
 
     setState(() => isLoading = false);
@@ -176,18 +178,6 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                   ),
                 ),
                 const Spacer(),
-                CustomImageView(
-                  imagePath: ImageConstant.imgMdnotificationsnone,
-                  height: 24,
-                  width: 26,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => NotifikasiKetuaTimScreen()),
-                    );
-                  },
-                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -213,7 +203,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                 child: Row(
                   children: [
                     CustomImageView(
-                      imagePath: ImageConstant.imgAvatars3dAvatar21,
+                      imagePath: profileImage,
                       height: 40,
                       width: 40,
                     ),

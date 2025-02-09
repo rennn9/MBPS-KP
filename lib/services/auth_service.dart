@@ -121,4 +121,18 @@ class AuthService {
       _showToast("Terjadi kesalahan: $e");
     }
   }
+
+  /// Fungsi untuk mendapatkan path foto profil berdasarkan gender
+  static String getProfilePicturePath(String? gender) {
+    if (gender != null) {
+      final lowerGender = gender.toLowerCase();
+      if (lowerGender.contains("laki")) {
+        return ImageConstant.imgAvatarsMale;
+      } else if (lowerGender.contains("perempuan")) {
+        return ImageConstant.imgAvatarsFemale;
+      }
+    }
+    // Jika null atau tidak mengandung kata "laki" atau "perempuan"
+    return ImageConstant.imgAvatars3dAvatar21;
+  }
 }

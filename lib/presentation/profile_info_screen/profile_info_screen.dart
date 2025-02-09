@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../services/auth_service.dart';
 import '../../theme/custom_button_style.dart';
 import '../../widgets/custom_elevated_button.dart';
 import '../../core/app_export.dart';
@@ -19,7 +18,7 @@ class ProfileInfoScreen extends StatefulWidget {
 }
 
 class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
-  File? _profileImage;
+  String? _profileImage;
 
   /// Variabel untuk menyimpan data pengguna
   String? _name;
@@ -30,18 +29,6 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   String? _position;
 
   bool _isLoading = true;
-
-  /// Fungsi untuk memilih gambar dari galeri
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
-    }
-  }
 
   /// Fungsi untuk mengambil nama divisi berdasarkan team_id
   Future<String> _fetchDivisionName(int teamId) async {
@@ -91,6 +78,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         if (data != null) {
           int? teamId = data['team_id'];
           int? positionId = data['position_id'];
+          String? gender = data['gender'] ?? '';
 
           // Ambil nama divisi dan posisi berdasarkan ID
           String divisionName = teamId != null
@@ -99,12 +87,14 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
           String positionName = positionId != null
               ? await _fetchPositionName(positionId)
               : "Posisi tidak tersedia";
+          String profilePath = AuthService.getProfilePicturePath(gender);
 
           setState(() {
             _name = data['name'] ?? "Nama tidak tersedia";
             _email = data['email'] ?? "Email tidak tersedia";
             _username = data['username'] ?? "Username tidak tersedia";
             _nip = data['nip_bps'] ?? "NIP tidak tersedia";
+            _profileImage = profilePath;
             _division = divisionName;
             _position = positionName;
             _isLoading = false;
@@ -186,40 +176,10 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                         alignment: Alignment.bottomRight,
                         children: [
                           ClipOval(
-                            child: _profileImage != null
-                                ? Image.file(
-                                    _profileImage!,
-                                    height: 120.h,
-                                    width: 120.h,
-                                    fit: BoxFit.cover,
-                                  )
-                                : CustomImageView(
-                                    imagePath: ImageConstant
-                                        .imgAvatars3dAvatar21120x120,
-                                    height: 120.h,
-                                    width: 120.h,
-                                  ),
-                          ),
-                          GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 1,
-                                    blurRadius: 3,
-                                  ),
-                                ],
-                              ),
-                              padding: EdgeInsets.all(5),
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.black,
-                                size: 20,
-                              ),
+                            child: CustomImageView(
+                              imagePath: _profileImage,
+                              height: 120.h,
+                              width: 120.h,
                             ),
                           ),
                         ],
@@ -258,10 +218,23 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
               ),
             ),
 
+            /// TOMBOL GANTI PASSWORD
+            CustomElevatedButton(
+              text: "Ganti Password",
+              onPressed: () {
+                // Pastikan Anda sudah mendefinisikan rute menuju ForgotPasswordScreen
+                Navigator.pushNamed(context, AppRoutes.forgotPasswordScreen);
+              },
+              height: 36,
+              buttonStyle: CustomButtonStyles.fillGray,
+              buttonTextStyle: CustomTextStyles.titleSmallOnPrimary,
+            ),
+
             /// Tombol Logout
             CustomElevatedButton(
               text: "Logout",
               onPressed: _logout,
+              height: 36,
               margin: EdgeInsets.symmetric(vertical: 20.h),
               buttonStyle: CustomButtonStyles.fillErrorContainer,
               buttonTextStyle: CustomTextStyles.titleSmallPrimary,

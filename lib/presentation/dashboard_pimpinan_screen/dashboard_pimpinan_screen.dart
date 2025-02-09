@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../services/auth_service.dart';
 import './widgets/expandablelists_item_widget.dart';
 import '../profile_info_screen/profile_info_screen.dart';
 import '../notifikasi_pimpinan_screen/notifikasi_pimpinan_screen.dart';
@@ -18,6 +19,7 @@ class DashboardPimpinanScreen extends StatefulWidget {
 class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
   String? _userName;
   int? _roleId;
+  String? _profileImage;
   bool _isLoadingData = true;
 
   /// Data submissions yang sudah dikelompokkan per tim:
@@ -53,6 +55,7 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
     if (userData != null) {
       _userName = userData['userName'] ?? "User";
       _roleId = userData['roleId'];
+      _profileImage = AuthService.getProfilePicturePath(userData['gender']);
     }
 
     // Load data submissions
@@ -264,7 +267,7 @@ class _DashboardPimpinanScreenState extends State<DashboardPimpinanScreen> {
                 child: Row(
                   children: [
                     CustomImageView(
-                      imagePath: ImageConstant.imgAvatars3dAvatar21,
+                      imagePath: _profileImage,
                       height: 40,
                       width: 40,
                     ),
