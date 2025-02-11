@@ -21,6 +21,7 @@ class DetailPengajuanKipappKetuaTimScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     String username = data?['Nama'];
     String teamName = data?['Tim'];
+    String profile = data?['Profile'];
     Map submissionData = data?['Submission Data'];
 
     // Inisialisasi status bulan berdasarkan data Firestore
@@ -96,7 +97,7 @@ class DetailPengajuanKipappKetuaTimScreen extends StatelessWidget {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SizedBox(height: 52.h),
+                                    SizedBox(height: 118.h),
                                     Text(
                                       username,
                                       style: CustomTextStyles
@@ -164,15 +165,6 @@ class DetailPengajuanKipappKetuaTimScreen extends StatelessWidget {
                                                         buttonTextStyle:
                                                             CustomTextStyles
                                                                 .titleMediumPrimary,
-                                                        // onPressed: () {
-                                                        //   Navigator.push(
-                                                        //     context,
-                                                        //     MaterialPageRoute(
-                                                        //       builder: (context) =>
-                                                        //           DetailPengajuanKipappKetuaTimScreenTahun(),
-                                                        //     ),
-                                                        //   );
-                                                        // },
                                                       ),
                                                     ],
                                                   ),
@@ -246,43 +238,32 @@ class DetailPengajuanKipappKetuaTimScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Container(
-                                  width: 106.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadiusStyle.circleBorder52,
-                                    border: Border.all(
-                                      color: appTheme.whiteA700,
-                                      width: 2.h,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        height: 98.h,
-                                        width: 98.h,
-                                        decoration: BoxDecoration(
-                                          color: appTheme.blue300,
-                                          borderRadius:
-                                              BorderRadiusStyle.roundedBorder48,
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              username[0].toUpperCase(),
-                                              style:
-                                                  theme.textTheme.displaySmall,
-                                            ),
-                                          ],
-                                        ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    width: 106.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadiusStyle.circleBorder52,
+                                      border: Border.all(
+                                        color: appTheme.whiteA700,
+                                        width: 2.h,
                                       ),
-                                    ],
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ClipOval(
+                                          child: CustomImageView(
+                                            imagePath: profile,
+                                            height: 120.h,
+                                            width: 120.h,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

@@ -32,6 +32,7 @@ class _DetailPengajuanCutiKetuaTimScreenState
 
     String username = widget.data?['Nama'];
     String teamName = widget.data?['Tim'];
+    String profile = widget.data?['Profile'];
     String submissionId = widget.data?['Id'];
     String status = widget.data?['Status'];
     Map submissionData = widget.data?['Submission Data'];
@@ -99,7 +100,7 @@ class _DetailPengajuanCutiKetuaTimScreenState
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SizedBox(height: 40.h),
+                                      SizedBox(height: 0.h),
                                       Text(
                                         username,
                                         style: theme.textTheme.titleMedium,
@@ -271,7 +272,7 @@ class _DetailPengajuanCutiKetuaTimScreenState
                                           indent: 4.h,
                                         ),
                                       ),
-                                      SizedBox(height: 84.h),
+                                      SizedBox(height: 40.h),
                                       if (status.toLowerCase() ==
                                           "Menunggu Persetujuan".toLowerCase())
                                         Container(
@@ -367,6 +368,7 @@ class _DetailPengajuanCutiKetuaTimScreenState
                                     ],
                                   ),
                                 ),
+                                SizedBox(height: 40.h),
                                 Align(
                                   alignment: Alignment.topCenter,
                                   child: Container(
@@ -382,27 +384,13 @@ class _DetailPengajuanCutiKetuaTimScreenState
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Container(
-                                          height: 98.h,
-                                          width: 98.h,
-                                          decoration: BoxDecoration(
-                                            color: appTheme.blue300,
-                                            borderRadius: BorderRadiusStyle
-                                                .roundedBorder48,
+                                        ClipOval(
+                                          child: CustomImageView(
+                                            imagePath: profile,
+                                            height: 120.h,
+                                            width: 120.h,
                                           ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                username[0].toUpperCase(),
-                                                style: theme
-                                                    .textTheme.displaySmall,
-                                              )
-                                            ],
-                                          ),
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),

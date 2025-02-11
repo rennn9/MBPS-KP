@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/auth_service.dart';
 import './widgets/listandi_item_widget.dart';
 import '../dashboard_ketua_tim_screen/dashboard_ketua_tim_screen.dart';
 import '../detail_absensi_manual_ketua_tim_screen/detail_absensi_manual_ketua_tim_screen.dart';
@@ -17,8 +18,7 @@ class NotifikasiKetuaTimScreen extends StatefulWidget {
   const NotifikasiKetuaTimScreen({Key? key}) : super(key: key);
 
   @override
-  _NotifikasiKetuaTimScreenState createState() =>
-      _NotifikasiKetuaTimScreenState();
+  _NotifikasiKetuaTimScreenState createState() => _NotifikasiKetuaTimScreenState();
 }
 
 class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
@@ -29,12 +29,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
   bool isLoading = true;
 
   String selectedTimeFilter = "Semua Permohonan"; // Filter waktu default
-  final List<String> timeFilters = [
-    "Semua Permohonan",
-    "Hari Ini",
-    "Minggu Ini",
-    "Bulan Ini"
-  ];
+  final List<String> timeFilters = ["Semua Permohonan", "Hari Ini", "Minggu Ini", "Bulan Ini"];
 
   @override
   void initState() {
@@ -53,10 +48,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
 
       if (user != null) {
         // Ambil data pengguna
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
+        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
         if (userDoc.exists) {
           final userData = userDoc.data() as Map<String, dynamic>;
@@ -68,9 +60,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
 
           // Ambil data notifikasi berdasarkan `team_id`
           if (currentTeamId.isNotEmpty) {
-            final submissionsSnapshot = await FirebaseFirestore.instance
-                .collection('submissions')
-                .get();
+            final submissionsSnapshot = await FirebaseFirestore.instance.collection('submissions').get();
 
             List<Map<String, dynamic>> tempNotifications = [];
 
@@ -84,20 +74,14 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
               String teamName = '';
 
               if (submissionType == "Presensi Manual") {
-                description =
-                    "Deskripsi: ${submissionData['submission_data']['description']}";
+                description = "Deskripsi: ${submissionData['submission_data']['description']}";
               } else if (submissionType == "Pengajuan Cuti") {
-                description =
-                    "Alasan: ${submissionData['submission_data']['reason']}";
+                description = "Alasan: ${submissionData['submission_data']['reason']}";
               } else if (submissionType == "KiP APP") {
-                if (submissionData['submission_data']['kipapp_type'] ==
-                    "Bulanan") {
-                  description =
-                      "Pengumpulan progress Bulanan (${submissionData['submission_data']['year']})";
-                } else if (submissionData['submission_data']['kipapp_type'] ==
-                    "Tahunan") {
-                  List<dynamic> years =
-                      submissionData['submission_data']['years'] ?? [];
+                if (submissionData['submission_data']['kipapp_type'] == "Bulanan") {
+                  description = "Pengumpulan progress Bulanan (${submissionData['submission_data']['year']})";
+                } else if (submissionData['submission_data']['kipapp_type'] == "Tahunan") {
+                  List<dynamic> years = submissionData['submission_data']['years'] ?? [];
                   String yearString = years.join(", ");
                   description = "Pengumpulan progress Tahunan ($yearString)";
                 }
@@ -128,20 +112,15 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
                   statusText = '';
               }
 
-              final userDoc = await FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(userId)
-                  .get();
+              final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
               if (!userDoc.exists) continue;
 
               final userData = userDoc.data() as Map<String, dynamic>;
               final teamId = userData['team_id']?.toString() ?? '';
               final userName = userData['name'] ?? 'Tidak Diketahui';
+              final profileImage = AuthService.getProfilePicturePath(userData['gender']);
 
-              final teamDoc = await FirebaseFirestore.instance
-                  .collection('teams')
-                  .doc(teamId)
-                  .get();
+              final teamDoc = await FirebaseFirestore.instance.collection('teams').doc(teamId).get();
               if (teamDoc.exists) {
                 final teamData = teamDoc.data() as Map<String, dynamic>;
                 teamName = teamData['name'] ?? '';
@@ -153,6 +132,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
                   'Submission Data': submissionData,
                   'Tim': teamName,
                   'Nama': userName,
+                  'Profile': profileImage,
                   'Deskripsi': description,
                   'Status': statusText,
                   'Tipe': submissionType,
@@ -204,9 +184,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-    return now.year == date.year &&
-        now.month == date.month &&
-        now.day == date.day;
+    return now.year == date.year && now.month == date.month && now.day == date.day;
   }
 
   bool _isThisWeek(DateTime date) {
@@ -332,10 +310,8 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
           type: notification['Tipe']!,
           backgroundColor: statusBackgroundColor, // Add background color
           onTapRow: () {
-            final submissionType =
-                notification['Submission Data']['submission_type'];
-            if (submissionType == "Presensi Manual" &&
-                notification['Status'] == 'Menunggu Persetujuan') {
+            final submissionType = notification['Submission Data']['submission_type'];
+            if (submissionType == "Presensi Manual" && notification['Status'] == 'Menunggu Persetujuan') {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -344,8 +320,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
                   ),
                 ),
               );
-            } else if (submissionType == "Pengajuan Cuti" &&
-                notification['Status'] == 'Menunggu Persetujuan') {
+            } else if (submissionType == "Pengajuan Cuti" && notification['Status'] == 'Menunggu Persetujuan') {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -355,8 +330,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
                 ),
               );
             } else if (submissionType == "KiP APP") {
-              final kipAppType = notification['Submission Data']
-                  ['submission_data']['kipapp_type'];
+              final kipAppType = notification['Submission Data']['submission_data']['kipapp_type'];
               if (kipAppType == "Bulanan") {
                 Navigator.push(
                   context,
@@ -370,8 +344,7 @@ class _NotifikasiKetuaTimScreenState extends State<NotifikasiKetuaTimScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        DetailPengajuanKipappKetuaTimScreenTahun(
+                    builder: (context) => DetailPengajuanKipappKetuaTimScreenTahun(
                       data: notification,
                     ),
                   ),

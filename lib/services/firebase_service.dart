@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'auth_service.dart';
+
 class FirebaseService {
   /// ============================================================
   ///  Ambil data user & tim (sama untuk Pegawai, Ketua Tim,
@@ -98,10 +100,24 @@ class FirebaseService {
         // Konversi status untuk ketua tim
         final statusForKetuaTim = _mapStatusForKetuaTim(rawStatus);
 
+        String teamName = '';
+        final teamDoc = await FirebaseFirestore.instance
+            .collection('teams')
+            .doc(teamId)
+            .get();
+        if (teamDoc.exists) {
+          final teamData = teamDoc.data() as Map<String, dynamic>;
+          teamName = teamData['name'] ?? '';
+        }
+
+        final profileImage =
+            AuthService.getProfilePicturePath(userData['gender']);
+
         submissions.add({
           'Submission Data': data,
           'Nama': userData['name'] ?? 'Tidak Diketahui',
-          'Tim': '', // diisi jika diperlukan
+          'Profile': profileImage,
+          'Tim': teamName, // diisi jika diperlukan
           'Jenis Pengajuan': submissionType,
           'Status': statusForKetuaTim,
           'Id': doc.id,
@@ -201,9 +217,13 @@ class FirebaseService {
         // Konversi status khusus pimpinan
         final statusForPimpinan = _mapStatusForPimpinan(rawStatus);
 
+        final profileImage =
+            AuthService.getProfilePicturePath(userDoc['gender']);
+
         teamSubmissions[mappedTeamLabel]?.add({
           'Submission Data': data,
           'Nama': userName,
+          'Profile': profileImage,
           'Tim': originalTeamName,
           'Jenis Pengajuan': submissionType,
           'Status': statusForPimpinan,

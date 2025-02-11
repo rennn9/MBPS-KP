@@ -19,34 +19,29 @@ class DetailAbsensiManualKetuaTimScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<DetailAbsensiManualKetuaTimScreen> createState() =>
-      _DetailAbsensiManualKetuaTimScreenState();
+  State<DetailAbsensiManualKetuaTimScreen> createState() => _DetailAbsensiManualKetuaTimScreenState();
 }
 
-class _DetailAbsensiManualKetuaTimScreenState
-    extends State<DetailAbsensiManualKetuaTimScreen> {
+class _DetailAbsensiManualKetuaTimScreenState extends State<DetailAbsensiManualKetuaTimScreen> {
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    print("Data user: ${widget.data}");
     final dateFormat = DateFormat("d MMMM yyyy", "id_ID");
 
     String username = widget.data?['Nama'];
+    String profile = widget.data?['Profile'];
     String teamName = widget.data?['Tim'];
     String submissionId = widget.data?['Id'];
     String status = widget.data?['Status'];
     Map submissionData = widget.data?['Submission Data'];
 
-    String attendenceType =
-        submissionData['submission_data']['attendence_type'] ?? '';
-    String description =
-        submissionData['submission_data']['description'] ?? '-';
-    String createdAt =
-        dateFormat.format(submissionData['created_at']?.toDate());
-    String startTime = DateFormat("HH:mm", "id_ID")
-        .format(submissionData['submission_data']['start_time']?.toDate());
-    String endTime = DateFormat("HH:mm", "id_ID")
-        .format(submissionData['submission_data']['end_time']?.toDate());
+    String attendenceType = submissionData['submission_data']['attendence_type'] ?? '';
+    String description = submissionData['submission_data']['description'] ?? '-';
+    String createdAt = dateFormat.format(submissionData['created_at']?.toDate());
+    String startTime = DateFormat("HH:mm", "id_ID").format(submissionData['submission_data']['start_time']?.toDate());
+    String endTime = DateFormat("HH:mm", "id_ID").format(submissionData['submission_data']['end_time']?.toDate());
 
     return SafeArea(
       child: Scaffold(
@@ -85,8 +80,7 @@ class _DetailAbsensiManualKetuaTimScreenState
                                     right: 8.h,
                                   ),
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadiusStyle.roundedBorder14,
+                                    borderRadius: BorderRadiusStyle.roundedBorder14,
                                     border: Border.all(
                                       color: appTheme.blueGray100,
                                       width: 1.h,
@@ -95,7 +89,7 @@ class _DetailAbsensiManualKetuaTimScreenState
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SizedBox(height: 40.h),
+                                      SizedBox(height: 10.h),
                                       Text(
                                         username,
                                         style: theme.textTheme.titleMedium,
@@ -103,16 +97,13 @@ class _DetailAbsensiManualKetuaTimScreenState
                                       SizedBox(height: 2.h),
                                       Text(
                                         teamName,
-                                        style: CustomTextStyles
-                                            .titleSmallErrorContainer,
+                                        style: CustomTextStyles.titleSmallErrorContainer,
                                       ),
                                       SizedBox(height: 18.h),
                                       SizedBox(
                                         width: double.maxFinite,
                                         child: Divider(
-                                          color: theme
-                                              .colorScheme.errorContainer
-                                              .withOpacity(0.3),
+                                          color: theme.colorScheme.errorContainer.withOpacity(0.3),
                                           indent: 18.h,
                                           endIndent: 14.h,
                                         ),
@@ -124,16 +115,14 @@ class _DetailAbsensiManualKetuaTimScreenState
                                           padding: EdgeInsets.only(left: 4.h),
                                           child: Text(
                                             "Info Pengajuan",
-                                            style: CustomTextStyles
-                                                .titleSmallMedium,
+                                            style: CustomTextStyles.titleSmallMedium,
                                           ),
                                         ),
                                       ),
                                       SizedBox(height: 14.h),
                                       Container(
                                         width: double.maxFinite,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 4.h),
+                                        margin: EdgeInsets.symmetric(horizontal: 4.h),
                                         child: _buildRowtanggal(
                                           context,
                                           tanggalOne: "Tipe",
@@ -150,8 +139,7 @@ class _DetailAbsensiManualKetuaTimScreenState
                                       SizedBox(height: 8.h),
                                       Container(
                                         width: double.maxFinite,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 4.h),
+                                        margin: EdgeInsets.symmetric(horizontal: 4.h),
                                         child: _buildRowtanggal(
                                           context,
                                           tanggalOne: "Tanggal Pengajuan",
@@ -168,8 +156,7 @@ class _DetailAbsensiManualKetuaTimScreenState
                                       SizedBox(height: 10.h),
                                       Container(
                                         width: double.maxFinite,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 4.h),
+                                        margin: EdgeInsets.symmetric(horizontal: 4.h),
                                         child: _buildRowtanggal(
                                           context,
                                           tanggalOne: "Jam Datang",
@@ -186,8 +173,7 @@ class _DetailAbsensiManualKetuaTimScreenState
                                       SizedBox(height: 8.h),
                                       Container(
                                         width: double.maxFinite,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 4.h),
+                                        margin: EdgeInsets.symmetric(horizontal: 4.h),
                                         child: _buildRowtanggal(
                                           context,
                                           tanggalOne: "Jam Pulang",
@@ -220,26 +206,20 @@ class _DetailAbsensiManualKetuaTimScreenState
                                           child: Container(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 12.h,
-                                                vertical: 8
-                                                    .h), // Menambah padding agar teks tidak menempel
+                                                vertical: 8.h), // Menambah padding agar teks tidak menempel
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(
                                                   8.h), // Menambahkan border-radius jika diinginkan
                                               border: Border.all(
-                                                color: appTheme
-                                                    .blueGray100, // Menambahkan border dengan warna
+                                                color: appTheme.blueGray100, // Menambahkan border dengan warna
                                                 width: 1.h, // Ketebalan border
                                               ),
                                             ),
                                             child: Text(
                                               description,
-                                              style: CustomTextStyles
-                                                  .labelLargeErrorContainer
-                                                  .copyWith(
-                                                color: theme
-                                                    .colorScheme.errorContainer
-                                                    .withOpacity(
-                                                        1), // Anda bisa menyesuaikan gaya teks di sini
+                                              style: CustomTextStyles.labelLargeErrorContainer.copyWith(
+                                                color: theme.colorScheme.errorContainer
+                                                    .withOpacity(1), // Anda bisa menyesuaikan gaya teks di sini
                                               ),
                                             ),
                                           ),
@@ -248,8 +228,7 @@ class _DetailAbsensiManualKetuaTimScreenState
                                       SizedBox(height: 4.h),
                                       Container(
                                         width: double.maxFinite,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 4.h),
+                                        margin: EdgeInsets.symmetric(horizontal: 4.h),
                                         child: _buildRowtanggal(
                                           context,
                                           tanggalOne: "Status",
@@ -263,32 +242,16 @@ class _DetailAbsensiManualKetuaTimScreenState
                                           indent: 4.h,
                                         ),
                                       ),
-                                      SizedBox(height: 52.h),
-                                      if (status.toLowerCase() ==
-                                          "Menunggu Persetujuan".toLowerCase())
-                                        _buildActionButtons(
-                                            context,
-                                            submissionId,
-                                            "TEAM_APPROVED",
-                                            "TEAM_REJECTED"),
-                                      if (status.toLowerCase() ==
-                                          "Ditolak oleh Ketua Tim"
-                                              .toLowerCase())
+                                      SizedBox(height: 35.h),
+                                      if (status.toLowerCase() == "Menunggu Persetujuan".toLowerCase())
+                                        _buildActionButtons(context, submissionId, "TEAM_APPROVED", "TEAM_REJECTED"),
+                                      if (status.toLowerCase() == "Ditolak oleh Ketua Tim".toLowerCase())
                                         _buildSingleActionButton(
-                                            context,
-                                            submissionId,
-                                            "PROCESSING",
-                                            "Batalkan Penolakan",
-                                            Colors.red),
-                                      if (status.toLowerCase() ==
-                                          "Menunggu Persetujuan Pimpinan"
-                                              .toLowerCase())
+                                            context, submissionId, "PROCESSING", "Batalkan Penolakan", Colors.red),
+                                      if (status.toLowerCase() == "Menunggu Persetujuan Pimpinan".toLowerCase())
                                         _buildSingleActionButton(
-                                            context,
-                                            submissionId,
-                                            "PROCESSING",
-                                            "Batalkan Persetujuan",
-                                            Colors.orange),
+                                            context, submissionId, "PROCESSING", "Batalkan Persetujuan", Colors.orange),
+                                      SizedBox(height: 28),
                                     ],
                                   ),
                                 ),
@@ -297,8 +260,7 @@ class _DetailAbsensiManualKetuaTimScreenState
                                   child: Container(
                                     width: 106.h,
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadiusStyle.circleBorder52,
+                                      borderRadius: BorderRadiusStyle.circleBorder52,
                                       border: Border.all(
                                         color: appTheme.whiteA700,
                                         width: 2.h,
@@ -307,27 +269,13 @@ class _DetailAbsensiManualKetuaTimScreenState
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Container(
-                                          height: 98.h,
-                                          width: 98.h,
-                                          decoration: BoxDecoration(
-                                            color: appTheme.blue300,
-                                            borderRadius: BorderRadiusStyle
-                                                .roundedBorder48,
+                                        ClipOval(
+                                          child: CustomImageView(
+                                            imagePath: profile,
+                                            height: 120.h,
+                                            width: 120.h,
                                           ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                username[0].toUpperCase(),
-                                                style: theme
-                                                    .textTheme.displaySmall,
-                                              )
-                                            ],
-                                          ),
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -353,8 +301,7 @@ class _DetailAbsensiManualKetuaTimScreenState
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, String submissionId,
-      String approveStatus, String rejectStatus) {
+  Widget _buildActionButtons(BuildContext context, String submissionId, String approveStatus, String rejectStatus) {
     return Row(
       children: [
         Expanded(
@@ -379,14 +326,13 @@ class _DetailAbsensiManualKetuaTimScreenState
     );
   }
 
-  Widget _buildSingleActionButton(BuildContext context, String submissionId,
-      String newStatus, String buttonText, Color buttonColor) {
+  Widget _buildSingleActionButton(
+      BuildContext context, String submissionId, String newStatus, String buttonText, Color buttonColor) {
     return Padding(
       padding: EdgeInsets.only(top: 16.h),
       child: CustomElevatedButton(
         text: buttonText,
-        buttonStyle: CustomButtonStyles.fillPrimary
-            .copyWith(backgroundColor: MaterialStateProperty.all(buttonColor)),
+        buttonStyle: CustomButtonStyles.fillPrimary.copyWith(backgroundColor: MaterialStateProperty.all(buttonColor)),
         onPressed: () {
           _updateSubmissionStatus(context, submissionId, newStatus);
         },
@@ -395,8 +341,7 @@ class _DetailAbsensiManualKetuaTimScreenState
   }
 
   /// Fungsi untuk memperbarui status
-  Future<void> _updateSubmissionStatus(
-      context, String? submissionId, String status) async {
+  Future<void> _updateSubmissionStatus(context, String? submissionId, String status) async {
     if (submissionId == null) return;
 
     setState(() {
@@ -404,10 +349,7 @@ class _DetailAbsensiManualKetuaTimScreenState
     });
 
     try {
-      await FirebaseFirestore.instance
-          .collection('submissions')
-          .doc(submissionId)
-          .update({'status': status});
+      await FirebaseFirestore.instance.collection('submissions').doc(submissionId).update({'status': status});
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Status pengajuan berhasil diperbarui')),
       );
